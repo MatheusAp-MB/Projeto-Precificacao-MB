@@ -1,35 +1,41 @@
-$(document).ready(function () {
-
-  var table = $("#tabela-produtos").DataTable({
+var table = $("#tabela-produtos").DataTable({
     scrollX: true,
     language: {
-      url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json"
+      emptyTable: "Nenhum registro encontrado",
+      info: "Mostrando _START_ até _END_ de _TOTAL_ registros",
+      infoEmpty: "Mostrando 0 até 0 de 0 registros",
+      infoFiltered: "(filtrado de _MAX_ registros no total)",
+      lengthMenu: "Exibir _MENU_ resultados por página",
+      loadingRecords: "Carregando...",
+      processing: "Processando...",
+      search: "Buscar:",
+      zeroRecords: "Nenhum registro encontrado",
+      paginate: {
+        first: "Primeiro",
+        last: "Último",
+        next: "Próximo",
+        previous: "Anterior"
+      }
     },
-    columnDefs: [
-      { targets: '_all', defaultContent: '—' }
-    ]
-  });
-
-  // Aplica visibilidade inicial conforme botões not_active
-  var botoes = document.getElementsByClassName("not_active");
-  for (const botao of botoes) {
-    fnShowHide(botao.id, false);
-  }
-
+    initComplete: function () {
+      var botoes = document.getElementsByClassName("not_active");
+      for (const botao of botoes) {
+        fnShowHide(botao.id, false);
+      }
+    }
 });
 
-// Mostra/oculta coluna
 function fnShowHide(iCol, toggle = null) {
+  var colIndex = parseInt(iCol) - 1;
   var oTable = $("#tabela-produtos").dataTable();
   if (toggle === null) {
-    var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
-    oTable.fnSetColumnVis(iCol, !bVis);
+    var bVis = oTable.fnSettings().aoColumns[colIndex].bVisible;
+    oTable.fnSetColumnVis(colIndex, !bVis);
   } else {
-    oTable.fnSetColumnVis(iCol, toggle);
+    oTable.fnSetColumnVis(colIndex, toggle);
   }
 }
 
-// Alterna estado do botão e visibilidade da coluna
 function mudar(botao) {
   if (botao.classList.contains("active")) {
     botao.classList.remove("active");
@@ -42,7 +48,6 @@ function mudar(botao) {
   }
 }
 
-// Mostra/oculta painel de opções
 var painelAberto = false;
 
 function opcoes_exibicao() {

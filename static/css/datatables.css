@@ -1,56 +1,131 @@
-/* ================================================
-   Painel de opções de exibição
-   ================================================ */
+/* 
+================================================
+          Botões da barra de ações
+================================================ 
+*/
+
+#barra_acoes {
+  display: flex;
+  /* justify-content: space-between; */
+  /* align-items: center; */
+  max-width: 80vw;
+  margin: auto;
+}
+#btn_op_exib {
+  background-color: #1d6094;
+  border: 2px solid #2e7bb5;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.2s;
+
+}
+
+#btn_op_exib:hover {
+  border: 2px solid rgb(0, 0, 0);
+  background-color: #419ff3;
+    padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+#btn_cad_produto {
+  background-color: #1d942b;
+  border: 2px solid #0d5403;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+#btn_cad_produto:hover {
+  border: 2px solid rgb(0, 0, 0);
+  background-color: #35c13f;
+    padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+/*
+================================================
+      Botões de opções de exibição
+================================================ 
+*/
 
 #Mostrar_Colunas {
   display: none;
   background-color: #1a3a5c;
   border: 2px solid #2e7bb5;
   color: white;
-  width: fit-content;
-  max-width: 100%;
+  padding: 16px;
+  margin-bottom: 16px;
+  border-radius: 6px;
+  max-width: 80vw;
+  max-height: 55vh;
+  margin: 0 auto;
 }
 
 #Mostrar_Colunas h6 {
   color: white;
   border-bottom: 2px solid #2e7bb5;
   padding-bottom: 8px;
+  margin-bottom: 12px;
+  font-size: 20px;
 }
 
-#Mostrar_Colunas button {
+.grid-botoes-colunas {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+  max-width: 80vw;
+  max-height: 55vh;
+}
+
+
+.grid-botoes-colunas button {
   height: 36px;
-  min-width: 120px;
   border-radius: 6px;
   border: none;
-  font-size: 0.85rem;
-  cursor: pointer;
+  font-size: 0.8rem;
   transition: all 0.2s;
+  max-width: 200px;
 }
 
-#Mostrar_Colunas button.active {
+.grid-botoes-colunas button.active {
   background-color: #198754;
   color: white;
 }
 
-#Mostrar_Colunas button.not_active {
+.grid-botoes-colunas button.not_active {
   background-color: #dc3545;
   color: white;
 }
 
-#Mostrar_Colunas button:hover {
+.grid-botoes-colunas button:hover {
   opacity: 0.85;
-  font-weight: bold;
-  border: 2px solid white;
+  outline: 4px solid white;
 }
 
+
+/* 
+Tabela
+*/
+
+.card.shadow-sm {
+max-width: 80vw;
+margin: 0 auto;
+}
+
+
 /* ================================================
-   Tabela DataTables
+   Cabeçalho da tabela
    ================================================ */
 
 table.dataTable thead th {
   background-color: #1a3a5c;
   color: white;
   border-bottom: 2px solid #2e7bb5;
+  white-space: nowrap;
 }
 
 table.dataTable thead th:hover {
@@ -60,6 +135,11 @@ table.dataTable thead th:hover {
 table.dataTable tbody tr:hover {
   background-color: rgba(46, 123, 181, 0.08);
 }
+
+
+/* ================================================
+   Paginação
+   ================================================ */
 
 .dataTables_wrapper .dataTables_paginate .paginate_button.current {
   background: #1a3a5c !important;
@@ -71,4 +151,59 @@ table.dataTable tbody tr:hover {
   background: #2e7bb5 !important;
   color: white !important;
   border: 1px solid #2e7bb5 !important;
+}
+
+/* ================================================
+   Header e footer do DataTables
+   ================================================ */
+
+.dataTables_wrapper {
+  background-color: #aeceffa8 !important;
+  border: 1px solid #000911;
+  border-radius: 6px;
+  max-width: 80vw;
+  margin: 0 auto;
+  padding: 5px;
+}
+
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter {
+  padding: 8px 12px;
+  font-size: 20px;
+  color: #000000;
+
+}
+
+
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate  {
+  padding: 8px 12px;
+  font-size: 16px;
+  /* border-top: 1px solid #dee2e6; */
+}
+
+
+.dataTables_wrapper .dataTables_filter input{
+  min-width: 400px;
+  background-color: #ffffff !important;
+  border: 1px solid #2e7bb5 !important;
+  border-radius: 6px !important;
+  padding: 4px 10px !important;
+  font-size: 14px;
+  outline: none;
+}
+
+.dataTables_length select{
+  min-width: 80px;
+  background-color: #ffffff !important;
+  border: 1px solid #2e7bb5 !important;
+  border-radius: 6px !important;
+  padding: 4px 10px !important;
+  font-size: 14px;
+  outline: none;
+}
+
+.dataTables_wrapper .dataTables_filter input:focus  {
+  border-color: #1a3a5c !important;
+  box-shadow: 0 0 0 2px rgba(46, 123, 181, 0.25) !important;
 }

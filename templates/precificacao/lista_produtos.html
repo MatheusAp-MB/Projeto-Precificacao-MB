@@ -12,26 +12,30 @@
 {% block toolbar_titulo %}Produtos{% endblock %}
 
 {% block conteudo %}
+
 <div class="container-fluid">
 
   <!-- Barra de ações -->
-  <div class="row mb-3 mt-2">
+  <div class="row mb-3 mt-2" id="barra_acoes">
+
     <div class="col-auto">
-      <button onclick="opcoes_exibicao()" class="btn btn-primary">
+      <button onclick="opcoes_exibicao()" class="btn btn-primary" id="btn_op_exib">
         <i class="fas fa-columns"></i> Opções de Exibição
       </button>
     </div>
+
     <div class="col-auto">
-      <button class="btn btn-success">
+      <button class="btn btn-primary" id="btn_cad_produto">
         <i class="fas fa-plus"></i> Cadastrar Produto
       </button>
     </div>
+    
   </div>
 
   <!-- Painel de seleção de colunas -->
   <div id="Mostrar_Colunas" class="mb-3 p-3 rounded">
     <h6 class="mb-3">Selecione as colunas que deseja exibir:</h6>
-    <div class="d-flex flex-wrap gap-2">
+    <div class="grid-botoes-colunas">
       <button id="1"  class="not_active" onclick="mudar(this)">ID</button>
       <button id="2"  class="active"     onclick="mudar(this)">SKU</button>
       <button id="3"  class="active"     onclick="mudar(this)">Título</button>
@@ -118,10 +122,6 @@
             <td>{{ produto.profundidade }} cm</td>
             <td>{{ produto.criado_em|date:"d/m/Y H:i" }}</td>
             <td>{{ produto.atualizado_em|date:"d/m/Y H:i" }}</td>
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="24" class="text-center py-4">Nenhum produto cadastrado.</td>
           </tr>
           {% endfor %}
         </tbody>
