@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produtos</title>
+</head>
+<body>
+    <h1>Lista de Produtos</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>SKU</th>
+                <th>Título</th>
+                <th>Custo</th>
+                <th>Estoque</th>
+                <th>Curva</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for produto in produtos %}
+            <tr>
+                <td>{{ produto.sku }}</td>
+                <td>{{ produto.titulo }}</td>
+                <td>{{ produto.custo }}</td>
+                <td>{{ produto.estoque }}</td>
+                <td>{{ produto.curva }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">Nenhum produto cadastrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
