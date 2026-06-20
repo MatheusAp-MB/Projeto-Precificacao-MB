@@ -1,0 +1,270 @@
+/* ================================================
+   Layout principal
+   ================================================ */
+
+* {
+    margin: 0px;
+    padding: 0px;
+    position: relative;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #515151;
+    background-color: #e9edf4;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: "Nunito", sans-serif;
+    font-weight: 500;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+}
+
+a {
+    color: #2e7bb5;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #1a3a5c;
+    text-decoration: underline;
+}
+
+/* ================================================
+   Estrutura do dashboard
+   ================================================ */
+
+.dashboard {
+    display: flex;
+    min-height: 100vh;
+}
+
+.dashboard-app {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 2;
+    margin: 0px;
+}
+
+.dashboard-content {
+    flex-grow: 2;
+    padding: 20px;
+}
+
+/* ================================================
+   Sidebar
+   ================================================ */
+
+.dashboard-nav {
+    min-width: 260px;
+    max-width: 260px;
+    background-color: #1a3a5c;
+    overflow-y: auto;
+    overflow-x: hidden;
+    transition: all 0.3s;
+}
+
+.dashboard-compact .dashboard-nav {
+    display: none;
+}
+
+.dashboard-nav header {
+    min-height: 84px;
+    padding: 8px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.brand-logo {
+    font-family: "Nunito", sans-serif;
+    font-weight: bold;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    color: #fff;
+}
+
+.brand-logo:hover {
+    color: #ddd;
+    text-decoration: none;
+}
+
+.brand-logo img {
+    margin-right: 10px;
+}
+
+/* ================================================
+   Navegação da sidebar
+   ================================================ */
+
+.dashboard-nav-list {
+    display: flex;
+    flex-direction: column;
+    padding-top: 10px;
+}
+
+.dashboard-nav-item {
+    min-height: 50px;
+    padding: 8px 20px 8px 20px;
+    display: flex;
+    align-items: center;
+    color: #fff;
+    letter-spacing: 0.02em;
+    transition: background 0.3s;
+}
+
+.dashboard-nav-item i {
+    width: 24px;
+    font-size: 17px;
+    margin-right: 10px;
+}
+
+.dashboard-nav-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    text-decoration: none;
+}
+
+.dashboard-nav-dropdown {
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-nav-dropdown.show {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.dashboard-nav-dropdown.show>.dashboard-nav-dropdown-toggle {
+    font-weight: bold;
+}
+
+.dashboard-nav-dropdown.show>.dashboard-nav-dropdown-toggle::after {
+    transform: none;
+}
+
+.dashboard-nav-dropdown.show>.dashboard-nav-dropdown-menu {
+    display: flex;
+}
+
+.dashboard-nav-dropdown-toggle::after {
+    content: "";
+    margin-left: auto;
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid rgba(255, 255, 255, 0.7);
+    transform: rotate(90deg);
+}
+
+.dashboard-nav-dropdown-menu {
+    display: none;
+    flex-direction: column;
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.dashboard-nav-dropdown-item {
+    min-height: 40px;
+    padding: 8px 20px 8px 50px;
+    display: flex;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.85);
+    transition: background 0.3s;
+    font-size: 0.9rem;
+}
+
+.dashboard-nav-dropdown-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    text-decoration: none;
+}
+
+.nav-item-divider {
+    height: 1px;
+    margin: 0.75rem 0;
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* ================================================
+   Toolbar superior
+   ================================================ */
+
+.dashboard-toolbar {
+    background-color: #1a3a5c;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    border-bottom: 3px solid #2e7bb5;
+}
+
+.menu-toggle {
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    margin-right: 20px;
+    background: none;
+    border: none;
+    padding: 5px;
+}
+
+.menu-toggle:hover {
+    color: #5bafd6;
+}
+
+#toolbar-titulo {
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* ================================================
+   Informações do usuário na sidebar
+   ================================================ */
+
+#user-info {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 10px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: auto;
+}
+
+/* ================================================
+   Responsivo
+   ================================================ */
+
+@media (max-width: 992px) {
+    .dashboard-nav {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 1070;
+        min-height: 100vh;
+    }
+
+    .dashboard-nav.mobile-show {
+        display: block;
+    }
+
+    .dashboard-app {
+        margin-left: 0;
+    }
+}

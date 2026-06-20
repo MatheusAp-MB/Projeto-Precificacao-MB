@@ -1,0 +1,74 @@
+/* ================================================
+   Painel de opções de exibição
+   ================================================ */
+
+#Mostrar_Colunas {
+  display: none;
+  background-color: #1a3a5c;
+  border: 2px solid #2e7bb5;
+  color: white;
+  width: fit-content;
+  max-width: 100%;
+}
+
+#Mostrar_Colunas h6 {
+  color: white;
+  border-bottom: 2px solid #2e7bb5;
+  padding-bottom: 8px;
+}
+
+#Mostrar_Colunas button {
+  height: 36px;
+  min-width: 120px;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+#Mostrar_Colunas button.active {
+  background-color: #198754;
+  color: white;
+}
+
+#Mostrar_Colunas button.not_active {
+  background-color: #dc3545;
+  color: white;
+}
+
+#Mostrar_Colunas button:hover {
+  opacity: 0.85;
+  font-weight: bold;
+  border: 2px solid white;
+}
+
+/* ================================================
+   Tabela DataTables
+   ================================================ */
+
+table.dataTable thead th {
+  background-color: #1a3a5c;
+  color: white;
+  border-bottom: 2px solid #2e7bb5;
+}
+
+table.dataTable thead th:hover {
+  background-color: #2e7bb5;
+}
+
+table.dataTable tbody tr:hover {
+  background-color: rgba(46, 123, 181, 0.08);
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+  background: #1a3a5c !important;
+  color: white !important;
+  border: 1px solid #1a3a5c !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+  background: #2e7bb5 !important;
+  color: white !important;
+  border: 1px solid #2e7bb5 !important;
+}
