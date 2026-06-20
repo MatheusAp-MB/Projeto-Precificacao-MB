@@ -176,12 +176,44 @@ table.dataTable tbody tr:hover {
 
 
 .dataTables_wrapper .dataTables_info,
-.dataTables_wrapper .dataTables_paginate  {
+.dataTables_wrapper .dataTables_paginate {
   padding: 8px 12px;
   font-size: 16px;
-  /* border-top: 1px solid #dee2e6; */
+  font-weight: 1000;
+  color: #000000 !important;
+
 }
 
+.dataTables_wrapper .dataTables_info {
+  text-align: center;
+  padding: 8px 12px;
+  font-weight: bold;
+  min-width: 100%;
+}
+
+.dataTables_wrapper .dataTables_paginate {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+#tabela-produtos_previous, #tabela-produtos_next {
+  background-color: #1a3a5c !important;
+  color: white !important;
+  border: 1px solid #1a3a5c !important;
+  border-radius: 6px;
+  padding: 4px 10px;
+}
+
+#tabela-produtos_previous:hover, #tabela-produtos_next:hover {
+  background: #2e7bb5 !important;
+  color: white !important;
+  border: 1px solid #1a3a5c !important;
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
 
 .dataTables_wrapper .dataTables_filter input{
   min-width: 400px;
@@ -191,6 +223,10 @@ table.dataTable tbody tr:hover {
   padding: 4px 10px !important;
   font-size: 14px;
   outline: none;
+}
+
+.dataTables_length select {
+  cursor: pointer;
 }
 
 .dataTables_length select{
