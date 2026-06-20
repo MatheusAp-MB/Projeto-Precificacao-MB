@@ -243,3 +243,17 @@ table.dataTable tbody tr:hover {
   border-color: #1a3a5c !important;
   box-shadow: 0 0 0 2px rgba(46, 123, 181, 0.25) !important;
 }
+
+/* ================================================
+   Altura das linhas e bordas
+   ================================================ */
+
+#tabela-produtos td,
+#tabela-produtos th {
+  height: 48px;
+  border: 1px solid #dee2e6 !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
