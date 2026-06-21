@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Produto, FreteML, Marketplace, TipoAnuncioML, Anuncio
+from .models import Produto, FreteML, Marketplace, TipoAnuncioML, Anuncio, ConfiguracaoLogisticaML
 
 
 @admin.register(Produto)
@@ -36,3 +36,7 @@ class AnuncioAdmin(admin.ModelAdmin):
                     'catalogo', 'preco_atual', 'preco_ideal', 'status']
     search_fields = ['produto__sku', 'produto__titulo', 'id_marketplace']
     list_filter = ['tipo_anuncio', 'tipo_envio', 'catalogo', 'status']
+
+@admin.register(ConfiguracaoLogisticaML)
+class ConfiguracaoLogisticaMLAdmin(admin.ModelAdmin):
+    list_display = ['marketplace', 'fator_coleta', 'armazenagem_diaria', 'periodo_armazenagem', 'atualizado_em']

@@ -98,6 +98,7 @@ class TipoAnuncioML(models.Model):
     comissao = models.DecimalField(max_digits=5, decimal_places=2)
     acrescimo_preco = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     meta_margem = models.DecimalField(max_digits=5, decimal_places=2, default=15)
+    atualizado_em = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = 'Tipo de Anúncio ML'
@@ -178,8 +179,9 @@ class Anuncio(models.Model):
     )
 
     # Controle
-    criado_em    = models.DateTimeField(auto_now_add=True)
+    criado_em     = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
+    calculado_em  = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         verbose_name        = 'Anúncio'
@@ -188,3 +190,31 @@ class Anuncio(models.Model):
 
     def __str__(self):
         return f'{self.produto.sku} — {self.tipo_anuncio.nome} {self.tipo_envio}'
+    
+
+class ConfiguracaoLogisticaML(models.Model):
+    marketplace = models.OneToOneField(
+        Marketplace,
+        on_delete=models.CASCADE,
+        related_name='config_logistica'
+    )
+    fator_coleta = models.DecimalField(
+        max_digits=8, decimal_places=2, default=72,
+        help_text='R$ por metro cúbico (coleta FULL)'
+    )
+    armazenagem_diaria = models.DecimalField(
+        max_digits=8, decimal_places=4, default=0.015,
+        help_text='R$ por dia (faixa média)'
+    )
+    periodo_armazenagem = models.IntegerField(
+        default=30,
+        help_text='Dias de armazenagem a considerar'
+    )
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Configuração Logística ML'
+        verbose_name_plural = 'Configurações Logísticas ML'
+
+    def __str__(self):
+        return f'Config Logística {self.marketplace.sigla}'
