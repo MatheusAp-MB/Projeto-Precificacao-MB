@@ -1,0 +1,60 @@
+{% extends 'bases/base_tabela.html' %}
+{% load static %}
+
+{% block titulo %}Anúncios ML — Precificação MB{% endblock %}
+{% block toolbar_titulo %}Anúncios — Mercado Livre{% endblock %}
+
+{% block botoes_colunas %}
+  <button id="1"  class="active"     onclick="mudar(this)">MLB</button>
+  <button id="2"  class="active"     onclick="mudar(this)">SKU</button>
+  <button id="3"  class="active"     onclick="mudar(this)">Título</button>
+  <button id="4"  class="active"     onclick="mudar(this)">EAN</button>
+  <button id="5"  class="active"     onclick="mudar(this)">Tipo</button>
+  <button id="6"  class="active"     onclick="mudar(this)">Envio</button>
+  <button id="7"  class="active"     onclick="mudar(this)">Catálogo</button>
+  <button id="8"  class="active"     onclick="mudar(this)">Preço Atual</button>
+  <button id="9"  class="active"     onclick="mudar(this)">Preço Ideal</button>
+  <button id="10" class="active"     onclick="mudar(this)">Status</button>
+{% endblock %}
+
+{% block id_tabela %}tabela-anuncios{% endblock %}
+
+{% block thead %}
+  <th>MLB</th>
+  <th>SKU</th>
+  <th>Título</th>
+  <th>EAN</th>
+  <th>Tipo</th>
+  <th>Envio</th>
+  <th>Catálogo</th>
+  <th>Preço Atual</th>
+  <th>Preço Ideal</th>
+  <th>Status</th>
+{% endblock %}
+
+{% block tbody %}
+  {% for anuncio in anuncios %}
+  <tr>
+    <td>{{ anuncio.id_marketplace }}</td>
+    <td>{{ anuncio.produto.sku }}</td>
+    <td>{{ anuncio.titulo }}</td>
+    <td>{{ anuncio.produto.ean|default:"—" }}</td>
+    <td>{{ anuncio.tipo_anuncio.nome }}</td>
+    <td>{{ anuncio.tipo_envio }}</td>
+    <td>{% if anuncio.catalogo %}Sim{% else %}Não{% endif %}</td>
+    <td>{% if anuncio.preco_atual %}R$ {{ anuncio.preco_atual|floatformat:2 }}{% else %}—{% endif %}</td>
+    <td>{% if anuncio.preco_ideal %}R$ {{ anuncio.preco_ideal|floatformat:2 }}{% else %}—{% endif %}</td>
+    <td>{{ anuncio.status }}</td>
+  </tr>
+  {% endfor %}
+{% endblock %}
+
+{% block scripts_tabela %}
+<script>
+$(document).ready(function () {
+  inicializar_tabela('#tabela-anuncios', {
+    pageLength: 25
+  });
+});
+</script>
+{% endblock %}
