@@ -761,3 +761,14 @@
 #tabela-wrap > table > thead > tr > th{
     border: 0.1px solid #989898;
 }
+
+.paginacao{
+    background-color: #1a3a5c;
+    color: white;
+    text-align: center;
+}
+.paginacao > div > button {
+    background-color: rgb(183, 244, 255);
+    padding: 3px;
+    border-radius: 5px;
+}
