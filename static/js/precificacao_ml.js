@@ -1,7 +1,9 @@
 function ajustarAltura() {
   const wrap = document.querySelector('.prec-tabela-wrap');
   if (!wrap) return;
-  wrap.style.maxHeight = (window.innerHeight * 0.45) + 'px';
+  const rect = wrap.getBoundingClientRect();
+  const alturaDisponivel = window.innerHeight - rect.top - 80;
+  wrap.style.maxHeight = Math.max(200, alturaDisponivel) + 'px';
 }
 // ================================================
 // Estado da sessão
@@ -284,3 +286,15 @@ function ajustarAlturaPainel(produtoId) {
 }
 
 window.addEventListener('resize', ajustarAltura);
+
+
+function toggleParametros() {
+  const conteudo = document.querySelector('.params-grid');
+  const frete    = document.querySelector('.frete-link');
+  const icon     = document.getElementById('icon-parametros');
+  const visivel  = conteudo.style.display !== 'none';
+  conteudo.style.display = visivel ? 'none' : '';
+  frete.style.display    = visivel ? 'none' : '';
+  icon.className         = visivel ? 'fas fa-chevron-down' : 'fas fa-chevron-up';
+  setTimeout(ajustarAltura, 200);
+}
