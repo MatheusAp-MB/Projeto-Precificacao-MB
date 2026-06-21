@@ -82,12 +82,9 @@
 
 .grade-container {
   overflow-x: auto;
-}
-
-.grade-tabela {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.85rem;
+  overflow-y: auto;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
 }
 
 .grade-tabela th {
@@ -96,8 +93,22 @@
   padding: 10px 12px;
   text-align: center;
   white-space: nowrap;
-  border: 1px solid #2e7bb5;
+  border-right: 1px solid #2e7bb5;
+  border-bottom: 1px solid #2e7bb5;
+  /* Cabeçalho fixo durante o scroll interno */
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
+
+.grade-tabela {
+  width: 100%;
+  border-collapse: separate; /* necessário para position: sticky funcionar */
+  border-spacing: 0;
+  font-size: 0.85rem;
+}
+
+
 
 .grade-tabela th.col-peso {
   background-color: #0f2744;
