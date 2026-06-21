@@ -1,0 +1,136 @@
+/* ================================================
+   Calculadora
+   ================================================ */
+
+.calculadora-container {
+  background-color: #1a3a5c;
+  border-radius: 10px;
+  padding: 24px;
+  color: white;
+}
+
+.calculadora-container label {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+}
+
+.calculadora-container input {
+  background-color: #ffffff;
+  border: 1px solid #2e7bb5;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.calculadora-container input:focus {
+  outline: none;
+  border-color: #5bafd6;
+  box-shadow: 0 0 0 2px rgba(91, 175, 214, 0.3);
+}
+
+.btn-calcular {
+  background-color: #2e7bb5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 24px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.btn-calcular:hover {
+  background-color: #5bafd6;
+}
+
+/* ================================================
+   Resultado da calculadora
+   ================================================ */
+
+.resultado-container {
+  margin-top: 16px;
+  min-height: 60px;
+}
+
+.resultado-frete {
+  background-color: #ffffff;
+  border: 2px solid #2e7bb5;
+  border-radius: 10px;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.resultado-frete .valor {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1a3a5c;
+}
+
+.resultado-frete .descricao {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* ================================================
+   Grade bidimensional
+   ================================================ */
+
+.grade-container {
+  overflow-x: auto;
+}
+
+.grade-tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.grade-tabela th {
+  background-color: #1a3a5c;
+  color: white;
+  padding: 10px 12px;
+  text-align: center;
+  white-space: nowrap;
+  border: 1px solid #2e7bb5;
+}
+
+.grade-tabela th.col-peso {
+  background-color: #0f2744;
+  text-align: left;
+}
+
+.grade-tabela td {
+  padding: 8px 12px;
+  text-align: center;
+  border: 1px solid #dee2e6;
+  white-space: nowrap;
+  color: #333;
+}
+
+.grade-tabela td.col-peso {
+  background-color: #f0f4f8;
+  color: #1a3a5c;
+  font-weight: 600;
+  text-align: left;
+}
+
+.grade-tabela tbody tr:hover td {
+  background-color: rgba(46, 123, 181, 0.08);
+}
+
+.grade-tabela tbody tr:hover td.col-peso {
+  background-color: #dce8f0;
+}
+
+/* Célula destacada pelo resultado da calculadora */
+.grade-tabela td.destaque {
+  background-color: #2e7bb5 !important;
+  color: white !important;
+  font-weight: 700;
+  border: 2px solid #1a3a5c !important;
+}

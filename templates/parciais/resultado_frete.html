@@ -1,0 +1,25 @@
+{% load static %}
+
+{% if erro %}
+  <div class="resultado-frete">
+    <span class="descricao" style="color: #dc3545;">Erro: {{ erro }}</span>
+  </div>
+
+{% elif valor %}
+  <div class="resultado-frete">
+    <div>
+      <div class="descricao">Valor do frete FULL ML</div>
+      <div class="valor">R$ {{ valor }}</div>
+    </div>
+  </div>
+  <script>
+    destacar_celula("{{ peso_min }}", "{{ preco_min }}");
+  </script>
+
+{% else %}
+  <div class="resultado-frete">
+    <span class="descricao" style="color: #dc3545;">
+      Nenhuma faixa encontrada para esses valores.
+    </span>
+  </div>
+{% endif %}

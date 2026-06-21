@@ -1,0 +1,31 @@
+{% extends 'bases/base_painel.html' %}
+{% load static %}
+
+{% block head_painel %}
+  <link rel="stylesheet" href="{% static 'css/grade.css' %}">
+  {% block head_grade %}{% endblock %}
+{% endblock %}
+
+{% block conteudo %}
+
+  <!-- Calculadora -->
+  <div class="calculadora-container" id="form-calcular">
+    {% block calculadora %}{% endblock %}
+  </div>
+
+  <!-- Resultado da calculadora -->
+  <div id="resultado-calculadora" class="resultado-container">
+    {% block resultado_inicial %}{% endblock %}
+  </div>
+
+  <!-- Grade -->
+  <div class="grade-container mt-4">
+    {% block grade %}{% endblock %}
+  </div>
+
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'js/grade.js' %}"></script>
+  {% block scripts_grade %}{% endblock %}
+{% endblock %}

@@ -8,4 +8,5 @@ urlpatterns = [
     path('frete-ml/', views.lista_frete_ml, name='lista_frete_ml'),
     path('anuncios/', views.lista_anuncios, name='lista_anuncios'),
     path('', views.home, name='home'),
+    path('frete-ml/calcular/', views.calcular_frete_ml, name='calcular_frete_ml'),
 ]

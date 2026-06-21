@@ -1,45 +1,96 @@
-{% extends 'bases/base_tabela.html' %}
+{% extends 'bases/base_grade.html' %}
 {% load static %}
 
 {% block titulo %}Frete ML — Precificação MB{% endblock %}
 {% block toolbar_titulo %}Tabela de Frete ML{% endblock %}
 
-{% block botoes_colunas %}
-  <button id="1" class="active" onclick="mudar(this)">Peso Mín</button>
-  <button id="2" class="active" onclick="mudar(this)">Peso Máx</button>
-  <button id="3" class="active" onclick="mudar(this)">Preço Mín</button>
-  <button id="4" class="active" onclick="mudar(this)">Preço Máx</button>
-  <button id="5" class="active" onclick="mudar(this)">Valor</button>
+{% block calculadora %}
+  <h6 class="mb-3">Calcular Frete</h6>
+  <div class="row g-3 align-items-end">
+
+    <div class="col-md-4">
+      <label>Peso do produto (kg)</label>
+      <input
+        type="number"
+        name="peso"
+        id="input-peso"
+        step="0.001"
+        min="0"
+        placeholder="Ex: 0.340">
+    </div>
+
+    <div class="col-md-4">
+      <label>Preço do produto (R$)</label>
+      <input
+        type="number"
+        name="preco"
+        id="input-preco"
+        step="0.01"
+        min="0"
+        placeholder="Ex: 192.90">
+    </div>
+
+    <div class="col-md-4">
+      <button
+        class="btn-calcular"
+        hx-post="{% url 'calcular_frete_ml' %}"
+        hx-target="#resultado-calculadora"
+        hx-include="#form-calcular">
+        <i class="fas fa-calculator"></i> Calcular
+      </button>
+    </div>
+
+  </div>
 {% endblock %}
 
-{% block id_tabela %}tabela-frete-ml{% endblock %}
-
-{% block thead %}
-  <th>Peso Mín (kg)</th>
-  <th>Peso Máx (kg)</th>
-  <th>Preço Mín (R$)</th>
-  <th>Preço Máx (R$)</th>
-  <th>Valor (R$)</th>
+{% block resultado_inicial %}
+  <div class="resultado-frete">
+    <span class="descricao">Informe o peso e o preço para calcular o frete.</span>
+  </div>
 {% endblock %}
 
-{% block tbody %}
-  {% for frete in fretes %}
-  <tr>
-    <td>{{ frete.peso_min }}</td>
-    <td>{{ frete.peso_max|default:"—" }}</td>
-    <td>R$ {{ frete.preco_min }}</td>
-    <td>{% if frete.preco_max %}R$ {{ frete.preco_max }}{% else %}—{% endif %}</td>
-    <td>R$ {{ frete.valor }}</td>
-  </tr>
-  {% endfor %}
-{% endblock %}
-
-{% block scripts_tabela %}
-<script>
-$(document).ready(function () {
-  inicializar_tabela('#tabela-frete-ml', {
-    pageLength: 25
-  });
-});
-</script>
+{% block grade %}
+  <table class="grade-tabela">
+    <thead>
+      <tr>
+        <th class="col-peso">De (kg)</th>
+        <th class="col-peso">Até (kg)</th>
+        {% for faixa in faixas_preco %}
+          <th>
+            R$ {{ faixa.preco_min|floatformat:0 }}
+            {% if faixa.preco_max %}
+              — R$ {{ faixa.preco_max|floatformat:2 }}
+            {% else %}
+              +
+            {% endif %}
+          </th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for linha in linhas %}
+      <tr>
+        <td class="col-peso">{{ linha.peso_min|floatformat:3 }}</td>
+        <td class="col-peso">
+          {% if linha.peso_max %}
+            {{ linha.peso_max|floatformat:3 }}
+          {% else %}
+            —
+          {% endif %}
+        </td>
+        {% for item in linha.valores %}
+          <td
+            data-peso="{{ linha.peso_min }}"
+            data-preco="{{ item.preco_min }}">
+            {% if item.valor %}
+              R$ {{ item.valor|floatformat:2 }}
+            {% else %}
+              —
+            {% endif %}
+          </td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% endblock %}
