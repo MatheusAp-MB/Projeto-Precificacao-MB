@@ -1,0 +1,40 @@
+{% extends 'bases/base_tabela.html' %}
+{% load static %}
+
+{% block titulo %}Marketplaces — Precificação MB{% endblock %}
+{% block toolbar_titulo %}Marketplaces{% endblock %}
+
+{% block botoes_colunas %}
+  <button id="1" class="active"     onclick="mudar(this)">ID</button>
+  <button id="2" class="active"     onclick="mudar(this)">Nome</button>
+  <button id="3" class="active"     onclick="mudar(this)">Sigla</button>
+  <button id="4" class="active"     onclick="mudar(this)">Ativo</button>
+{% endblock %}
+
+{% block id_tabela %}tabela-marketplaces{% endblock %}
+
+{% block thead %}
+  <th>ID</th>
+  <th>Nome</th>
+  <th>Sigla</th>
+  <th>Ativo</th>
+{% endblock %}
+
+{% block tbody %}
+  {% for mp in marketplaces %}
+  <tr>
+    <td>{{ mp.id }}</td>
+    <td>{{ mp.nome }}</td>
+    <td>{{ mp.sigla }}</td>
+    <td>{% if mp.ativo %}Sim{% else %}Não{% endif %}</td>
+  </tr>
+  {% endfor %}
+{% endblock %}
+
+{% block scripts_tabela %}
+<script>
+$(document).ready(function () {
+  inicializar_tabela('#tabela-marketplaces', {});
+});
+</script>
+{% endblock %}

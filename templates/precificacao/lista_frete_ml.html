@@ -1,0 +1,45 @@
+{% extends 'bases/base_tabela.html' %}
+{% load static %}
+
+{% block titulo %}Frete ML — Precificação MB{% endblock %}
+{% block toolbar_titulo %}Tabela de Frete ML{% endblock %}
+
+{% block botoes_colunas %}
+  <button id="1" class="active" onclick="mudar(this)">Peso Mín</button>
+  <button id="2" class="active" onclick="mudar(this)">Peso Máx</button>
+  <button id="3" class="active" onclick="mudar(this)">Preço Mín</button>
+  <button id="4" class="active" onclick="mudar(this)">Preço Máx</button>
+  <button id="5" class="active" onclick="mudar(this)">Valor</button>
+{% endblock %}
+
+{% block id_tabela %}tabela-frete-ml{% endblock %}
+
+{% block thead %}
+  <th>Peso Mín (kg)</th>
+  <th>Peso Máx (kg)</th>
+  <th>Preço Mín (R$)</th>
+  <th>Preço Máx (R$)</th>
+  <th>Valor (R$)</th>
+{% endblock %}
+
+{% block tbody %}
+  {% for frete in fretes %}
+  <tr>
+    <td>{{ frete.peso_min }}</td>
+    <td>{{ frete.peso_max|default:"—" }}</td>
+    <td>R$ {{ frete.preco_min }}</td>
+    <td>{% if frete.preco_max %}R$ {{ frete.preco_max }}{% else %}—{% endif %}</td>
+    <td>R$ {{ frete.valor }}</td>
+  </tr>
+  {% endfor %}
+{% endblock %}
+
+{% block scripts_tabela %}
+<script>
+$(document).ready(function () {
+  inicializar_tabela('#tabela-frete-ml', {
+    pageLength: 25
+  });
+});
+</script>
+{% endblock %}

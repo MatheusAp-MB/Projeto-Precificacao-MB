@@ -1,0 +1,46 @@
+{% extends 'bases/base_tabela.html' %}
+{% load static %}
+
+{% block titulo %}Tipos de Anúncio ML — Precificação MB{% endblock %}
+{% block toolbar_titulo %}Tipos de Anúncio ML{% endblock %}
+
+{% block botoes_colunas %}
+  <button id="1" class="active" onclick="mudar(this)">ID</button>
+  <button id="2" class="active" onclick="mudar(this)">Marketplace</button>
+  <button id="3" class="active" onclick="mudar(this)">Nome</button>
+  <button id="4" class="active" onclick="mudar(this)">Comissão</button>
+  <button id="5" class="active" onclick="mudar(this)">Acréscimo Preço</button>
+  <button id="6" class="active" onclick="mudar(this)">Meta Margem</button>
+{% endblock %}
+
+{% block id_tabela %}tabela-tipos{% endblock %}
+
+{% block thead %}
+  <th>ID</th>
+  <th>Marketplace</th>
+  <th>Nome</th>
+  <th>Comissão</th>
+  <th>Acréscimo Preço</th>
+  <th>Meta Margem</th>
+{% endblock %}
+
+{% block tbody %}
+  {% for tipo in tipos %}
+  <tr>
+    <td>{{ tipo.id }}</td>
+    <td>{{ tipo.marketplace.nome }}</td>
+    <td>{{ tipo.nome }}</td>
+    <td>{{ tipo.comissao }}%</td>
+    <td>{{ tipo.acrescimo_preco }}%</td>
+    <td>{{ tipo.meta_margem }}%</td>
+  </tr>
+  {% endfor %}
+{% endblock %}
+
+{% block scripts_tabela %}
+<script>
+$(document).ready(function () {
+  inicializar_tabela('#tabela-tipos', {});
+});
+</script>
+{% endblock %}
