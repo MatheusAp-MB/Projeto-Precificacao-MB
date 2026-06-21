@@ -1,0 +1,44 @@
+{% if res_classico.erro %}
+  <div class="resultado-erro">
+    <i class="fas fa-exclamation-triangle"></i> {{ res_classico.erro }}
+  </div>
+{% else %}
+  <div class="resultado-linha">
+    <span class="resultado-label">Custo Final</span>
+    <span class="resultado-valor">R$ {{ res_classico.custo_final }}</span>
+  </div>
+  <div class="resultado-linha">
+    <span class="resultado-label">Peso lookup</span>
+    <span class="resultado-valor">{{ res_classico.peso_cubado }} kg</span>
+  </div>
+  <div class="resultado-linha">
+    <span class="resultado-label">Frete ML</span>
+    <span class="resultado-valor">R$ {{ res_classico.frete }}</span>
+  </div>
+  <div class="resultado-linha">
+    <span class="resultado-label">Coleta</span>
+    <span class="resultado-valor">R$ {{ res_classico.coleta }}</span>
+  </div>
+  <div class="resultado-linha">
+    <span class="resultado-label">Armazenagem</span>
+    <span class="resultado-valor">R$ {{ res_classico.armazenagem }}</span>
+  </div>
+
+  <div class="resultado-bloco resultado-bloco-classico">
+    <div class="resultado-bloco-label">Preço ideal Clássico</div>
+    <div class="resultado-bloco-preco">R$ {{ res_classico.preco }}</div>
+    <div class="resultado-bloco-margem">✓ Margem {{ res_classico.margem_pct }}%</div>
+  </div>
+
+  {% if res_premium %}
+    {% if res_premium.erro %}
+      <div class="resultado-erro">{{ res_premium.erro }}</div>
+    {% else %}
+      <div class="resultado-bloco resultado-bloco-premium">
+        <div class="resultado-bloco-label">Preço ideal Premium</div>
+        <div class="resultado-bloco-preco">R$ {{ res_premium.preco }}</div>
+        <div class="resultado-bloco-margem">✓ Margem {{ res_premium.margem_pct }}%</div>
+      </div>
+    {% endif %}
+  {% endif %}
+{% endif %}

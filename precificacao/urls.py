@@ -9,4 +9,11 @@ urlpatterns = [
     path('anuncios/', views.lista_anuncios, name='lista_anuncios'),
     path('', views.home, name='home'),
     path('frete-ml/calcular/', views.calcular_frete_ml, name='calcular_frete_ml'),
+    path('precificacao/ml/', views.precificacao_ml, name='precificacao_ml'),
+    path('precificacao/ml/produto/<int:produto_id>/painel/',
+         views.painel_produto_ml, name='painel_produto_ml'),
+    path('precificacao/ml/calcular/',
+         views.calcular_produto_ml, name='calcular_produto_ml'),
+    path('precificacao/ml/salvar/', views.salvar_precificacao_ml,
+         name='salvar_precificacao_ml'),
 ]

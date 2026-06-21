@@ -1,0 +1,184 @@
+{% load static %}
+
+<div class="expand-inner" id="painel-{{ produto.id }}">
+
+  <input type="hidden" name="produto_id" value="{{ produto.id }}">
+
+  <div class="expand-grid">
+
+    <!-- Coluna 1: Financeiro + Dimensões -->
+    <div class="campo-grupo">
+      <div class="campo-grupo-titulo">Financeiro</div>
+      <div class="campo-linha">
+        <span class="campo-label">Custo bruto</span>
+        <input class="campo-input" name="custo"
+               value="{{ produto.custo }}"
+               data-original="{{ produto.custo }}"
+               data-campo="Custo bruto"
+               data-produto-id="{{ produto.id }}"
+               data-produto-nome="{{ produto.titulo }}"
+               onchange="registrarAlteracaoProduto(this); recalcularProduto({{ produto.id }})">
+        <span class="campo-unidade">R$</span>
+      </div>
+      <div class="campo-linha">
+        <span class="campo-label">Custo c/ boni</span>
+        <input class="campo-input" name="custo_com_boni"
+               value="{{ produto.custo_com_boni|default:produto.custo }}"
+               data-original="{{ produto.custo_com_boni|default:produto.custo }}"
+               data-campo="Custo c/ boni"
+               data-produto-id="{{ produto.id }}"
+               data-produto-nome="{{ produto.titulo }}"
+               onchange="registrarAlteracaoProduto(this); recalcularProduto({{ produto.id }})">
+        <span class="campo-unidade">R$</span>
+      </div>
+      <div class="campo-linha">
+        <span class="campo-label">ST Valor</span>
+        <input class="campo-input" name="st_valor"
+               value="{{ produto.st_valor|default:'0' }}"
+               data-original="{{ produto.st_valor|default:'0' }}"
+               data-campo="ST Valor"
+               data-produto-id="{{ produto.id }}"
+               data-produto-nome="{{ produto.titulo }}"
+               onchange="registrarAlteracaoProduto(this); recalcularProduto({{ produto.id }})">
+        <span class="campo-unidade">R$</span>
+      </div>
+
+      <div class="campo-grupo-titulo" style="margin-top: 12px;">Dimensões</div>
+      <div class="campo-linha">
+        <span class="campo-label">Peso</span>
+        <input class="campo-input" name="peso"
+               value="{{ produto.peso }}"
+               data-original="{{ produto.peso }}"
+               data-campo="Peso"
+               data-produto-id="{{ produto.id }}"
+               data-produto-nome="{{ produto.titulo }}"
+               onchange="registrarAlteracaoProduto(this); recalcularProduto({{ produto.id }})">
+        <span class="campo-unidade">kg</span>
+      </div>
+      <div class="campo-linha">
+        <span class="campo-label">Altura</span>
+        <input class="campo-input" name="altura"
+               value="{{ produto.altura }}"
+               data-original="{{ produto.altura }}"
+               data-campo="Altura"
+               data-produto-id="{{ produto.id }}"
+               data-produto-nome="{{ produto.titulo }}"
+               onchange="registrarAlteracaoProduto(this); recalcularProduto({{ produto.id }})">
+        <span class="campo-unidade">cm</span>
+      </div>
+      <div class="campo-linha">
+        <span class="campo-label">Comprimento</span>
+        <input class="campo-input" name="profundidade"
+               value="{{ produto.profundidade }}"
+               data-original="{{ produto.profundidade }}"
+               data-campo="Comprimento"
+               data-produto-id="{{ produto.id }}"
+               data-produto-nome="{{ produto.titulo }}"
+               onchange="registrarAlteracaoProduto(this); recalcularProduto({{ produto.id }})">
+        <span class="campo-unidade">cm</span>
+      </div>
+      <div class="campo-linha">
+        <span class="campo-label">Largura</span>
+        <input class="campo-input" name="largura"
+               value="{{ produto.largura }}"
+               data-original="{{ produto.largura }}"
+               data-campo="Largura"
+               data-produto-id="{{ produto.id }}"
+               data-produto-nome="{{ produto.titulo }}"
+               onchange="registrarAlteracaoProduto(this); recalcularProduto({{ produto.id }})">
+        <span class="campo-unidade">cm</span>
+      </div>
+    </div>
+
+    <!-- Coluna 2: Tributário -->
+    <div class="campo-grupo">
+      <div class="campo-grupo-titulo">Tributário</div>
+      <div class="campo-linha">
+        <span class="campo-label">ICMS Entrada</span>
+        <input class="campo-input" name="icms_entrada"
+               value="{{ produto.icms_entrada }}"
+               data-original="{{ produto.icms_entrada }}"
+               data-campo="ICMS Entrada"
+               data-produto-id="{{ produto.id }}"
+               data-produto-nome="{{ produto.titulo }}"
+               onchange="registrarAlteracaoProduto(this); recalcularProduto({{ produto.id }})">
+        <span class="campo-unidade">%</span>
+      </div>
+      <div class="campo-linha">
+        <span class="campo-label">IPI</span>
+        <input class="campo-input" name="ipi"
+               value="{{ produto.ipi }}"
+               data-original="{{ produto.ipi }}"
+               data-campo="IPI"
+               data-produto-id="{{ produto.id }}"
+               data-produto-nome="{{ produto.titulo }}"
+               onchange="registrarAlteracaoProduto(this); recalcularProduto({{ produto.id }})">
+        <span class="campo-unidade">%</span>
+      </div>
+      <div class="campo-linha">
+        <span class="campo-label">PIS/COFINS</span>
+        <input class="campo-input" name="pis_cofins"
+               value="{{ produto.pis_cofins }}"
+               data-original="{{ produto.pis_cofins }}"
+               data-campo="PIS/COFINS"
+               data-produto-id="{{ produto.id }}"
+               data-produto-nome="{{ produto.titulo }}"
+               onchange="registrarAlteracaoProduto(this); recalcularProduto({{ produto.id }})">
+        <span class="campo-unidade">%</span>
+      </div>
+      <div class="campo-linha">
+        <span class="campo-label">ICMS Saída Média</span>
+        <input class="campo-input" name="icms_saida_media"
+               value="{{ produto.icms_saida_media }}"
+               data-original="{{ produto.icms_saida_media }}"
+               data-campo="ICMS Saída Média"
+               data-produto-id="{{ produto.id }}"
+               data-produto-nome="{{ produto.titulo }}"
+               onchange="registrarAlteracaoProduto(this); recalcularProduto({{ produto.id }})">
+        <span class="campo-unidade">%</span>
+      </div>
+      <div class="campo-linha">
+        <span class="campo-label">ICMS Saída SP</span>
+        <input class="campo-input" name="icms_saida_sp"
+               value="{{ produto.icms_saida_sp }}"
+               data-original="{{ produto.icms_saida_sp }}"
+               data-campo="ICMS Saída SP"
+               data-produto-id="{{ produto.id }}"
+               data-produto-nome="{{ produto.titulo }}"
+               onchange="registrarAlteracaoProduto(this); recalcularProduto({{ produto.id }})">
+        <span class="campo-unidade">%</span>
+      </div>
+      <div class="campo-linha">
+        <span class="campo-label">Frete CIF/FOB</span>
+        <input class="campo-input" name="frete_cif_fob"
+               value="{{ produto.frete_cif_fob|default:'0' }}"
+               data-original="{{ produto.frete_cif_fob|default:'0' }}"
+               data-campo="Frete CIF/FOB"
+               data-produto-id="{{ produto.id }}"
+               data-produto-nome="{{ produto.titulo }}"
+               onchange="registrarAlteracaoProduto(this); recalcularProduto({{ produto.id }})">
+        <span class="campo-unidade">%</span>
+      </div>
+      <div class="campo-linha">
+        <span class="campo-label">MVA</span>
+        <input class="campo-input" name="mva"
+               value="{{ produto.mva|default:'0' }}"
+               data-original="{{ produto.mva|default:'0' }}"
+               data-campo="MVA"
+               data-produto-id="{{ produto.id }}"
+               data-produto-nome="{{ produto.titulo }}"
+               onchange="registrarAlteracaoProduto(this); recalcularProduto({{ produto.id }})">
+        <span class="campo-unidade">%</span>
+      </div>
+    </div>
+
+    <!-- Coluna 3: Resultado calculado -->
+    <div class="campo-grupo">
+      <div class="campo-grupo-titulo">Resultado calculado</div>
+      <div id="resultado-{{ produto.id }}">
+        {% include 'parciais/resultado_produto_ml.html' %}
+      </div>
+    </div>
+
+  </div>
+</div>

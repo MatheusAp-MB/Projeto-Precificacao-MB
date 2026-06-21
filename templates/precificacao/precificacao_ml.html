@@ -1,0 +1,233 @@
+{% extends 'bases/base_painel.html' %}
+{% load static %}
+
+{% block titulo %}Precificação ML — Precificação MB{% endblock %}
+{% block toolbar_titulo %}Precificação — Mercado Livre{% endblock %}
+
+{% block toolbar_acoes %}
+  <button class="btn-toolbar" id="btn-recalcular" disabled onclick="recalcularAlteracoes()">
+    <i class="fas fa-sync-alt"></i> Recalcular alterações
+  </button>
+  <button class="btn-toolbar btn-toolbar-primary" onclick="recalcularTudo()">
+    <i class="fas fa-calculator"></i> Recalcular tudo
+  </button>
+  <button class="btn-toolbar btn-toolbar-success" id="btn-salvar" disabled onclick="salvar()">
+    <i class="fas fa-save"></i> Salvar
+  </button>
+{% endblock %}
+
+{% block head_painel %}
+  <link rel="stylesheet" href="{% static 'css/precificacao_ml.css' %}">
+{% endblock %}
+
+{% block conteudo %}
+<div class="prec-layout">
+
+  <!-- Coluna principal -->
+  <div class="prec-main">
+
+    <!-- Parâmetros do marketplace -->
+    <div class="prec-card">
+      <div class="prec-card-title">
+        <i class="fas fa-sliders-h"></i> Parâmetros do marketplace
+      </div>
+      <div class="params-grid">
+
+        <div class="param-bloco">
+          <div class="param-bloco-titulo"><i class="fas fa-shopping-cart"></i> Clássico</div>
+          <div class="param-linha">
+            <span class="param-label">Comissão</span>
+            <div class="param-valor">
+              <input class="param-input" data-param="classico_comissao"
+                     value="{{ tipo_classico.comissao }}" onchange="registrarParamMaster(this)">
+              <span class="param-unidade">%</span>
+            </div>
+          </div>
+          <div class="param-linha">
+            <span class="param-label">Meta de margem</span>
+            <div class="param-valor">
+              <input class="param-input" data-param="classico_meta_margem"
+                     value="{{ tipo_classico.meta_margem }}" onchange="registrarParamMaster(this)">
+              <span class="param-unidade">%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="param-bloco">
+          <div class="param-bloco-titulo"><i class="fas fa-star"></i> Premium</div>
+          <div class="param-linha">
+            <span class="param-label">Comissão</span>
+            <div class="param-valor">
+              <input class="param-input" data-param="premium_comissao"
+                     value="{{ tipo_premium.comissao }}" onchange="registrarParamMaster(this)">
+              <span class="param-unidade">%</span>
+            </div>
+          </div>
+          <div class="param-linha">
+            <span class="param-label">Meta de margem</span>
+            <div class="param-valor">
+              <input class="param-input" data-param="premium_meta_margem"
+                     value="{{ tipo_premium.meta_margem }}" onchange="registrarParamMaster(this)">
+              <span class="param-unidade">%</span>
+            </div>
+          </div>
+          <div class="param-linha">
+            <span class="param-label">Acréscimo preço</span>
+            <div class="param-valor">
+              <input class="param-input" data-param="premium_acrescimo"
+                     value="{{ tipo_premium.acrescimo_preco }}" onchange="registrarParamMaster(this)">
+              <span class="param-unidade">%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="param-bloco">
+          <div class="param-bloco-titulo"><i class="fas fa-box"></i> Logística FULL</div>
+          {% if config %}
+          <div class="param-linha">
+            <span class="param-label">Fator coleta</span>
+            <div class="param-valor">
+              <input class="param-input" data-param="fator_coleta"
+                     value="{{ config.fator_coleta }}" onchange="registrarParamMaster(this)">
+              <span class="param-unidade">R$/m³</span>
+            </div>
+          </div>
+          <div class="param-linha">
+            <span class="param-label">Armazenagem</span>
+            <div class="param-valor">
+              <input class="param-input" data-param="armazenagem_diaria"
+                     value="{{ config.armazenagem_diaria }}" onchange="registrarParamMaster(this)">
+              <span class="param-unidade">R$/dia</span>
+            </div>
+          </div>
+          <div class="param-linha">
+            <span class="param-label">Período</span>
+            <div class="param-valor">
+              <input class="param-input" data-param="periodo_armazenagem"
+                     value="{{ config.periodo_armazenagem }}" onchange="registrarParamMaster(this)">
+              <span class="param-unidade">dias</span>
+            </div>
+          </div>
+          {% else %}
+          <p class="param-aviso">Configuração não encontrada. Cadastre no Admin.</p>
+          {% endif %}
+        </div>
+
+      </div>
+      <a href="{% url 'lista_frete_ml' %}" class="frete-link" target="_blank">
+        <i class="fas fa-external-link-alt"></i> Conferir tabela de fretes ML
+      </a>
+    </div>
+
+    <!-- Tabela de produtos -->
+    <div class="prec-card" style="padding: 0; overflow: hidden;">
+      <div class="prec-tabela-header">
+        <span class="prec-card-title" style="margin: 0;">
+          <i class="fas fa-box"></i> Produtos
+        </span>
+        <input type="text" id="busca-produto" placeholder="Buscar produto ou SKU..."
+               class="prec-busca" oninput="filtrarTabela(this.value)">
+      </div>
+
+      <div class="prec-tabela-wrap" id="tabela-wrap">
+        <table class="prec-tabela">
+          <thead>
+            <tr>
+              <th rowspan="2" class="th-left" style="width: 220px;">Produto</th>
+              <th rowspan="2">Custo final</th>
+              <th rowspan="2">Frete ML</th>
+              <th colspan="2" class="th-classico">Clássico</th>
+              <th colspan="2" class="th-premium">Premium</th>
+              <th rowspan="2" style="width: 70px;"></th>
+            </tr>
+            <tr>
+              <th class="th-classico">Preço ideal</th>
+              <th class="th-classico">Margem</th>
+              <th class="th-premium">Preço ideal</th>
+              <th class="th-premium">Margem</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in lista %}
+            <tr class="prod-row" id="row-{{ item.produto.id }}"
+                data-nome="{{ item.produto.titulo|lower }}"
+                data-sku="{{ item.produto.sku|lower }}">
+              <td class="td-produto">
+                <div class="td-nome">{{ item.produto.titulo }}</div>
+                <div class="td-sku">{{ item.produto.sku }}</div>
+              </td>
+              <td class="td-cinza">R$ {{ item.custo_final }}</td>
+              <td class="td-cinza">
+                {% if item.anuncio_classico and item.anuncio_classico.preco_ideal %}
+                  R$ {{ item.anuncio_classico.preco_ideal }}
+                {% else %}—{% endif %}
+              </td>
+              <td class="td-preco">
+                {% if item.anuncio_classico and item.anuncio_classico.preco_ideal %}
+                  R$ {{ item.anuncio_classico.preco_ideal }}
+                {% else %}—{% endif %}
+              </td>
+              <td class="{% if item.anuncio_classico and item.anuncio_classico.preco_ideal %}td-margem-ok{% else %}td-vazio{% endif %}">
+                —
+              </td>
+              <td class="td-preco">
+                {% if item.anuncio_premium and item.anuncio_premium.preco_ideal %}
+                  R$ {{ item.anuncio_premium.preco_ideal }}
+                {% else %}—{% endif %}
+              </td>
+              <td class="{% if item.anuncio_premium and item.anuncio_premium.preco_ideal %}td-margem-ok{% else %}td-vazio{% endif %}">
+                —
+              </td>
+              <td>
+                <button class="btn-editar" id="btn-edit-{{ item.produto.id }}"
+                        hx-get="{% url 'painel_produto_ml' item.produto.id %}"
+                        hx-target="#expand-{{ item.produto.id }}"
+                        hx-swap="innerHTML"
+                        onclick="togglePainel({{ item.produto.id }}, this)">
+                  <i class="fas fa-pencil-alt"></i> Editar
+                </button>
+              </td>
+            </tr>
+            <tr class="expand-row" id="expand-row-{{ item.produto.id }}" style="display: none;">
+              <td colspan="8" id="expand-{{ item.produto.id }}"></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+  <!-- fim coluna principal -->
+
+  <!-- Sidebar de alterações -->
+  <div class="prec-sidebar">
+    <div class="alteracoes-card">
+      <div class="alteracoes-header">
+        <span><i class="fas fa-code-branch"></i> Alterações da sessão</span>
+        <span class="alteracoes-badge" id="badge-alteracoes">0</span>
+      </div>
+      <div id="lista-alteracoes">
+        <div class="alteracoes-vazio">
+          <i class="fas fa-check-circle"></i><br>
+          Nenhuma alteração<br>na sessão atual
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    const calcularUrl = "{% url 'calcular_produto_ml' %}";
+    const salvarUrl   = "{% url 'salvar_precificacao_ml' %}";
+  </script>
+  <script src="{% static 'js/precificacao_ml.js' %}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      ajustarAltura();
+    });
+  </script>
+{% endblock %}
