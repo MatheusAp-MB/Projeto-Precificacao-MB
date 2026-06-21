@@ -1,139 +1,118 @@
-{% extends 'bases/base_painel.html' %}
+{% extends 'bases/base_tabela.html' %}
 {% load static %}
 
 {% block titulo %}Produtos — Precificação MB{% endblock %}
-
-{% block head_painel %}
-<!-- DataTables CSS -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-<link rel="stylesheet" href="{% static 'css/datatables.css' %}">
-{% endblock %}
-
 {% block toolbar_titulo %}Produtos{% endblock %}
 
-{% block conteudo %}
-
-<div class="container-fluid">
-
-  <!-- Barra de ações -->
-  <div class="row mb-3 mt-2" id="barra_acoes">
-
-    <div class="col-auto">
-      <button onclick="opcoes_exibicao()" class="btn btn-primary" id="btn_op_exib">
-        <i class="fas fa-columns"></i> Opções de Exibição
-      </button>
-    </div>
-
-    <div class="col-auto">
-      <button class="btn btn-primary" id="btn_cad_produto">
-        <i class="fas fa-plus"></i> Cadastrar Produto
-      </button>
-    </div>
-
-  </div>
-
-  <!-- Painel de seleção de colunas -->
-  <div id="Mostrar_Colunas" class="mb-3 p-3 rounded">
-    <h6 class="mb-3">Selecione as colunas que deseja exibir:</h6>
-    <div class="grid-botoes-colunas">
-      <button id="1" class="not_active" onclick="mudar(this)">ID</button>
-      <button id="2" class="active" onclick="mudar(this)">SKU</button>
-      <button id="3" class="active" onclick="mudar(this)">Título</button>
-      <button id="4" class="active" onclick="mudar(this)">EAN</button>
-      <button id="5" class="not_active" onclick="mudar(this)">Cód. Fabricante</button>
-      <button id="6" class="active" onclick="mudar(this)">Curva</button>
-      <button id="7" class="active" onclick="mudar(this)">Estoque</button>
-      <button id="8" class="active" onclick="mudar(this)">Custo</button>
-      <button id="9" class="not_active" onclick="mudar(this)">Custo c/ Boni</button>
-      <button id="10" class="not_active" onclick="mudar(this)">NCM</button>
-      <button id="11" class="not_active" onclick="mudar(this)">IPI</button>
-      <button id="12" class="not_active" onclick="mudar(this)">ICMS Entrada</button>
-      <button id="13" class="not_active" onclick="mudar(this)">ICMS Saída SP</button>
-      <button id="14" class="not_active" onclick="mudar(this)">ICMS Saída Média</button>
-      <button id="15" class="not_active" onclick="mudar(this)">PIS/COFINS</button>
-      <button id="16" class="not_active" onclick="mudar(this)">MVA</button>
-      <button id="17" class="not_active" onclick="mudar(this)">ST Valor</button>
-      <button id="18" class="not_active" onclick="mudar(this)">Frete CIF/FOB</button>
-      <button id="19" class="not_active" onclick="mudar(this)">Peso</button>
-      <button id="20" class="not_active" onclick="mudar(this)">Altura</button>
-      <button id="21" class="not_active" onclick="mudar(this)">Largura</button>
-      <button id="22" class="not_active" onclick="mudar(this)">Profundidade</button>
-      <button id="23" class="not_active" onclick="mudar(this)">Criado em</button>
-      <button id="24" class="not_active" onclick="mudar(this)">Atualizado em</button>
-    </div>
-  </div>
-
-  <!-- Tabela -->
-  <div class="card shadow-sm">
-    <div class="card-body p-0">
-      <table id="tabela-produtos" class="display hover" style="width:100%">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>SKU</th>
-            <th>Título</th>
-            <th>EAN</th>
-            <th>Cód. Fabricante</th>
-            <th>Curva</th>
-            <th>Estoque</th>
-            <th>Custo</th>
-            <th>Custo c/ Boni</th>
-            <th>NCM</th>
-            <th>IPI</th>
-            <th>ICMS Entrada</th>
-            <th>ICMS Saída SP</th>
-            <th>ICMS Saída Média</th>
-            <th>PIS/COFINS</th>
-            <th>MVA</th>
-            <th>ST Valor</th>
-            <th>Frete CIF/FOB</th>
-            <th>Peso</th>
-            <th>Altura</th>
-            <th>Largura</th>
-            <th>Profundidade</th>
-            <th>Criado em</th>
-            <th>Atualizado em</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for produto in produtos %}
-          <tr>
-            <td>{{ produto.id }}</td>
-            <td>{{ produto.sku }}</td>
-            <td>{{ produto.titulo }}</td>
-            <td>{{ produto.ean|default:"—" }}</td>
-            <td>{{ produto.cod_fabricante|default:"—" }}</td>
-            <td>{{ produto.curva|default:"—" }}</td>
-            <td>{{ produto.estoque }}</td>
-            <td>R$ {{ produto.custo|floatformat:2 }}</td>
-            <td>R$ {{ produto.custo_com_boni|floatformat:2|default:"—" }}</td>
-            <td>{{ produto.ncm|default:"—" }}</td>
-            <td>{{ produto.ipi|floatformat:2 }}%</td>
-            <td>{{ produto.icms_entrada|floatformat:2 }}%</td>
-            <td>{{ produto.icms_saida_sp|floatformat:2 }}%</td>
-            <td>{{ produto.icms_saida_media|floatformat:2 }}%</td>
-            <td>{{ produto.pis_cofins|floatformat:2 }}%</td>
-            <td>{{ produto.mva|default:"—" }}</td>
-            <td>{{ produto.st_valor|default:"—" }}</td>
-            <td>{{ produto.frete_cif_fob|default:"—" }}</td>
-            <td>{{ produto.peso|floatformat:3 }} kg</td>
-            <td>{{ produto.altura|floatformat:2 }} cm</td>
-            <td>{{ produto.largura|floatformat:2 }} cm</td>
-            <td>{{ produto.profundidade|floatformat:2 }} cm</td>
-            <td>{{ produto.criado_em|date:"d/m/Y H:i" }}</td>
-            <td>{{ produto.atualizado_em|date:"d/m/Y H:i" }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-</div>
+{% block botoes_acao %}
+  <button class="btn" id="btn_cad_produto">
+    <i class="fas fa-plus"></i> Cadastrar Produto
+  </button>
 {% endblock %}
 
-{% block scripts %}
-<!-- DataTables JS -->
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="{% static 'js/datatables.js' %}"></script>
+{% block botoes_colunas %}
+  <button id="1"  class="not_active" onclick="mudar(this)">ID</button>
+  <button id="2"  class="active"     onclick="mudar(this)">SKU</button>
+  <button id="3"  class="active"     onclick="mudar(this)">Título</button>
+  <button id="4"  class="active"     onclick="mudar(this)">EAN</button>
+  <button id="5"  class="not_active" onclick="mudar(this)">Cód. Fabricante</button>
+  <button id="6"  class="active"     onclick="mudar(this)">Curva</button>
+  <button id="7"  class="active"     onclick="mudar(this)">Estoque</button>
+  <button id="8"  class="active"     onclick="mudar(this)">Custo</button>
+  <button id="9"  class="not_active" onclick="mudar(this)">Custo c/ Boni</button>
+  <button id="10" class="not_active" onclick="mudar(this)">NCM</button>
+  <button id="11" class="not_active" onclick="mudar(this)">IPI</button>
+  <button id="12" class="not_active" onclick="mudar(this)">ICMS Entrada</button>
+  <button id="13" class="not_active" onclick="mudar(this)">ICMS Saída SP</button>
+  <button id="14" class="not_active" onclick="mudar(this)">ICMS Saída Média</button>
+  <button id="15" class="not_active" onclick="mudar(this)">PIS/COFINS</button>
+  <button id="16" class="not_active" onclick="mudar(this)">MVA</button>
+  <button id="17" class="not_active" onclick="mudar(this)">ST Valor</button>
+  <button id="18" class="not_active" onclick="mudar(this)">Frete CIF/FOB</button>
+  <button id="19" class="not_active" onclick="mudar(this)">Peso</button>
+  <button id="20" class="not_active" onclick="mudar(this)">Altura</button>
+  <button id="21" class="not_active" onclick="mudar(this)">Largura</button>
+  <button id="22" class="not_active" onclick="mudar(this)">Profundidade</button>
+  <button id="23" class="not_active" onclick="mudar(this)">Criado em</button>
+  <button id="24" class="not_active" onclick="mudar(this)">Atualizado em</button>
+{% endblock %}
+
+{% block id_tabela %}tabela-produtos{% endblock %}
+
+{% block thead %}
+  <th>ID</th>
+  <th>SKU</th>
+  <th>Título</th>
+  <th>EAN</th>
+  <th>Cód. Fabricante</th>
+  <th>Curva</th>
+  <th>Estoque</th>
+  <th>Custo</th>
+  <th>Custo c/ Boni</th>
+  <th>NCM</th>
+  <th>IPI</th>
+  <th>ICMS Entrada</th>
+  <th>ICMS Saída SP</th>
+  <th>ICMS Saída Média</th>
+  <th>PIS/COFINS</th>
+  <th>MVA</th>
+  <th>ST Valor</th>
+  <th>Frete CIF/FOB</th>
+  <th>Peso</th>
+  <th>Altura</th>
+  <th>Largura</th>
+  <th>Profundidade</th>
+  <th>Criado em</th>
+  <th>Atualizado em</th>
+{% endblock %}
+
+{% block tbody %}
+  {% for produto in produtos %}
+  <tr>
+    <td>{{ produto.id }}</td>
+    <td>{{ produto.sku }}</td>
+    <td>{{ produto.titulo }}</td>
+    <td>{{ produto.ean|default:"—" }}</td>
+    <td>{{ produto.cod_fabricante|default:"—" }}</td>
+    <td>{{ produto.curva|default:"—" }}</td>
+    <td>{{ produto.estoque }}</td>
+    <td>R$ {{ produto.custo|floatformat:2 }}</td>
+    <td>{{ produto.custo_com_boni|floatformat:2|default:"—" }}</td>
+    <td>{{ produto.ncm|default:"—" }}</td>
+    <td>{{ produto.ipi|floatformat:2 }}%</td>
+    <td>{{ produto.icms_entrada|floatformat:2 }}%</td>
+    <td>{{ produto.icms_saida_sp|floatformat:2 }}%</td>
+    <td>{{ produto.icms_saida_media|floatformat:2 }}%</td>
+    <td>{{ produto.pis_cofins|floatformat:2 }}%</td>
+    <td>{{ produto.mva|default:"—" }}</td>
+    <td>{{ produto.st_valor|default:"—" }}</td>
+    <td>{{ produto.frete_cif_fob|default:"—" }}</td>
+    <td>{{ produto.peso|floatformat:3 }} kg</td>
+    <td>{{ produto.altura|floatformat:2 }} cm</td>
+    <td>{{ produto.largura|floatformat:2 }} cm</td>
+    <td>{{ produto.profundidade|floatformat:2 }} cm</td>
+    <td>{{ produto.criado_em|date:"d/m/Y H:i" }}</td>
+    <td>{{ produto.atualizado_em|date:"d/m/Y H:i" }}</td>
+  </tr>
+  {% endfor %}
+{% endblock %}
+
+{% block scripts_tabela %}
+<script>
+$(document).ready(function () {
+  inicializar_tabela('#tabela-produtos', {
+    autoWidth: false,
+    columnDefs: [
+      { width: "60px",  targets: [0, 5] },
+      { width: "130px", targets: [1, 3, 4, 9] },
+      { width: "280px", targets: [2] },
+      { width: "80px",  targets: [6] },
+      { width: "100px", targets: [7, 8, 16] },
+      { width: "110px", targets: [10,11,12,13,14,15,17] },
+      { width: "80px",  targets: [18,19,20,21] },
+      { width: "130px", targets: [22,23] }
+    ]
+  });
+});
+</script>
 {% endblock %}

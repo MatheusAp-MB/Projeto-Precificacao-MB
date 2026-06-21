@@ -1,0 +1,50 @@
+{% extends 'bases/base_painel.html' %}
+{% load static %}
+
+{% block head_painel %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="{% static 'css/datatables.css' %}">
+{% block head_tabela %}{% endblock %}
+{% endblock %}
+
+{% block conteudo %}
+
+<!-- Barra de ações -->
+<div class="d-flex gap-2 mb-3">
+    <button onclick="opcoes_exibicao()" class="btn" id="btn_op_exib">
+        <i class="fas fa-columns"></i> Opções de Exibição
+    </button>
+    {% block botoes_acao %}{% endblock %}
+</div>
+
+<!-- Painel de seleção de colunas -->
+<div id="Mostrar_Colunas">
+    <h6>Selecione as colunas que deseja exibir:</h6>
+    <div class="grid-botoes-colunas">
+        {% block botoes_colunas %}{% endblock %}
+    </div>
+</div>
+
+<!-- Tabela -->
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <table id="{% block id_tabela %}tabela{% endblock %}" class="display hover">
+            <thead>
+                <tr>
+                    {% block thead %}{% endblock %}
+                </tr>
+            </thead>
+            <tbody>
+                {% block tbody %}{% endblock %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="{% static 'js/datatables.js' %}"></script>
+{% block scripts_tabela %}{% endblock %}
+{% endblock %}
