@@ -1,3 +1,9 @@
+function ajustarAltura() {
+  const wrap = document.querySelector('.prec-tabela-wrap');
+  if (!wrap) return;
+  const top = wrap.getBoundingClientRect().top;
+  wrap.style.maxHeight = (window.innerHeight - top - 16) + 'px';
+}
 // ================================================
 // Estado da sessão
 // ================================================
@@ -38,6 +44,7 @@ function recalcularProduto(produtoId) {
 
 // Configura HTMX no painel ao ser carregado
 document.body.addEventListener('htmx:afterSwap', function (evt) {
+  setTimeout(ajustarAltura, 50);
   const el = evt.detail.target;
 
   // Encontra o painel dentro do elemento trocado

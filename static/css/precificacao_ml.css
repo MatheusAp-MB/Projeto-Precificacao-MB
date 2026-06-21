@@ -36,6 +36,9 @@
     --cor-texto-muted: #000000;
 }
 
+.prec-tabela thead tr:nth-child(2) th {
+    top: 35px;
+}
 
 .param-bloco {
     transition: border-color 0.3s;
@@ -101,6 +104,22 @@
 /* ================================================
    Cards
    ================================================ */
+
+#card_tabela {
+    display: flex;
+    flex-direction: column;
+    max-height: 450px;
+}
+
+#card_tabela #container-tabela {
+    flex: 1;
+    overflow: hidden;
+}
+
+#card_tabela #container-paginacao {
+    flex-shrink: 0;
+    border-top: 1px solid var(--cor-borda);
+}
 
 .prec-card {
     background: #ffffff;

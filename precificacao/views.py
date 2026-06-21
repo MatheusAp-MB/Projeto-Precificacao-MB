@@ -117,11 +117,15 @@ def calcular_frete_ml(request):
                 'valor': None,
                 'erro': str(e),
             })
+
+
 def _get_config_ml():
     """Retorna marketplace ML, tipos de anúncio e config logística."""
-    marketplace   = Marketplace.objects.get(sigla='ML')
-    tipo_classico = TipoAnuncioML.objects.get(marketplace=marketplace, nome='Clássico')
-    tipo_premium  = TipoAnuncioML.objects.get(marketplace=marketplace, nome='Premium')
+    marketplace = Marketplace.objects.get(sigla='ML')
+    tipo_classico = TipoAnuncioML.objects.get(
+        marketplace=marketplace, nome='Clássico')
+    tipo_premium = TipoAnuncioML.objects.get(
+        marketplace=marketplace, nome='Premium')
     try:
         config = marketplace.config_logistica
     except ConfiguracaoLogisticaML.DoesNotExist:
@@ -132,8 +136,8 @@ def _get_config_ml():
 def _calcular_resultado_produto(d_produto, tipo_classico, tipo_premium, d_config):
     """Calcula preço ideal para Clássico e Premium."""
     res_c = calcular_preco_ideal_ml(
-        comissao_pct    = float(tipo_classico.comissao),
-        meta_margem_pct = float(tipo_classico.meta_margem),
+        comissao_pct=float(tipo_classico.comissao),
+        meta_margem_pct=float(tipo_classico.meta_margem),
         **d_produto,
         **d_config,
     )
@@ -141,19 +145,19 @@ def _calcular_resultado_produto(d_produto, tipo_classico, tipo_premium, d_config
     res_p = None
     if res_c.get('preco'):
         acrescimo = float(tipo_premium.acrescimo_preco) / 100
-        preco_p   = arredondar_para_90(res_c['preco'] * (1 + acrescimo))
-        frete_p   = buscar_frete_ml(res_c['peso_lookup'], preco_p)
-        margem_p  = calcular_margem_ml(
-            preco            = preco_p,
-            custo_final      = res_c['custo_final'],
-            custo_bruto      = d_produto['custo_bruto'],
-            comissao_pct     = float(tipo_premium.comissao),
-            icms_saida_pct   = d_produto['icms_saida_media_pct'],
-            icms_entrada_pct = d_produto['icms_entrada_pct'],
-            pis_cofins_pct   = d_produto['pis_cofins_pct'],
-            frete            = frete_p,
-            coleta           = res_c['coleta'],
-            armazenagem      = res_c['armazenagem'],
+        preco_p = arredondar_para_90(res_c['preco'] * (1 + acrescimo))
+        frete_p = buscar_frete_ml(res_c['peso_lookup'], preco_p)
+        margem_p = calcular_margem_ml(
+            preco=preco_p,
+            custo_final=res_c['custo_final'],
+            custo_bruto=d_produto['custo_bruto'],
+            comissao_pct=float(tipo_premium.comissao),
+            icms_saida_pct=d_produto['icms_saida_media_pct'],
+            icms_entrada_pct=d_produto['icms_entrada_pct'],
+            pis_cofins_pct=d_produto['pis_cofins_pct'],
+            frete=frete_p,
+            coleta=res_c['coleta'],
+            armazenagem=res_c['armazenagem'],
         )
         res_p = {
             'preco':      preco_p,
@@ -166,17 +170,50 @@ def _calcular_resultado_produto(d_produto, tipo_classico, tipo_premium, d_config
 
 
 def precificacao_ml(request):
+    from .funcoes.ml.calculos import calcular_custo_final, produto_para_dict, config_para_dict
+    from django.core.paginator import Paginator
+
     marketplace, tipo_classico, tipo_premium, config = _get_config_ml()
     d_config = config_para_dict(config)
 
-    produtos     = Produto.objects.all().order_by('titulo')
-    anuncios_c   = {a.produto_id: a for a in Anuncio.objects.filter(tipo_anuncio=tipo_classico, tipo_envio='FULL')}
-    anuncios_p   = {a.produto_id: a for a in Anuncio.objects.filter(tipo_anuncio=tipo_premium,  tipo_envio='FULL')}
+    busca = request.GET.get('busca', '').strip()
+    produtos = Produto.objects.all().order_by('titulo')
+    if busca:
+        produtos = produtos.filter(
+            models.Q(titulo__icontains=busca) |
+            models.Q(sku__icontains=busca) |
+            models.Q(cod_fabricante__icontains=busca)
+        )
+
+    paginator = Paginator(produtos, 25)
+    pagina = request.GET.get('pagina', 1)
+    page_obj = paginator.get_page(pagina)
+
+    ids_pagina = [p.id for p in page_obj.object_list]
+
+    anuncios_c = {
+        a.produto_id: a
+        for a in Anuncio.objects.filter(
+            tipo_anuncio=tipo_classico,
+            tipo_envio='FULL',
+            produto_id__in=ids_pagina
+        )
+    }
+    anuncios_p = {
+        a.produto_id: a
+        for a in Anuncio.objects.filter(
+            tipo_anuncio=tipo_premium,
+            tipo_envio='FULL',
+            produto_id__in=ids_pagina
+        )
+    }
 
     lista = []
-    for p in produtos:
-        d  = produto_para_dict(p)
-        cf = calcular_custo_final(d['custo_com_boni'], d['ipi_pct'], d['frete_cif_pct'], d['st_valor'])
+    for p in page_obj.object_list:
+        d = produto_para_dict(p)
+        cf = calcular_custo_final(
+            d['custo_com_boni'], d['ipi_pct'], d['frete_cif_pct'], d['st_valor']
+        )
         lista.append({
             'produto':          p,
             'custo_final':      round(cf, 2),
@@ -184,23 +221,31 @@ def precificacao_ml(request):
             'anuncio_premium':  anuncios_p.get(p.id),
         })
 
-    return render(request, 'precificacao/precificacao_ml.html', {
+    contexto = {
         'lista':         lista,
+        'page_obj':      page_obj,
+        'busca':         busca,
         'tipo_classico': tipo_classico,
         'tipo_premium':  tipo_premium,
         'config':        config,
         'marketplace':   marketplace,
-    })
+    }
+
+    if request.headers.get('HX-Request'):
+        return render(request, 'parciais/card_tabela_ml.html', contexto)
+
+    return render(request, 'precificacao/precificacao_ml.html', contexto)
 
 
 def painel_produto_ml(request, produto_id):
     """HTMX — retorna o painel de edição expandido de um produto."""
     produto = get_object_or_404(Produto, pk=produto_id)
     marketplace, tipo_classico, tipo_premium, config = _get_config_ml()
-    d_config  = config_para_dict(config)
+    d_config = config_para_dict(config)
     d_produto = produto_para_dict(produto)
 
-    res_c, res_p = _calcular_resultado_produto(d_produto, tipo_classico, tipo_premium, d_config)
+    res_c, res_p = _calcular_resultado_produto(
+        d_produto, tipo_classico, tipo_premium, d_config)
 
     return render(request, 'parciais/painel_produto_ml.html', {
         'produto':       produto,
@@ -221,7 +266,7 @@ def calcular_produto_ml(request):
             return float(default)
 
     produto_id = request.POST.get('produto_id')
-    produto    = get_object_or_404(Produto, pk=produto_id)
+    produto = get_object_or_404(Produto, pk=produto_id)
     marketplace, tipo_classico, tipo_premium, config = _get_config_ml()
     d_config = config_para_dict(config)
 
@@ -240,7 +285,8 @@ def calcular_produto_ml(request):
         'profundidade_cm':       _f('profundidade'),
     }
 
-    res_c, res_p = _calcular_resultado_produto(d_produto, tipo_classico, tipo_premium, d_config)
+    res_c, res_p = _calcular_resultado_produto(
+        d_produto, tipo_classico, tipo_premium, d_config)
 
     return render(request, 'parciais/resultado_produto_ml.html', {
         'res_classico': res_c,
@@ -262,17 +308,25 @@ def salvar_precificacao_ml(request):
     # Salva parâmetros master
     params = dados.get('parametros', {})
     if params:
-        if 'classico_comissao'    in params: tipo_classico.comissao      = params['classico_comissao']
-        if 'classico_meta_margem' in params: tipo_classico.meta_margem   = params['classico_meta_margem']
+        if 'classico_comissao' in params:
+            tipo_classico.comissao = params['classico_comissao']
+        if 'classico_meta_margem' in params:
+            tipo_classico.meta_margem = params['classico_meta_margem']
         tipo_classico.save()
-        if 'premium_comissao'     in params: tipo_premium.comissao       = params['premium_comissao']
-        if 'premium_meta_margem'  in params: tipo_premium.meta_margem    = params['premium_meta_margem']
-        if 'premium_acrescimo'    in params: tipo_premium.acrescimo_preco = params['premium_acrescimo']
+        if 'premium_comissao' in params:
+            tipo_premium.comissao = params['premium_comissao']
+        if 'premium_meta_margem' in params:
+            tipo_premium.meta_margem = params['premium_meta_margem']
+        if 'premium_acrescimo' in params:
+            tipo_premium.acrescimo_preco = params['premium_acrescimo']
         tipo_premium.save()
         if config:
-            if 'fator_coleta'         in params: config.fator_coleta        = params['fator_coleta']
-            if 'armazenagem_diaria'   in params: config.armazenagem_diaria  = params['armazenagem_diaria']
-            if 'periodo_armazenagem'  in params: config.periodo_armazenagem = params['periodo_armazenagem']
+            if 'fator_coleta' in params:
+                config.fator_coleta = params['fator_coleta']
+            if 'armazenagem_diaria' in params:
+                config.armazenagem_diaria = params['armazenagem_diaria']
+            if 'periodo_armazenagem' in params:
+                config.periodo_armazenagem = params['periodo_armazenagem']
             config.save()
 
     # Salva alterações por produto
@@ -289,7 +343,8 @@ def salvar_precificacao_ml(request):
             produto.save()
 
             d = produto_para_dict(produto)
-            res_c, res_p = _calcular_resultado_produto(d, tipo_classico, tipo_premium, d_config)
+            res_c, res_p = _calcular_resultado_produto(
+                d, tipo_classico, tipo_premium, d_config)
 
             if res_c.get('preco'):
                 Anuncio.objects.filter(produto=produto, tipo_anuncio=tipo_classico).update(

@@ -1,0 +1,72 @@
+<div class="prec-tabela-wrap" id="tabela-wrap">
+  <table class="prec-tabela">
+    <thead>
+      <tr>
+        <th rowspan="2" class="th-left th-produto" style="width: 500px;">Produto</th>
+        <th rowspan="2" class="th-produto">Custo final</th>
+        <th rowspan="2" class="th-produto">Frete ML</th>
+        <th colspan="3" class="th-classico">Clássico</th>
+        <th colspan="3" class="th-premium">Premium</th>
+        <th rowspan="2" class="th-acoes" style="width: 80px;"></th>
+      </tr>
+      <tr>
+        <th class="th-classico">Preço atual</th>
+        <th class="th-classico">Preço ideal</th>
+        <th class="th-classico">Margem</th>
+        <th class="th-premium">Preço atual</th>
+        <th class="th-premium">Preço ideal</th>
+        <th class="th-premium">Margem</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in lista %}
+      <tr class="prod-row" id="row-{{ item.produto.id }}"
+          data-nome="{{ item.produto.titulo|lower }}"
+          data-sku="{{ item.produto.sku|lower }}">
+        <td class="td-produto">
+          <div class="td-nome">{{ item.produto.titulo }}</div>
+          <div class="td-sku">{{ item.produto.sku }}</div>
+        </td>
+        <td class="td-muted">R$ {{ item.custo_final }}</td>
+        <td class="td-muted">—</td>
+        <td class="td-classico td-muted">
+          {% if item.anuncio_classico and item.anuncio_classico.preco_atual %}
+            R$ {{ item.anuncio_classico.preco_atual }}
+          {% else %}—{% endif %}
+        </td>
+        <td class="td-classico td-preco">
+          {% if item.anuncio_classico and item.anuncio_classico.preco_ideal %}
+            R$ {{ item.anuncio_classico.preco_ideal }}
+          {% else %}—{% endif %}
+        </td>
+        <td class="td-classico {% if item.anuncio_classico and item.anuncio_classico.preco_ideal %}td-margem-ok{% else %}td-vazio{% endif %}">—</td>
+        <td class="td-premium td-muted">
+          {% if item.anuncio_premium and item.anuncio_premium.preco_atual %}
+            R$ {{ item.anuncio_premium.preco_atual }}
+          {% else %}—{% endif %}
+        </td>
+        <td class="td-premium td-preco">
+          {% if item.anuncio_premium and item.anuncio_premium.preco_ideal %}
+            R$ {{ item.anuncio_premium.preco_ideal }}
+          {% else %}—{% endif %}
+        </td>
+        <td class="td-premium {% if item.anuncio_premium and item.anuncio_premium.preco_ideal %}td-margem-ok{% else %}td-vazio{% endif %}">—</td>
+        <td>
+          <button class="btn-editar" id="btn-edit-{{ item.produto.id }}"
+                  hx-get="{% url 'painel_produto_ml' item.produto.id %}"
+                  hx-target="#expand-{{ item.produto.id }}"
+                  hx-swap="innerHTML"
+                  onclick="togglePainel({{ item.produto.id }}, this)">
+            <i class="fas fa-pencil-alt"></i> Editar
+          </button>
+        </td>
+      </tr>
+      <tr class="expand-row" id="expand-row-{{ item.produto.id }}" style="display: none;">
+        <td colspan="10" id="expand-{{ item.produto.id }}"></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+</div>
