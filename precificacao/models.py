@@ -40,14 +40,20 @@ class Produto(models.Model):
 
     # Tributário
     ncm = models.CharField(max_length=10, blank=True, null=True)
-    ipi = models.DecimalField(max_digits=5, decimal_places=4, default=0)
-    icms_entrada = models.DecimalField(max_digits=5, decimal_places=4, default=0)
-    icms_saida_sp = models.DecimalField(max_digits=5, decimal_places=4, default=0)
-    icms_saida_media = models.DecimalField(max_digits=5, decimal_places=4, default=0)
-    pis_cofins = models.DecimalField(max_digits=5, decimal_places=4, default=0)
-    mva = models.DecimalField(max_digits=5, decimal_places=4, default=0, blank=True, null=True)
-    st_valor = models.DecimalField(max_digits=10, decimal_places=2, default=0, blank=True, null=True)
-    frete_cif_fob = models.DecimalField(max_digits=5, decimal_places=4, default=0, blank=True, null=True)
+    ipi = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    icms_entrada = models.DecimalField(
+        max_digits=6, decimal_places=2, default=0)
+    icms_saida_sp = models.DecimalField(
+        max_digits=6, decimal_places=2, default=0)
+    icms_saida_media = models.DecimalField(
+        max_digits=6, decimal_places=2, default=0)
+    pis_cofins = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    mva = models.DecimalField(
+        max_digits=6, decimal_places=2, default=0, blank=True, null=True)
+    st_valor = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0, blank=True, null=True)
+    frete_cif_fob = models.DecimalField(
+        max_digits=6, decimal_places=2, default=0, blank=True, null=True)
 
     # Dimensões
     peso = models.DecimalField(max_digits=8, decimal_places=3)
