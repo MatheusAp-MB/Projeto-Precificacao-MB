@@ -1,8 +1,7 @@
 function ajustarAltura() {
   const wrap = document.querySelector('.prec-tabela-wrap');
   if (!wrap) return;
-  const top = wrap.getBoundingClientRect().top;
-  wrap.style.maxHeight = (window.innerHeight - top - 16) + 'px';
+  wrap.style.maxHeight = (window.innerHeight * 0.45) + 'px';
 }
 // ================================================
 // Estado da sessão
