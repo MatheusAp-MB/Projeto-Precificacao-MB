@@ -232,7 +232,7 @@ def precificacao_ml(request):
     }
 
     if request.headers.get('HX-Request'):
-        return render(request, 'parciais/card_tabela_ml.html', contexto)
+        return render(request, 'parciais/tabela_produtos_ml.html', contexto)
 
     return render(request, 'precificacao/precificacao_ml.html', contexto)
 

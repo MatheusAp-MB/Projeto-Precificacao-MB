@@ -105,10 +105,8 @@
    Cards
    ================================================ */
 
-#card_tabela {
-    display: flex;
-    flex-direction: column;
-    max-height: 450px;
+#container-tabela {
+    /* max-height: 20px; */
 }
 
 #card_tabela #container-tabela {

@@ -120,41 +120,37 @@
     </div>
 
     <!-- Tabela de produtos -->
-    <div class="prec-card" id="card_tabela" style="padding: 0;"></div>
+    <div class="prec-card"style="padding: 0;">
       <div class="prec-tabela-header">
         <span class="prec-card-title" style="margin: 0;">
           <i class="fas fa-box"></i> Produtos
         </span>
         <input type="text" id="busca-produto" placeholder="Buscar produto ou SKU..." class="prec-busca" name="busca"
           value="{{ busca }}" hx-get="{% url 'precificacao_ml' %}" hx-trigger="input changed delay:300ms"
-          hx-target="#card_tabela" hx-swap="innerHTML" hx-include="[name='busca']">
+          hx-target="#container-tabela" hx-swap="innerHTML" hx-include="[name='busca']">
       </div>
-
       <div id="container-tabela">
         {% include 'parciais/tabela_produtos_ml.html' %}
       </div>
-      <div id="container-paginacao">
-        {% include 'parciais/paginacao_ml.html' %}
-      </div>
     </div>
+    <!-- fim coluna principal -->
 
-  </div>
-  <!-- fim coluna principal -->
-
-  <!-- Sidebar de alterações -->
-  <div class="prec-sidebar">
-    <div class="alteracoes-card">
-      <div class="alteracoes-header">
-        <span><i class="fas fa-code-branch"></i> Alterações da sessão</span>
-        <span class="alteracoes-badge" id="badge-alteracoes">0</span>
-      </div>
-      <div id="lista-alteracoes">
-        <div class="alteracoes-vazio">
-          <i class="fas fa-check-circle"></i><br>
-          Nenhuma alteração<br>na sessão atual
+    <!-- Sidebar de alterações -->
+    <div class="prec-sidebar">
+      <div class="alteracoes-card">
+        <div class="alteracoes-header">
+          <span><i class="fas fa-code-branch"></i> Alterações da sessão</span>
+          <span class="alteracoes-badge" id="badge-alteracoes">0</span>
+        </div>
+        <div id="lista-alteracoes">
+          <div class="alteracoes-vazio">
+            <i class="fas fa-check-circle"></i><br>
+            Nenhuma alteração<br>na sessão atual
+          </div>
         </div>
       </div>
     </div>
+
   </div>
 
 </div>
