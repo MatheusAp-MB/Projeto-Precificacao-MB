@@ -8,7 +8,7 @@
 
     <!-- Coluna 1: Financeiro + Dimensões -->
     <div class="campo-grupo">
-      <div class="campo-grupo-titulo">Financeiro</div>
+      <div class="campo-grupo-titulo titulo-financeiro">Financeiro</div>
       <div class="campo-linha">
         <span class="campo-label">Custo bruto</span>
         <input class="campo-input" name="custo"
@@ -43,7 +43,7 @@
         <span class="campo-unidade">R$</span>
       </div>
 
-      <div class="campo-grupo-titulo" style="margin-top: 12px;">Dimensões</div>
+      <div class="campo-grupo-titulo titulo-dimensoes" style="margin-top: 12px;">Dimensões</div>
       <div class="campo-linha">
         <span class="campo-label">Peso</span>
         <input class="campo-input" name="peso"
@@ -92,7 +92,7 @@
 
     <!-- Coluna 2: Tributário -->
     <div class="campo-grupo">
-      <div class="campo-grupo-titulo">Tributário</div>
+      <div class="campo-grupo-titulo titulo-tributario">Tributário</div>
       <div class="campo-linha">
         <span class="campo-label">ICMS Entrada</span>
         <input class="campo-input" name="icms_entrada"
@@ -174,7 +174,7 @@
 
     <!-- Coluna 3: Resultado calculado -->
     <div class="campo-grupo">
-      <div class="campo-grupo-titulo">Resultado calculado</div>
+      <div class="campo-grupo-titulo titulo-resultado">Resultado calculado</div>
       <div id="resultado-{{ produto.id }}">
         {% include 'parciais/resultado_produto_ml.html' %}
       </div>

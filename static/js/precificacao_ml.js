@@ -16,11 +16,12 @@ function togglePainel(produtoId, btn) {
     expandRow.style.display = 'none';
     btn.classList.remove('ativo');
     btn.innerHTML = '<i class="fas fa-pencil-alt"></i> Editar';
-  } else {
-    expandRow.style.display = '';
-    btn.classList.add('ativo');
-    btn.innerHTML = '<i class="fas fa-chevron-up"></i> Fechar';
-  }
+    } else {
+        expandRow.style.display = '';
+        btn.classList.add('ativo');
+        btn.innerHTML = '<i class="fas fa-chevron-up"></i> Fechar';
+        setTimeout(function() { ajustarAlturaPainel(produtoId); }, 50);
+      }
 
   ajustarAltura();
 }
@@ -253,19 +254,6 @@ function filtrarTabela(q) {
 }
 
 // ================================================
-// Altura dinâmica da tabela
-// ================================================
-
-function ajustarAltura() {
-  const wrap = document.getElementById('tabela-wrap');
-  if (!wrap) return;
-  const top = wrap.getBoundingClientRect().top;
-  wrap.style.maxHeight = (window.innerHeight - top - 16) + 'px';
-}
-
-window.addEventListener('resize', ajustarAltura);
-
-// ================================================
 // Utilitários
 // ================================================
 
@@ -275,3 +263,18 @@ function getCookie(name) {
   if (parts.length === 2) return parts.pop().split(';').shift();
   return '';
 }
+
+// ================================================
+// Altura dinâmica da tabela
+// ================================================
+
+function ajustarAlturaPainel(produtoId) {
+  const painel = document.getElementById('expand-' + produtoId);
+  if (!painel) return;
+  const top = painel.getBoundingClientRect().top;
+  const altura = window.innerHeight - top - 16;
+  painel.style.maxHeight = altura + 'px';
+  painel.style.overflowY = 'auto';
+}
+
+window.addEventListener('resize', ajustarAltura);
