@@ -1,0 +1,34 @@
+
+/* ================================================
+   Cards da Home
+   ================================================ */
+
+.card-home {
+  background-color: #ffffff;
+  border: 2px solid #dee2e6;
+  border-radius: 10px;
+  padding: 30px 20px;
+  text-align: center;
+  color: #1a3a5c;
+  transition: all 0.2s;
+  height: 100%;
+}
+
+.card-home:hover {
+  background-color: #1a3a5c;
+  border-color: #1a3a5c;
+  color: #ffffff;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(26, 58, 92, 0.2);
+}
+
+.card-home h5 {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.card-home p {
+  font-size: 0.875rem;
+  opacity: 0.8;
+  margin: 0;
+}

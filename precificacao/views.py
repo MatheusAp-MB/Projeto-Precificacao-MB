@@ -27,3 +27,7 @@ def lista_frete_ml(request):
 def lista_anuncios(request):
     anuncios = Anuncio.objects.select_related('produto', 'tipo_anuncio').all()
     return render(request, 'precificacao/lista_anuncios.html', {'anuncios': anuncios})
+
+
+def home(request):
+    return render(request, 'precificacao/home.html')

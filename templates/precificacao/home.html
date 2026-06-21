@@ -1,0 +1,65 @@
+{% extends 'bases/base_painel.html' %}
+{% load static %}
+
+{% block titulo %}Início — Precificação MB{% endblock %}
+{% block toolbar_titulo %}Página Inicial{% endblock %}
+
+{% block head_painel %}
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block conteudo %}
+<div class="row g-4 mt-2">
+
+  <div class="col-md-4">
+    <a href="{% url 'lista_produtos' %}" class="text-decoration-none">
+      <div class="card-home">
+        <i class="fas fa-box fa-2x mb-3"></i>
+        <h5>Produtos</h5>
+        <p>Visualize e gerencie o catálogo de produtos</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-4">
+    <a href="{% url 'lista_anuncios' %}" class="text-decoration-none">
+      <div class="card-home">
+        <i class="fas fa-bullhorn fa-2x mb-3"></i>
+        <h5>Anúncios</h5>
+        <p>Visualize os anúncios do Mercado Livre</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-4">
+    <a href="{% url 'lista_marketplaces' %}" class="text-decoration-none">
+      <div class="card-home">
+        <i class="fas fa-store fa-2x mb-3"></i>
+        <h5>Marketplaces</h5>
+        <p>Gerencie os marketplaces cadastrados</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-4">
+    <a href="{% url 'lista_tipos_anuncio' %}" class="text-decoration-none">
+      <div class="card-home">
+        <i class="fas fa-tags fa-2x mb-3"></i>
+        <h5>Tipos de Anúncio</h5>
+        <p>Comissões e metas de margem por tipo</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-4">
+    <a href="{% url 'lista_frete_ml' %}" class="text-decoration-none">
+      <div class="card-home">
+        <i class="fas fa-truck fa-2x mb-3"></i>
+        <h5>Frete ML</h5>
+        <p>Tabela de fretes do Mercado Livre FULL</p>
+      </div>
+    </a>
+  </div>
+
+</div>
+{% endblock %}

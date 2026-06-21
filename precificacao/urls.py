@@ -7,4 +7,5 @@ urlpatterns = [
     path('tipos-anuncio/', views.lista_tipos_anuncio, name='lista_tipos_anuncio'),
     path('frete-ml/', views.lista_frete_ml, name='lista_frete_ml'),
     path('anuncios/', views.lista_anuncios, name='lista_anuncios'),
+    path('', views.home, name='home'),
 ]
