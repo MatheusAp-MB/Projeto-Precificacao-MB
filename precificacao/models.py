@@ -131,3 +131,60 @@ class FreteML(models.Model):
 
     def __str__(self):
         return f'Peso {self.peso_min}-{self.peso_max}kg | Preço {self.preco_min}-{self.preco_max} → R${self.valor}'
+    
+class Anuncio(models.Model):
+
+    class TipoEnvio(models.TextChoices):
+        FLEX = 'FLEX', 'Flex'
+        FULL = 'FULL', 'Full'
+
+    class Status(models.TextChoices):
+        ATIVO    = 'ATIVO',    'Ativo'
+        PAUSADO  = 'PAUSADO',  'Pausado'
+        INATIVO  = 'INATIVO',  'Inativo'
+
+    # Conexões
+    produto      = models.ForeignKey(
+        Produto,
+        on_delete=models.CASCADE,
+        related_name='anuncios'
+    )
+    tipo_anuncio = models.ForeignKey(
+        TipoAnuncioML,
+        on_delete=models.PROTECT,
+        related_name='anuncios'
+    )
+
+    # Identificação
+    id_marketplace = models.CharField(max_length=50, unique=True)
+    titulo         = models.CharField(max_length=255)
+
+    # Tipo
+    tipo_envio = models.CharField(max_length=10, choices=TipoEnvio.choices)
+    catalogo   = models.BooleanField(default=False)
+
+    # Preços
+    preco_atual  = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    preco_ideal  = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+    # Estoque
+    estoque = models.IntegerField(default=0)
+
+    # Status
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.ATIVO
+    )
+
+    # Controle
+    criado_em    = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name        = 'Anúncio'
+        verbose_name_plural = 'Anúncios'
+        ordering            = ['produto', 'tipo_anuncio', 'tipo_envio']
+
+    def __str__(self):
+        return f'{self.produto.sku} — {self.tipo_anuncio.nome} {self.tipo_envio}'

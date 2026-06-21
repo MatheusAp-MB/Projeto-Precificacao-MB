@@ -19,7 +19,8 @@ class Command(BaseCommand):
         self.stdout.write(f'Lendo arquivo: {arquivo}')
 
         try:
-            wb = openpyxl.load_workbook(arquivo, read_only=True, data_only=True)
+            wb = openpyxl.load_workbook(
+                arquivo, read_only=True, data_only=True)
         except Exception as e:
             self.stdout.write(self.style.ERROR(f'Erro ao abrir arquivo: {e}'))
             return
@@ -38,25 +39,25 @@ class Command(BaseCommand):
 
             try:
                 # Extrai colunas (índice 0 = coluna A)
-                curva           = row[0]   # A
-                cod_forn        = row[1]   # B - Cód Forn (usado como SKU)
-                titulo          = row[2]   # C - Descrição
-                ean             = row[3]   # D - Cód Barras
-                ncm             = row[4]   # E - NCM
-                mva             = row[7]   # H - MVA
-                st_valor        = row[8]   # I - ST Valor
-                custo           = row[9]   # J - Custo
-                custo_com_boni  = row[10]  # K - Custo c/ Boni
-                frete_cif_fob   = row[11]  # L - Frete CIF/FOB
-                icms_entrada    = row[12]  # M - ICMS Entrada
-                ipi             = row[13]  # N - IPI
-                pis_cofins      = row[14]  # O - PIS/COFINS
-                icms_saida_sp   = row[15]  # P - ICMS Saída SP
-                icms_saida_media= row[16]  # Q - ICMS Saída Média
-                peso            = row[19]  # T - Peso
-                altura          = row[21]  # V - Alt.cm
-                profundidade    = row[22]  # W - Comp.cm
-                largura         = row[23]  # X - Larg.cm
+                curva = row[0]   # A
+                cod_forn = row[1]   # B - Cód Forn (usado como SKU)
+                titulo = row[2]   # C - Descrição
+                ean = row[3]   # D - Cód Barras
+                ncm = row[4]   # E - NCM
+                mva = row[7]   # H - MVA
+                st_valor = row[8]   # I - ST Valor
+                custo = row[9]   # J - Custo
+                custo_com_boni = row[10]  # K - Custo c/ Boni
+                frete_cif_fob = row[11]  # L - Frete CIF/FOB
+                icms_entrada = row[12]  # M - ICMS Entrada
+                ipi = row[13]  # N - IPI
+                pis_cofins = row[14]  # O - PIS/COFINS
+                icms_saida_sp = row[15]  # P - ICMS Saída SP
+                icms_saida_media = row[16]  # Q - ICMS Saída Média
+                peso = row[19]  # T - Peso
+                altura = row[21]  # V - Alt.cm
+                profundidade = row[22]  # W - Comp.cm
+                largura = row[23]  # X - Larg.cm
 
                 # Valida campos obrigatórios
                 if not titulo or not custo or not cod_forn:
@@ -97,7 +98,7 @@ class Command(BaseCommand):
                     'profundidade':     dec(profundidade) if profundidade else 0,
                 }
 
-                sku = str(cod_forn).strip()
+                sku = f"F{str(ean).strip()}.001" if ean else str(ean).strip()
 
                 produto, criado = Produto.objects.update_or_create(
                     sku=sku,
@@ -106,14 +107,15 @@ class Command(BaseCommand):
 
                 if criado:
                     criados += 1
-                    self.stdout.write(f'  [CRIADO]     {sku} — {titulo[:50]}')
+                    # self.stdout.write(f'  [CRIADO]     {sku} — {titulo[:50]}')
                 else:
                     atualizados += 1
-                    self.stdout.write(f'  [ATUALIZADO] {sku} — {titulo[:50]}')
+                    # self.stdout.write(f'  [ATUALIZADO] {sku} — {titulo[:50]}')
 
             except Exception as e:
                 erros += 1
-                self.stdout.write(self.style.ERROR(f'  [ERRO] Linha {i + 2}: {e}'))
+                self.stdout.write(self.style.ERROR(
+                    f'  [ERRO] Linha {i + 2}: {e}'))
 
         self.stdout.write('\n' + '=' * 50)
         self.stdout.write(self.style.SUCCESS(
