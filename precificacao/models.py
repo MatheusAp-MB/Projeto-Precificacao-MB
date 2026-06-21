@@ -72,3 +72,62 @@ class Produto(models.Model):
 
     def __str__(self):
         return f'{self.sku} — {self.titulo}'
+
+
+class Marketplace(models.Model):
+    nome = models.CharField(max_length=100)
+    sigla = models.CharField(max_length=20, unique=True)
+    ativo = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = 'Marketplace'
+        verbose_name_plural = 'Marketplaces'
+        ordering = ['nome']
+
+    def __str__(self):
+        return f'{self.nome} ({self.sigla})'
+
+
+class TipoAnuncioML(models.Model):
+    marketplace = models.ForeignKey(
+        Marketplace,
+        on_delete=models.PROTECT,
+        related_name='tipos_anuncio'
+    )
+    nome = models.CharField(max_length=50)
+    comissao = models.DecimalField(max_digits=5, decimal_places=2)
+    acrescimo_preco = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    meta_margem = models.DecimalField(max_digits=5, decimal_places=2, default=15)
+
+    class Meta:
+        verbose_name = 'Tipo de Anúncio ML'
+        verbose_name_plural = 'Tipos de Anúncio ML'
+
+    def __str__(self):
+        return f'{self.marketplace.sigla} — {self.nome}'
+
+
+class FreteML(models.Model):
+    peso_min = models.DecimalField(max_digits=8, decimal_places=3)
+    peso_max = models.DecimalField(
+        max_digits=8,
+        decimal_places=3,
+        null=True,
+        blank=True
+    )
+    preco_min = models.DecimalField(max_digits=10, decimal_places=2)
+    preco_max = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True
+    )
+    valor = models.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta:
+        verbose_name = 'Frete ML'
+        verbose_name_plural = 'Fretes ML'
+        ordering = ['peso_min', 'preco_min']
+
+    def __str__(self):
+        return f'Peso {self.peso_min}-{self.peso_max}kg | Preço {self.preco_min}-{self.preco_max} → R${self.valor}'
