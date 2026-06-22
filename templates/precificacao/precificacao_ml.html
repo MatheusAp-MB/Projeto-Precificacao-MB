@@ -162,7 +162,8 @@
 {% block scripts %}
 <script>
   const calcularUrl = "{% url 'calcular_produto_ml' %}";
-  const salvarUrl = "{% url 'salvar_precificacao_ml' %}";
+  const salvarUrl   = "{% url 'salvar_precificacao_ml' %}";
+  const recalcularTudoUrl = "{% url 'recalcular_tudo_ml' %}";
 </script>
 <script src="{% static 'js/precificacao_ml.js' %}"></script>
 <script>

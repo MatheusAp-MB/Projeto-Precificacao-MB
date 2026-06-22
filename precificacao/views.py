@@ -380,3 +380,37 @@ def salvar_precificacao_ml(request):
             continue
 
     return JsonResponse({'ok': True, 'salvos': salvos})
+
+
+@require_POST
+def recalcular_tudo_ml(request):
+    from django.utils import timezone
+    from .funcoes.ml.calculos import produto_para_dict, config_para_dict, calcular_preco_ideal_ml, arredondar_para_90, buscar_frete_ml, calcular_margem_ml
+
+    marketplace, tipo_classico, tipo_premium, config = _get_config_ml()
+    d_config = config_para_dict(config)
+
+    produtos = Produto.objects.all()
+    salvos = 0
+    erros = 0
+
+    for produto in produtos:
+        try:
+            d = produto_para_dict(produto)
+            res_c, res_p = _calcular_resultado_produto(d, tipo_classico, tipo_premium, d_config)
+
+            if res_c.get('preco'):
+                Anuncio.objects.filter(
+                    produto=produto, tipo_anuncio=tipo_classico
+                ).update(preco_ideal=res_c['preco'], calculado_em=timezone.now())
+
+            if res_p and res_p.get('preco'):
+                Anuncio.objects.filter(
+                    produto=produto, tipo_anuncio=tipo_premium
+                ).update(preco_ideal=res_p['preco'], calculado_em=timezone.now())
+
+            salvos += 1
+        except Exception:
+            erros += 1
+
+    return JsonResponse({'ok': True, 'salvos': salvos, 'erros': erros})

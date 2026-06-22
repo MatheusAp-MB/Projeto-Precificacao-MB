@@ -192,7 +192,23 @@ function recalcularAlteracoes() {
 }
 
 function recalcularTudo() {
-  alert('Em breve: recalculará todos os produtos.');
+  const btn = document.querySelector('.btn-toolbar-primary');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculando...';
+
+  fetch(recalcularTudoUrl, {
+    method: 'POST',
+    headers: { 'X-CSRFToken': getCookie('csrftoken') },
+  })
+  .then(r => r.json())
+  .then(function(data) {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-calculator"></i> Recalcular tudo';
+    if (data.ok) {
+      alert(data.salvos + ' produtos calculados com sucesso!' + (data.erros ? '\n' + data.erros + ' erros.' : ''));
+      location.reload();
+    }
+  });
 }
 
 function salvar() {

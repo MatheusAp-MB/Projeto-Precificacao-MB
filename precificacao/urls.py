@@ -16,4 +16,6 @@ urlpatterns = [
          views.calcular_produto_ml, name='calcular_produto_ml'),
     path('precificacao/ml/salvar/', views.salvar_precificacao_ml,
          name='salvar_precificacao_ml'),
+    path('precificacao/ml/recalcular-tudo/',
+         views.recalcular_tudo_ml, name='recalcular_tudo_ml'),
 ]
