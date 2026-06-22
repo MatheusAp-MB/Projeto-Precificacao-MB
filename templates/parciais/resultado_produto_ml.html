@@ -28,6 +28,12 @@
     <div class="resultado-bloco-label">Preço ideal Clássico</div>
     <div class="resultado-bloco-preco">R$ {{ res_classico.preco }}</div>
     <div class="resultado-bloco-margem">✓ Margem {{ res_classico.margem_pct }}%</div>
+    {% if diff_classico %}
+      <div class="resultado-bloco-diff {% if diff_classico.positivo %}diff-positivo{% else %}diff-negativo{% endif %}">
+        {% if diff_classico.positivo %}▲{% else %}▼{% endif %}
+        R$ {{ diff_classico.valor|floatformat:2 }} em relação ao salvo
+      </div>
+    {% endif %}
   </div>
 
   {% if res_premium %}
@@ -38,6 +44,12 @@
         <div class="resultado-bloco-label">Preço ideal Premium</div>
         <div class="resultado-bloco-preco">R$ {{ res_premium.preco }}</div>
         <div class="resultado-bloco-margem">✓ Margem {{ res_premium.margem_pct }}%</div>
+        {% if diff_premium %}
+          <div class="resultado-bloco-diff {% if diff_premium.positivo %}diff-positivo{% else %}diff-negativo{% endif %}">
+            {% if diff_premium.positivo %}▲{% else %}▼{% endif %}
+            R$ {{ diff_premium.valor|floatformat:2 }} em relação ao salvo
+          </div>
+        {% endif %}
       </div>
     {% endif %}
   {% endif %}

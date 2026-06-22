@@ -3,6 +3,8 @@
 <div class="expand-inner" id="painel-{{ produto.id }}">
 
   <input type="hidden" name="produto_id" value="{{ produto.id }}">
+  <input type="hidden" name="preco_ref_classico" value="{{ preco_ref_classico|default:'' }}">
+  <input type="hidden" name="preco_ref_premium"  value="{{ preco_ref_premium|default:'' }}">
 
   <div class="expand-grid">
 

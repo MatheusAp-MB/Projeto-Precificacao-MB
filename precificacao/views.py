@@ -247,12 +247,21 @@ def painel_produto_ml(request, produto_id):
     res_c, res_p = _calcular_resultado_produto(
         d_produto, tipo_classico, tipo_premium, d_config)
 
+    anuncio_c = Anuncio.objects.filter(
+        produto=produto, tipo_anuncio=tipo_classico, tipo_envio='FULL'
+    ).first()
+    anuncio_p = Anuncio.objects.filter(
+        produto=produto, tipo_anuncio=tipo_premium, tipo_envio='FULL'
+    ).first()
+
     return render(request, 'parciais/painel_produto_ml.html', {
-        'produto':       produto,
-        'res_classico':  res_c,
-        'res_premium':   res_p,
-        'tipo_classico': tipo_classico,
-        'tipo_premium':  tipo_premium,
+        'produto':          produto,
+        'res_classico':     res_c,
+        'res_premium':      res_p,
+        'tipo_classico':    tipo_classico,
+        'tipo_premium':     tipo_premium,
+        'preco_ref_classico': anuncio_c.preco_atual if anuncio_c else None,
+        'preco_ref_premium':  anuncio_p.preco_atual if anuncio_p else None,
     })
 
 
@@ -261,10 +270,12 @@ def calcular_produto_ml(request):
     """HTMX — recalcula em tempo real quando um campo é alterado no painel."""
     def _f(key, default=0.0):
         try:
-            return float(request.POST.get(key, default))
+            val = str(request.POST.get(key, default))
+            val = val.replace('.', '').replace(',', '.')
+            return float(val)
         except (ValueError, TypeError):
             return float(default)
-
+        
     produto_id = request.POST.get('produto_id')
     produto = get_object_or_404(Produto, pk=produto_id)
     marketplace, tipo_classico, tipo_premium, config = _get_config_ml()
@@ -288,9 +299,21 @@ def calcular_produto_ml(request):
     res_c, res_p = _calcular_resultado_produto(
         d_produto, tipo_classico, tipo_premium, d_config)
 
+    def _diff(preco_novo, preco_ref_str):
+        try:
+            ref = float(str(preco_ref_str).replace(".", "").replace(',', '.'))
+            if ref and preco_novo:
+                diff = float(preco_novo) - ref
+                return {'valor': round(diff, 2), 'positivo': diff > 0}
+        except (ValueError, TypeError):
+            pass
+        return None
+
     return render(request, 'parciais/resultado_produto_ml.html', {
-        'res_classico': res_c,
-        'res_premium':  res_p,
+        'res_classico':  res_c,
+        'res_premium':   res_p,
+        'diff_classico': _diff(res_c.get('preco'), request.POST.get('preco_ref_classico', '')),
+        'diff_premium':  _diff(res_p.get('preco') if res_p else None, request.POST.get('preco_ref_premium', '')),
     })
 
 
