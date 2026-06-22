@@ -24,11 +24,14 @@ function togglePainel(produtoId, btn) {
     btn.classList.remove('ativo');
     btn.innerHTML = '<i class="fas fa-pencil-alt"></i> Editar';
     } else {
-        expandRow.style.display = '';
-        btn.classList.add('ativo');
-        btn.innerHTML = '<i class="fas fa-chevron-up"></i> Fechar';
-        setTimeout(function() { ajustarAlturaPainel(produtoId); }, 50);
-      }
+    expandRow.style.display = '';
+    btn.classList.add('ativo');
+    btn.innerHTML = '<i class="fas fa-chevron-up"></i> Fechar';
+    setTimeout(function() {
+      ajustarAlturaPainel(produtoId);
+      expandRow.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }, 100);
+  }
 
   ajustarAltura();
 }

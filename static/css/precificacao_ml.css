@@ -516,6 +516,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 20px;
+    max-height: 330px;
 }
 
 /* Títulos das seções com barra colorida */
