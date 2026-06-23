@@ -207,6 +207,60 @@ Tags disponíveis:
 
 ---
 
+## Padronização de arquivos e pastas
+
+### Nomenclatura de arquivos
+
+| Tipo | Prefixo | Exemplo |
+|---|---|---|
+| CSS | `layout_` | `layout_global.css` |
+| HTML base | `estrutura_base_` | `estrutura_base_global.html` |
+| HTML parcial | `estrutura_parcial_` | `estrutura_parcial_card.html` |
+| HTML página | `estrutura_` | `estrutura_home.html` |
+| JS | `script_` | `script_global.js` |
+
+### Estrutura de pastas
+
+**`static/`**
+```
+static/
+├── base_compartilhada/
+│   ├── css/
+│   ├── js/
+│   └── img/
+└── pagina_[nome]/
+    ├── css/
+    └── js/
+```
+
+**`templates/`**
+```
+templates/
+├── base_compartilhada/
+│   ├── estrutura_base_global.html
+│   └── parciais/
+│       └── estrutura_parcial_[nome].html
+└── pagina_[nome]/
+    ├── estrutura_[nome].html
+    └── parciais/
+        └── estrutura_parcial_[nome].html
+```
+
+### Regras
+- Arquivos compartilhados entre páginas → `base_compartilhada/`
+- Cada página tem sua própria pasta em `static/` e `templates/`
+- Nunca misturar arquivos de páginas diferentes na mesma pasta
+
+### Lembrete
+
+Sobre parcial vs base em HTML:
+
+- Base — é o esqueleto que outras páginas herdam. Define a estrutura global (head, sidebar, toolbar). Outras páginas estendem ela com {% extends %}. Existe uma por tipo de layout.
+
+- Parcial — é um fragmento reutilizável que é incluído dentro de uma página com {% include %}. Exemplos: um card de produto, uma mensagem de erro, uma tabela. Pode existir vários.
+
+---
+
 ## Notas importantes
 
 - O banco de dados é local em cada máquina — não é compartilhado

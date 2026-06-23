@@ -20,6 +20,7 @@ nav:
 
   - 04 - Padrões:
     - Comentários e Tags: 04__Padroes/comentarios.md
+    - Nomenclatura e Estrutura: 04__Padroes/nomenclatura.md
     
   - 05 - Estrutura Física:
     - Visão Geral: 05__Estrutura_Fisica_do_Projeto/index.md
