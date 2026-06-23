@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,13 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-66%o=rifv!glcw1#qi5wrd1yz+7fgqo)kxq+@dyvyph5lj$*(('
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
+# * [IMPORTANTE] → Valores sensíveis vêm do arquivo .env — nunca hardcode aqui
+SECRET_KEY = os.getenv('SECRET_KEY')
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -59,7 +60,8 @@ ROOT_URLCONF = 'Projeto_Sistema_Interno_MB_SV.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        # * [EXPLICAÇÃO] → Aponta para a pasta templates/ na raiz do projeto
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -77,10 +79,20 @@ WSGI_APPLICATION = 'Projeto_Sistema_Interno_MB_SV.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+# * [IMPORTANTE] → Credenciais do banco vêm do .env — nunca hardcode aqui
+# * [EXPLICAÇÃO] → Usamos MySQL com charset utf8mb4 para suporte completo
+# *                a caracteres especiais e acentos do português
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '3306'),
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+        },
     }
 }
 
@@ -107,9 +119,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
+# * [EXPLICAÇÃO] → Configurado para português brasileiro e fuso de São Paulo
+LANGUAGE_CODE = 'pt-br'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
@@ -120,3 +132,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# * [EXPLICAÇÃO] → Aponta para a pasta static/ na raiz do projeto
+STATICFILES_DIRS = [BASE_DIR / 'static']
