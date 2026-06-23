@@ -5,18 +5,35 @@ dev_addr: 127.0.0.1:8001
 
 nav:
   - Início: index.md
+
   - 01 - Projeto:
     - Visão Geral: 01__Projeto/visao-geral.md
     - Tecnologias: 01__Projeto/tecnologias.md
+
   - 02 - Git, GitHub e GitHub Desktop:
-    - Configuração Inicial: 02__GIT_GITHUB_GITHUB_DESKTOP/configuracao-inicial.md
     - Branches e Git: 02__GIT_GITHUB_GITHUB_DESKTOP/branches-e-git.md
+    - Configuração Inicial: 02__GIT_GITHUB_GITHUB_DESKTOP/configuracao-inicial.md
+
   - 03 - Django:
     - Estrutura do Projeto: 03__Django/estrutura-do-projeto.md
+
   - 04 - Padrões:
-    - Comentários: 04__Padroes/comentarios.md
+    - Comentários e Tags: 04__Padroes/comentarios.md
     - Commits: 04__Padroes/commits.md
-  - 05 - Estrutura Física: 05__Estrutura_Fisica_do_Projeto/index.md
+
+  - 05 - Estrutura Física:
+    - Visão Geral: 05__Estrutura_Fisica_do_Projeto/index.md
+    - .gitignore: 05__Estrutura_Fisica_do_Projeto/gitignore.md
+    - mkdocs.yml: 05__Estrutura_Fisica_do_Projeto/mkdocs.yml.md
+    - pyproject.toml: 05__Estrutura_Fisica_do_Projeto/pyproject.toml.md
+    - poetry.lock: 05__Estrutura_Fisica_do_Projeto/poetry.lock.md
+    - manage.py: 05__Estrutura_Fisica_do_Projeto/manage.py.md
+    - Projeto_Sistema_Interno_MB_SV/:
+      - __init__.py: 05__Estrutura_Fisica_do_Projeto/Projeto_Sistema_Interno_MB_SV/__init__.py.md
+      - settings.py: 05__Estrutura_Fisica_do_Projeto/Projeto_Sistema_Interno_MB_SV/settings.py.md
+      - urls.py: 05__Estrutura_Fisica_do_Projeto/Projeto_Sistema_Interno_MB_SV/urls.py.md
+      - wsgi.py: 05__Estrutura_Fisica_do_Projeto/Projeto_Sistema_Interno_MB_SV/wsgi.py.md
+      - asgi.py: 05__Estrutura_Fisica_do_Projeto/Projeto_Sistema_Interno_MB_SV/asgi.py.md
 
 theme:
   name: material
@@ -29,13 +46,13 @@ theme:
     primary: custom
     accent: custom
   features:
-      - navigation.tabs
-      - navigation.tabs.sticky
-      - navigation.sections
-      - navigation.top
-      - search.highlight
-      - search.suggest
-      - content.code.copy
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.top
+    - search.highlight
+    - search.suggest
+    - content.code.copy
 
 extra_css:
   - stylesheets/extra.css

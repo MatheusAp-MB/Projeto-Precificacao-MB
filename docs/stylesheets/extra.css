@@ -1,38 +1,181 @@
+/*
+* [RESUMO] → Estilos customizados do MkDocs Material para o Projeto Sistema Interno MB/SV.
+* Sobrescreve o tema padrão com as cores e layout do projeto.
+* Organizado na mesma ordem que aparece visualmente na página:
+* variáveis → header → tabs → sidebar → conteúdo → tipografia
+*/
+
+/* + [STATUS GERAL: APROVADO] → Todas as seções testadas e aprovadas visualmente */
+
+/* 
+* ================================================
+*            VARIÁVEIS GLOBAIS DE COR
+*     Centraliza todas as cores do projeto.
+*     Para alterar o tema, mude apenas aqui.
+* ================================================
+*/
 :root {
-  --md-primary-fg-color:        #1a3a5c;
-  --md-primary-fg-color--light: #2e7bb5;
-  --md-primary-fg-color--dark:  #0f2744;
-  --md-accent-fg-color:         #2e7bb5;
-  --md-typeset-a-color:         #2e7bb5;
+    /** [EXPLICAÇÃO] → Cores primárias — azul escuro do projeto */
+    --md-primary-fg-color: #1a3a5c;
+    --md-primary-fg-color--light: #2e7bb5;
+    --md-primary-fg-color--dark: #0f2744;
+
+    /** [EXPLICAÇÃO] → Cor de destaque — links e elementos ativos */
+    --md-accent-fg-color: #2e7bb5;
+    --md-typeset-a-color: #2e7bb5;
+
+    /** [EXPLICAÇÃO] → Cores de texto — usadas na tipografia e nav */
+    --cor-texto-principal: #1a3a5c;
+    --cor-texto-secundario: #15304f;
+    --cor-texto-nav: #444444;
+    --cor-borda: #000000;
 }
 
+/* 
+* ================================================
+*    HEADER — barra superior com título e busca
+* ================================================ 
+*/
 .md-header {
-  background-color: #1a3a5c;
+    /*
+    * [EXPLICAÇÃO] → Força a cor de fundo do header para o azul escuro do projeto.
+    * O Material usa a cor primária por padrão, mas sobrescrevemos
+    * para garantir consistência visual.
+    */
+    background-color: var(--md-primary-fg-color);
 }
 
+/*
+* ================================================
+*    TABS — navbar de navegação entre seções
+* ================================================ 
+*/
 .md-tabs {
-  background-color: #15304f;
+    /*
+    * [EXPLICAÇÃO] → Tom ligeiramente mais escuro que o header
+    * para criar separação visual entre os dois elementos.
+    */
+    background-color: var(--md-primary-fg-color--dark);
 }
 
-/* Oculta a navegação lateral quando está na página inicial */
-.md-nav--primary .md-nav__title {
-  display: none;
+/* 
+* ================================================
+*    LAYOUT PRINCIPAL — grid de colunas
+* ================================================ 
+*/
+.md-main__inner.md-grid {
+    /*
+    * [EXPLICAÇÃO] → O Material usa um grid centralizado com max-width.
+    * Removemos essa limitação para o conteúdo ocupar toda a largura da tela,
+    * encostando o menu lateral na borda esquerda.
+    */
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
+/* 
+* ================================================
+*    SIDEBAR ESQUERDA — menu de navegação lateral
+* ================================================ 
+*/
 .md-sidebar--primary {
-  width: 0;
-  min-width: 0;
+    width: 200px !important;
+    left: 0 !important;
+    padding-left: 0 !important;
 }
 
-/* Aumenta contraste do título da página */
+.md-sidebar--primary .md-sidebar__scrollwrap {
+    /*
+    * [EXPLICAÇÃO] → Mantém 20px de espaço interno à esquerda
+    * para o conteúdo não ficar completamente colado na borda.
+    */
+    padding: 0 0 0 20px !important;
+    margin: 0 !important;
+}
+
+/** [EXPLICAÇÃO] → Título da seção no menu lateral */
+.md-nav--primary .md-nav__title {
+    font-size: 0.65rem;
+    color: var(--cor-texto-principal);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 8px 12px 4px;
+}
+
+/** [EXPLICAÇÃO] → Itens do menu lateral */
+.md-nav--primary .md-nav__item {
+    font-size: 0.75rem;
+}
+
+/** [EXPLICAÇÃO] → Links do menu lateral */
+.md-nav--primary .md-nav__link {
+    padding: 4px 12px;
+    color: var(--cor-texto-nav);
+}
+
+/** [EXPLICAÇÃO] → Link ativo — página atual */
+.md-nav--primary .md-nav__link--active {
+    color: var(--md-primary-fg-color--light);
+    font-weight: 600;
+}
+
+/*
+* ================================================
+*    SIDEBAR DIREITA — índice da página atual
+* ================================================ 
+*/
+.md-sidebar--secondary {
+    width: 300px !important;
+}
+
+/** [EXPLICAÇÃO] →Itens do índice — separados por linha */
+.md-nav.md-nav--secondary>.md-nav__list>.md-nav__item {
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--cor-borda);
+}
+
+/*
+* ================================================
+*        ÁREA DE CONTEÚDO PRINCIPAL
+* ================================================
+*/
+.md-sidebar__inner {
+    /*
+    * [EXPLICAÇÃO] → Remove padding e margin padrão do Material
+    * para que o layout customizado funcione corretamente.
+    */
+    padding: 0px !important;
+    margin: 0px !important;
+    text-align: left !important;
+}
+
+body>div.md-container>main>div>div.md-content {
+    /*
+    * [EXPLICAÇÃO] → Bordas laterais para delimitar visualmente
+    * a área de conteúdo entre os dois menus laterais.
+    */
+    border-inline: 1px solid var(--cor-borda);
+}
+
+/*
+* ================================================
+*    TIPOGRAFIA — títulos e subtítulos
+* ================================================
+*/
 .md-typeset h1 {
-  color: #1a3a5c;
-  font-weight: 700;
+    /*
+    * [IMPORTANTE] → O Material usa cinza claro por padrão para h1,
+    * o que gera pouco contraste com o fundo branco.
+    * Forçamos o azul escuro do projeto para melhor legibilidade.
+    */
+    color: var(--cor-texto-principal);
+    font-weight: 700;
 }
 
-/* Aumenta contraste dos subtítulos */
 .md-typeset h2,
 .md-typeset h3 {
-  color: #15304f;
-  font-weight: 600;
+    color: var(--cor-texto-secundario);
+    font-weight: 600;
 }

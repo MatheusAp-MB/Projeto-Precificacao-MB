@@ -1,0 +1,89 @@
+:root {
+  --md-primary-fg-color:        #1a3a5c;
+  --md-primary-fg-color--light: #2e7bb5;
+  --md-primary-fg-color--dark:  #0f2744;
+  --md-accent-fg-color:         #2e7bb5;
+  --md-typeset-a-color:         #2e7bb5;
+}
+
+.md-header {
+  background-color: #1a3a5c;
+}
+
+.md-tabs {
+  background-color: #15304f;
+}
+
+/* Menu lateral — compacto e elegante */
+.md-sidebar--primary {
+  width: 200px !important; /* ajuste esse valor */
+  left: 0 !important;
+  padding-left: 0 !important;
+}
+
+.md-sidebar--primary .md-sidebar__scrollwrap {
+  padding: 0 0 0 20px !important;
+  margin: 0 !important;
+}
+
+.md-sidebar--secondary {
+  width: 300px !important;  /* ajuste esse valor */
+}
+
+.md-sidebar__inner{
+  padding: 0px !important;
+  margin: 0px !important;
+  /* background-color: red; */
+  text-align: left !important;
+}
+.md-nav.md-nav--secondary> .md-nav__list> .md-nav__item{
+  /* background-color: red; */
+  padding-bottom: 10px;
+  border-bottom: 1px solid #000000;
+}
+
+body > div.md-container > main > div > div.md-content{
+  border-inline: 1px solid #000000;
+}
+
+.md-nav--primary .md-nav__title {
+  font-size: 0.65rem;
+  color: #1a3a5c;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 8px 12px 4px;
+}
+
+.md-nav--primary .md-nav__item {
+  font-size: 0.75rem;
+}
+
+.md-nav--primary .md-nav__link {
+  padding: 4px 12px;
+  color: #444;
+}
+
+.md-nav--primary .md-nav__link--active {
+  color: #2e7bb5;
+  font-weight: 600;
+}
+
+/* Aumenta contraste do título da página */
+.md-typeset h1 {
+  color: #1a3a5c;
+  font-weight: 700;
+}
+
+/* Aumenta contraste dos subtítulos */
+.md-typeset h2,
+.md-typeset h3 {
+  color: #15304f;
+  font-weight: 600;
+}
+
+.md-main__inner.md-grid {
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
