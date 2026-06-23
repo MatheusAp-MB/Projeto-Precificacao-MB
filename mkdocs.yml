@@ -1,0 +1,41 @@
+site_name: Projeto - Sistema Interno MB/SV
+site_description: Documentação interna do sistema
+docs_dir: docs
+dev_addr: 127.0.0.1:8001
+
+nav:
+  - Início: index.md
+  - 01 - Projeto:
+    - Visão Geral: 01__Projeto/visao-geral.md
+    - Tecnologias: 01__Projeto/tecnologias.md
+  - 02 - Git, GitHub e GitHub Desktop:
+    - Configuração Inicial: 02__GIT_GITHUB_GITHUB_DESKTOP/configuracao-inicial.md
+    - Branches e Git: 02__GIT_GITHUB_GITHUB_DESKTOP/branches-e-git.md
+  - 03 - Django:
+    - Estrutura do Projeto: 03__Django/estrutura-do-projeto.md
+  - 04 - Padrões:
+    - Comentários: 04__Padroes/comentarios.md
+    - Commits: 04__Padroes/commits.md
+  - 05 - Estrutura Física: 05__Estrutura_Fisica_do_Projeto/index.md
+
+theme:
+  name: material
+  language: pt-BR
+  font:
+    text: Inter
+    code: JetBrains Mono
+  palette:
+    scheme: default
+    primary: custom
+    accent: custom
+  features:
+      - navigation.tabs
+      - navigation.tabs.sticky
+      - navigation.sections
+      - navigation.top
+      - search.highlight
+      - search.suggest
+      - content.code.copy
+
+extra_css:
+  - stylesheets/extra.css

@@ -1,0 +1,38 @@
+:root {
+  --md-primary-fg-color:        #1a3a5c;
+  --md-primary-fg-color--light: #2e7bb5;
+  --md-primary-fg-color--dark:  #0f2744;
+  --md-accent-fg-color:         #2e7bb5;
+  --md-typeset-a-color:         #2e7bb5;
+}
+
+.md-header {
+  background-color: #1a3a5c;
+}
+
+.md-tabs {
+  background-color: #15304f;
+}
+
+/* Oculta a navegação lateral quando está na página inicial */
+.md-nav--primary .md-nav__title {
+  display: none;
+}
+
+.md-sidebar--primary {
+  width: 0;
+  min-width: 0;
+}
+
+/* Aumenta contraste do título da página */
+.md-typeset h1 {
+  color: #1a3a5c;
+  font-weight: 700;
+}
+
+/* Aumenta contraste dos subtítulos */
+.md-typeset h2,
+.md-typeset h3 {
+  color: #15304f;
+  font-weight: 600;
+}

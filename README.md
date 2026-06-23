@@ -1,9 +1,9 @@
-# ⚠️ INSTRUÇÃO PARA A LLM — LEIA ANTES DE QUALQUER COISA
+# INSTRUÇÃO PARA A LLM — LEIA ANTES DE QUALQUER COISA
 
-Se você é uma LLM (Claude, GPT, ou qualquer outra) lendo este arquivo:
+Se você é uma LLM lendo este arquivo:
 
-1. **SEMPRE pergunte ao usuário em qual branch estamos trabalhando antes de qualquer ação**
-2. **SEMPRE sincronize o repositório com a branch correta antes de analisar ou gerar código**
+1. SEMPRE pergunte ao usuário em qual branch estamos trabalhando antes de qualquer ação
+2. SEMPRE sincronize o repositório com a branch correta antes de analisar ou gerar código
 3. A branch de trabalho atual é a `dev` — mas confirme com o usuário
 
 ```
@@ -29,28 +29,30 @@ integrando processos como precificação, gestão de produtos e anúncios em mar
 
 ---
 
-## ⚠️ REGRAS QUE NÃO PODEM SER ESQUECIDAS
+## README vs MkDocs — qual usar?
 
-### MkDocs e o projeto caminham juntos
-- **Nunca crie um arquivo no projeto sem criar o espelho no MkDocs**
-- **Nunca remova um arquivo do projeto sem remover o espelho no MkDocs**
-- **Nunca crie uma pasta no projeto sem criar a pasta espelho no MkDocs**
-- Todo commit deve incluir tanto o arquivo do projeto quanto sua documentação no MkDocs
-
-### README vs MkDocs — qual usar?
 | | README | MkDocs |
 |---|---|---|
 | **O que é** | Lista de regras e instruções críticas | Enciclopédia e espelho vivo do projeto |
 | **Para que serve** | O que não pode esquecer | Conhecimento, explicações, documentação |
 | **Quando consultar** | Antes de começar qualquer sessão | Para entender como algo funciona |
-| **Quem escreve** | Só coisas essenciais e permanentes | Tudo que for aprendido ou decidido |
+
+---
+
+## REGRAS QUE NÃO PODEM SER ESQUECIDAS
+
+### MkDocs e o projeto caminham juntos
+- Nunca crie um arquivo no projeto sem criar o espelho no MkDocs
+- Nunca remova um arquivo do projeto sem remover o espelho no MkDocs
+- Nunca crie uma pasta no projeto sem criar a pasta espelho no MkDocs
+- Todo commit deve incluir tanto o arquivo do projeto quanto sua documentação no MkDocs
 
 ### MkDocs é um espelho vivo do projeto
-A pasta `docs/` replica **exatamente** a estrutura física do projeto no VSCode:
+A pasta `docs/` replica exatamente a estrutura física do projeto no VSCode:
 - Cada pasta do projeto → pasta equivalente no `docs/`
 - Cada arquivo do projeto → arquivo de documentação equivalente no `docs/`
 - O arquivo de documentação explica o que o arquivo real faz
-- **Não é uma cópia do código** — é uma explicação do código
+- Não é uma cópia do código — é uma explicação do código
 
 ---
 
@@ -58,9 +60,9 @@ A pasta `docs/` replica **exatamente** a estrutura física do projeto no VSCode:
 
 | Branch | Função | Pode mexer? |
 |--------|--------|-------------|
-| `main` | Produção — código estável e aprovado | ❌ Nunca |
-| `dev` | Desenvolvimento atual — branch de trabalho | ✅ Sempre |
-| `old_dev` | Referência — versão anterior do projeto | ⚠️ Só consulta |
+| `main` | Produção — código estável e aprovado | Nunca |
+| `dev` | Desenvolvimento atual — branch de trabalho | Sempre |
+| `old_dev` | Referência — versão anterior do projeto | Só consulta |
 
 ### Regras de branch
 - Todo desenvolvimento acontece na `dev`
@@ -91,7 +93,7 @@ apresentação e aprovação. Ela serve como:
 | MySQL | 8.x | Banco de dados |
 | Poetry | 2.x | Gerenciamento de dependências |
 | HTMX | 1.9 | Interatividade sem JavaScript complexo |
-| MkDocs | — | Documentação do projeto |
+| MkDocs Material | — | Documentação do projeto |
 | Git | — | Controle de versão |
 
 ---
@@ -152,14 +154,29 @@ LOGIN_REQUIRED=False
 
 Ver arquivo `COMMENTS.md` na raiz do projeto.
 
-Resumo das tags usadas com a extensão **Better Comments**:
+Cada tipo de arquivo tem sua própria sintaxe de comentário:
+
+| Tipo de arquivo | Sintaxe |
+|---|---|
+| `.py` | `#` |
+| `.html` | `<!-- -->` |
+| `.js` | `//` |
+| `.css` | `/* */` |
+| `.yml` | `#` |
+| `.sql` | `--` |
+
+Arquivos `.md` não precisam de comentários.
+
+**Tudo que envolve banco de dados deve ser comentado com atenção especial.**
+
+Tags disponíveis:
 
 ```python
 # + [STATUS: APROVADO]          → Testado e funcionando
 # ! [STATUS: ATENÇÃO]           → Falha, erro ou problema
 # ~ [STATUS: EM TESTE]          → Aguardando validação
 # # [STATUS: DESENVOLVIMENTO]   → Incompleto, não usar
-# * [IMPORTANTE] / [EXPLICAÇÃO] → Detalhe crítico ou explicação
+# * [IMPORTANTE] / [EXPLICAÇÃO] / [RESUMO] → Detalhe crítico ou explicação
 ```
 
 ---
@@ -169,17 +186,14 @@ Resumo das tags usadas com a extensão **Better Comments**:
 > Esta seção será atualizada conforme os módulos forem sendo construídos.
 
 | Módulo | Status | Descrição |
-|--------|--------|-----------| 
-| Autenticação | 🔧 Em construção | Login, logout, controle de acesso |
-| Home | 🔧 Em construção | Painel principal com cards de módulos |
-| Precificação ML | 📋 Planejado | Cálculo de preço ideal para Mercado Livre |
+|--------|--------|-----------|
+| Autenticação | Em construção | Login, logout, controle de acesso |
+| Home | Em construção | Painel principal com cards de módulos |
+| Precificação ML | Planejado | Cálculo de preço ideal para Mercado Livre |
 
 ---
 
-## Convenções do projeto
-
-### Commits
-Seguir o padrão **Conventional Commits**:
+## Convenções de commit
 
 | Prefixo | Quando usar |
 |---------|-------------|
@@ -195,7 +209,7 @@ Seguir o padrão **Conventional Commits**:
 
 ## Notas importantes
 
-- O banco de dados é **local** em cada máquina — não é compartilhado
+- O banco de dados é local em cada máquina — não é compartilhado
 - Cada PC precisa do seu próprio `.env`
 - O MySQL deve estar rodando antes de iniciar o servidor
 - O sistema é desenvolvido e testado em casa em um monitor QHD 27"
