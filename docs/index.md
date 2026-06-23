@@ -38,7 +38,7 @@ A documentação está organizada em 5 seções:
 - [Branches e Git](02__GIT_GITHUB_GITHUB_DESKTOP/branches-e-git.md)
 - [Estrutura do projeto Django](03__Django/estrutura-do-projeto.md)
 - [Convenção de comentários](04__Padroes/comentarios.md)
-- [Convenção de commits](04__Padroes/commits.md)
+- [Convenção de commits](02__GIT_GITHUB_GITHUB_DESKTOP\branches-e-git.md)
 
 ---
 
