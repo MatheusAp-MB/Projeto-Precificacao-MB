@@ -1,22 +1,15 @@
-"""
-URL configuration for Projeto_Sistema_Interno_MB_SV project.
+# * [RESUMO] → Arquivo de URLs principal do projeto.
+#              Centraliza todas as rotas e delega para os urls.py de cada app.
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/6.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
 urlpatterns = [
+    # * [EXPLICAÇÃO] → Rota do painel administrativo do Django.
+    #                  Acessível em /admin/
     path('admin/', admin.site.urls),
+
+    # * [EXPLICAÇÃO] → Rotas do app core — login, logout e homepage.
+    #                  O include() delega para o urls.py do app core.
+    path('', include('core.urls')),
 ]

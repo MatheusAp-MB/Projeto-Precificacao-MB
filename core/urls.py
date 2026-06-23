@@ -1,0 +1,15 @@
+
+# * [RESUMO] → URLs do app core. Define as rotas globais do sistema — login e logout.
+
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    # * [EXPLICAÇÃO] → Rota de login — acessível sem autenticação.
+    #                  Definida como rota pública no middleware.
+    path('login/', views.view_login, name='login'),
+
+    # * [EXPLICAÇÃO] → Rota de logout — encerra a sessão e redireciona
+    #                  para o login.
+    path('logout/', views.view_logout, name='logout'),
+]

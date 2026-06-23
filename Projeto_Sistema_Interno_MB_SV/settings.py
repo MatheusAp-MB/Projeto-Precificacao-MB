@@ -53,6 +53,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+   
+    # * [EXPLICAÇÃO] → Middleware customizado de autenticação global. Controla o acesso a todas as rotas do sistema.
+    'core.middleware.AutenticacaoMiddleware',
 ]
 
 ROOT_URLCONF = 'Projeto_Sistema_Interno_MB_SV.urls'

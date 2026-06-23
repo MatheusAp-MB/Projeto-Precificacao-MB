@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <!--
+    * [RESUMO] → Template da tela de login do sistema.
+    * Estilo simples e funcional — será refinado visualmente depois.
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — Sistema Interno MB/SV</title>
+</head>
+<body>
+
+    <h1>Sistema Interno MB/SV</h1>
+    <h2>Login</h2>
+
+    <!--
+    * [EXPLICAÇÃO] → Exibe a mensagem de erro se as credenciais
+    * estiverem incorretas. O erro vem da view_login.
+    -->
+    {% if erro %}
+        <p style="color: red;">{{ erro }}</p>
+    {% endif %}
+
+    <!--
+    * [EXPLICAÇÃO] → O method POST envia os dados de forma segura.
+    * O csrf_token é obrigatório em todo formulário Django — protege
+    * contra ataques CSRF (Cross-Site Request Forgery).
+    -->
+    <form method="POST">
+        {% csrf_token %}
+
+        <div>
+            <label for="username">Usuário</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+
+        <div>
+            <label for="password">Senha</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+
+        <button type="submit">Entrar</button>
+
+    </form>
+
+</body>
+</html>
