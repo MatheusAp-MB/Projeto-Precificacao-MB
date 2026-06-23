@@ -37,7 +37,7 @@ def view_login(request):
             #                  estão erradas. Passamos o erro para o template.
             erro = 'Usuário ou senha incorretos.'
 
-    return render(request, 'pagina_login/login.html', {'erro': erro})
+    return render(request, 'pagina_login/estrutura_login.html', {'erro': erro})
 
 
 # ================================================
