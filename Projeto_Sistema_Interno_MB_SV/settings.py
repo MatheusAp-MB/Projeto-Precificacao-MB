@@ -30,6 +30,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+# * [EXPLICAÇÃO] → Apps do projeto — cada módulo do sistema é registrado aqui
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -37,6 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # * [EXPLICAÇÃO] → App principal do projeto — abriga comandos globais, middleware customizado e utilitários compartilhados entre módulos.
+    'core',
+    
 ]
 
 MIDDLEWARE = [
