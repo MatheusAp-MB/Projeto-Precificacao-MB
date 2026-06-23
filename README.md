@@ -29,6 +29,31 @@ integrando processos como precificação, gestão de produtos e anúncios em mar
 
 ---
 
+## ⚠️ REGRAS QUE NÃO PODEM SER ESQUECIDAS
+
+### MkDocs e o projeto caminham juntos
+- **Nunca crie um arquivo no projeto sem criar o espelho no MkDocs**
+- **Nunca remova um arquivo do projeto sem remover o espelho no MkDocs**
+- **Nunca crie uma pasta no projeto sem criar a pasta espelho no MkDocs**
+- Todo commit deve incluir tanto o arquivo do projeto quanto sua documentação no MkDocs
+
+### README vs MkDocs — qual usar?
+| | README | MkDocs |
+|---|---|---|
+| **O que é** | Lista de regras e instruções críticas | Enciclopédia e espelho vivo do projeto |
+| **Para que serve** | O que não pode esquecer | Conhecimento, explicações, documentação |
+| **Quando consultar** | Antes de começar qualquer sessão | Para entender como algo funciona |
+| **Quem escreve** | Só coisas essenciais e permanentes | Tudo que for aprendido ou decidido |
+
+### MkDocs é um espelho vivo do projeto
+A pasta `docs/` replica **exatamente** a estrutura física do projeto no VSCode:
+- Cada pasta do projeto → pasta equivalente no `docs/`
+- Cada arquivo do projeto → arquivo de documentação equivalente no `docs/`
+- O arquivo de documentação explica o que o arquivo real faz
+- **Não é uma cópia do código** — é uma explicação do código
+
+---
+
 ## Estrutura de branches
 
 | Branch | Função | Pode mexer? |
@@ -66,6 +91,7 @@ apresentação e aprovação. Ela serve como:
 | MySQL | 8.x | Banco de dados |
 | Poetry | 2.x | Gerenciamento de dependências |
 | HTMX | 1.9 | Interatividade sem JavaScript complexo |
+| MkDocs | — | Documentação do projeto |
 | Git | — | Controle de versão |
 
 ---
@@ -143,7 +169,7 @@ Resumo das tags usadas com a extensão **Better Comments**:
 > Esta seção será atualizada conforme os módulos forem sendo construídos.
 
 | Módulo | Status | Descrição |
-|--------|--------|-----------|
+|--------|--------|-----------| 
 | Autenticação | 🔧 Em construção | Login, logout, controle de acesso |
 | Home | 🔧 Em construção | Painel principal com cards de módulos |
 | Precificação ML | 📋 Planejado | Cálculo de preço ideal para Mercado Livre |
@@ -164,9 +190,6 @@ Seguir o padrão **Conventional Commits**:
 | `refactor:` | Reorganização sem mudar comportamento |
 | `test:` | Testes |
 | `style:` | Formatação, CSS, visual |
-
-### Estrutura de arquivos
-> Esta seção será detalhada conforme a estrutura for definida.
 
 ---
 
