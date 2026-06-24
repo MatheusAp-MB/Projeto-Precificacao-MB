@@ -134,6 +134,21 @@ anuncios = Anuncio.objects.select_related('marketplace').all()
 <!-- ! [STATUS: ATENÇÃO] → Não remover — usado por todos os templates filhos -->
 ```
 
+### Atenção — Tags Django em comentários HTML
+
+O Django processa `{% %}` antes de renderizar o HTML.
+Mesmo dentro de comentários, as tags são interpretadas e podem causar erros.
+
+**Solução:** use espaço interno ao mencionar tags Django em comentários.
+
+```html
+<!-- Errado — Django tenta processar e dá erro -->
+<!-- Esta página usa {% extends 'base.html' %} -->
+
+<!-- Correto — espaço interno evita o processamento -->
+<!-- Esta página usa { % extends 'base.html' % } -->
+```
+
 ### JavaScript — linha única e multiblocos
 ```javascript
 // * [RESUMO] → Funções de controle do painel de edição de produtos

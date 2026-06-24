@@ -49,3 +49,13 @@ def view_logout(request):
     #                  remove os dados de autenticação do cookie.
     logout(request)
     return redirect('/login/')
+
+# ================================================
+# HOMEPAGE
+# ================================================
+
+def view_home(request):
+    # * [EXPLICAÇÃO] → View da homepage — página inicial do sistema.
+    #                  Por enquanto só renderiza o template.
+    #                  Futuramente pode receber dados de resumo/dashboard.
+    return render(request, 'pagina_home/estrutura_home.html')

@@ -12,4 +12,8 @@ urlpatterns = [
     # * [EXPLICAÇÃO] → Rota de logout — encerra a sessão e redireciona
     #                  para o login.
     path('logout/', views.view_logout, name='logout'),
+    
+    # * [EXPLICAÇÃO] → Rota da homepage — raiz do sistema.
+    #                  Após o login, o usuário é redirecionado para cá.
+    path('', views.view_home, name='home'),
 ]
