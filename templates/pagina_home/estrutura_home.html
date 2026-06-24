@@ -1,27 +1,21 @@
 <!--
 * [RESUMO] → Template da homepage do sistema.
-* Exibe o grid de módulos disponíveis em cards clicáveis.
-* Herda a estrutura base de estrutura_base_global.html
+* Herda de estrutura_base_grid_card.html — que já inclui
+* o grid e o CSS dos cards.
+* Define apenas os cards específicos da homepage.
 -->
-{% extends 'base_compartilhada/estrutura_base_global.html' %}
+{% extends 'base_compartilhada/estrutura_base_grid_card.html' %}
 {% load static %}
 
 {% block titulo %}Início — Sistema Interno MB/SV{% endblock %}
 {% block toolbar_titulo %}Página Inicial{% endblock %}
 
-{% block head_extra %}
-    <!-- * [EXPLICAÇÃO] → CSS específico da homepage -->
+{% block head_grid %}
+    <!-- * [EXPLICAÇÃO] → CSS exclusivo da homepage, se necessário -->
     <link rel="stylesheet" href="{% static 'pagina_home/css/layout_home.css' %}">
 {% endblock %}
 
-{% block conteudo %}
-
-<!--
-* [EXPLICAÇÃO] → Grid de 3 colunas com 9 cards no total.
-* Bootstrap col-md-4 = 3 colunas em telas médias e grandes.
-* g-4 = gap de 4 unidades entre os cards.
--->
-<div class="row g-4" id="Container_Cards">
+{% block cards %}
 
     <!-- Card: Precificação — ATIVO -->
     <div class="col-md-4">
@@ -46,6 +40,7 @@
     </div>
 
     <!-- Cards em branco — reservados para módulos futuros -->
+    {% for i in "1234567" %}
     <div class="col-md-4">
         <div class="card-modulo card-modulo-vazio">
             <i class="fas fa-plus fa-2x mb-3"></i>
@@ -53,55 +48,6 @@
             <p>Novo módulo</p>
         </div>
     </div>
-
-    <div class="col-md-4">
-        <div class="card-modulo card-modulo-vazio">
-            <i class="fas fa-plus fa-2x mb-3"></i>
-            <h5>Em breve</h5>
-            <p>Novo módulo</p>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card-modulo card-modulo-vazio">
-            <i class="fas fa-plus fa-2x mb-3"></i>
-            <h5>Em breve</h5>
-            <p>Novo módulo</p>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card-modulo card-modulo-vazio">
-            <i class="fas fa-plus fa-2x mb-3"></i>
-            <h5>Em breve</h5>
-            <p>Novo módulo</p>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card-modulo card-modulo-vazio">
-            <i class="fas fa-plus fa-2x mb-3"></i>
-            <h5>Em breve</h5>
-            <p>Novo módulo</p>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card-modulo card-modulo-vazio">
-            <i class="fas fa-plus fa-2x mb-3"></i>
-            <h5>Em breve</h5>
-            <p>Novo módulo</p>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card-modulo card-modulo-vazio">
-            <i class="fas fa-plus fa-2x mb-3"></i>
-            <h5>Em breve</h5>
-            <p>Novo módulo</p>
-        </div>
-    </div>
-
-</div>
+    {% endfor %}
 
 {% endblock %}
