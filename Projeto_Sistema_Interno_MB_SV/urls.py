@@ -12,4 +12,8 @@ urlpatterns = [
     # * [EXPLICAÇÃO] → Rotas do app core — login, logout e homepage.
     #                  O include() delega para o urls.py do app core.
     path('', include('core.urls')),
+    
+    # * [EXPLICAÇÃO] → Rotas do app de precificação por marketplace.
+    #                  O prefixo 'precificacao/' agrupa todas as telas do módulo.
+    path('precificacao/', include('precificacao_marketplaces.urls')),
 ]

@@ -42,6 +42,9 @@ INSTALLED_APPS = [
 
     # * [EXPLICAÇÃO] → App principal do projeto — abriga comandos globais, middleware customizado e utilitários compartilhados entre módulos.
     'core',
+
+    # * [STATUS: DESENVOLVIMENTO] → App de precificação por marketplace (ML e futuros)
+    'precificacao_marketplaces',
     
 ]
 

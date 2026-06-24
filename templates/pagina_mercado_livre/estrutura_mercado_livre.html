@@ -1,0 +1,36 @@
+<!--
+* [RESUMO] → Template da tela do Mercado Livre — grid de opções.
+* Herda de estrutura_base_grid_card.html.
+* Exibe um card por funcionalidade disponível para o marketplace.
+-->
+{% extends 'base_compartilhada/estrutura_base_grid_card.html' %}
+{% load static %}
+
+{% block titulo %}Mercado Livre — Sistema Interno MB/SV{% endblock %}
+{% block toolbar_titulo %}Mercado Livre{% endblock %}
+
+{% block cards %}
+
+    <!-- Card: Tabela de Frete — ATIVO -->
+    <div class="col-md-4">
+        <a href="{% url 'tabela_frete_ml' %}" class="text-decoration-none">
+            <div class="card-modulo">
+                <i class="fas fa-truck fa-2x mb-3"></i>
+                <h5>Tabela de Frete</h5>
+                <p>Consulte e valide a tabela de frete do Mercado Livre</p>
+            </div>
+        </a>
+    </div>
+
+    <!-- Cards em branco — reservados para funcionalidades futuras -->
+    {% for i in "12345678" %}
+    <div class="col-md-4">
+        <div class="card-modulo card-modulo-vazio">
+            <i class="fas fa-plus fa-2x mb-3"></i>
+            <h5>Em breve</h5>
+            <p>Nova funcionalidade</p>
+        </div>
+    </div>
+    {% endfor %}
+
+{% endblock %}

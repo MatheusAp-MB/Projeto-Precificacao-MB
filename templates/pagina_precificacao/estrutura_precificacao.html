@@ -1,0 +1,102 @@
+<!--
+* [RESUMO] → Template da tela de precificação — grid de marketplaces.
+* Herda de estrutura_base_grid_card.html.
+* Exibe um card por marketplace disponível no sistema.
+-->
+{% extends 'base_compartilhada/estrutura_base_grid_card.html' %}
+{% load static %}
+
+{% block titulo %}Precificação — Sistema Interno MB/SV{% endblock %}
+{% block toolbar_titulo %}Precificação{% endblock %}
+
+{% block head_grid %}
+    <!-- * [EXPLICAÇÃO] → CSS exclusivo da tela de precificação -->
+    <link rel="stylesheet" href="{% static 'pagina_precificacao/css/layout_precificacao.css' %}">
+{% endblock %}
+
+{% block cards %}
+
+    <!-- Card: Mercado Livre — ATIVO -->
+    <div class="col-md-4">
+        <a href="{% url 'mercado_livre' %}" class="text-decoration-none">
+            <div class="card-modulo">
+                <img src="{% static 'pagina_precificacao/img/logo_mercado_livre.png' %}" alt="Mercado Livre">
+                <h5>Mercado Livre</h5>
+                <p>Gerencie preços e configurações do Mercado Livre</p>
+            </div>
+        </a>
+    </div>
+
+    <!-- Card: Shopee — EM BREVE -->
+    <div class="col-md-4">
+        <div class="card-modulo card-modulo-vazio">
+            <img src="{% static 'pagina_precificacao/img/logo_shopee.png' %}" alt="Shopee">
+            <h5>Shopee</h5>
+            <p>Em breve</p>
+        </div>
+    </div>
+
+    <!-- Card: Magalu — EM BREVE -->
+    <div class="col-md-4">
+        <div class="card-modulo card-modulo-vazio">
+            <img src="{% static 'pagina_precificacao/img/logo_magalu.png' %}" alt="Magalu">
+            <h5>Magalu</h5>
+            <p>Em breve</p>
+        </div>
+    </div>
+
+    <!-- Card: Amazon — EM BREVE -->
+    <div class="col-md-4">
+        <div class="card-modulo card-modulo-vazio">
+            <img src="{% static 'pagina_precificacao/img/logo_amazon.png' %}" alt="Amazon">
+            <h5>Amazon</h5>
+            <p>Em breve</p>
+        </div>
+    </div>
+
+    <!-- Card: Tiktok Shop — EM BREVE -->
+    <div class="col-md-4">
+        <div class="card-modulo card-modulo-vazio">
+            <img src="{% static 'pagina_precificacao/img/logo_tiktok_shop.png' %}" alt="Tiktok Shop">
+            <h5>Tiktok Shop</h5>
+            <p>Em breve</p>
+        </div>
+    </div>
+
+    <!-- Card: Mais Correios — EM BREVE -->
+    <div class="col-md-4">
+        <div class="card-modulo card-modulo-vazio">
+            <img src="{% static 'pagina_precificacao/img/logo_mais_correios.png' %}" alt="Mais Correios">
+            <h5>Mais Correios</h5>
+            <p>Em breve</p>
+        </div>
+    </div>
+
+    <!-- Card: Raia — EM BREVE -->
+    <div class="col-md-4">
+        <div class="card-modulo card-modulo-vazio">
+            <img src="{% static 'pagina_precificacao/img/logo_raia.png' %}" alt="Raia">
+            <h5>Raia</h5>
+            <p>Em breve</p>
+        </div>
+    </div>
+
+    <!-- Card: Tudo de Agro — EM BREVE -->
+    <div class="col-md-4">
+        <div class="card-modulo card-modulo-vazio">
+            <img src="{% static 'pagina_precificacao/img/logo_tudo_de_agro.png' %}" alt="Tudo de Agro">
+            <h5>Tudo de Agro</h5>
+            <p>Em breve</p>
+        </div>
+    </div>
+
+    <!-- Card: Visão Geral — EM BREVE -->
+    <div class="col-md-4">
+        <div class="card-modulo card-modulo-vazio">
+            <i class="fas fa-chart-bar fa-2x mb-3"></i>
+            <h5>Visão Geral</h5>
+            <p>Em breve</p>
+        </div>
+    </div>
+
+{% endblock %}
