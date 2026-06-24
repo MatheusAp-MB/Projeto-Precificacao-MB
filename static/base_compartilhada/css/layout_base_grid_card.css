@@ -1,10 +1,10 @@
 /*
-* [RESUMO] → CSS específico da homepage.
-* Define o estilo dos cards de módulos do sistema.
-* Importado apenas na homepage via block head_extra.
+* [RESUMO] → CSS compartilhado para páginas com grid de cards.
+* Define o estilo dos cards de módulos reutilizável em qualquer página.
+* Importado pelo estrutura_base_grid_card.html
 */
 
-/* # [STATUS: EM DESENVOLVIMENTO] */
+/* + [STATUS: APROVADO] */
 
 /* ================================================
    CARDS DE MÓDULOS

@@ -2,7 +2,7 @@
 //              Controla comportamentos compartilhados por todas as páginas:
 //              toggle da sidebar e dropdown de navegação.
 
-// + [STATUS: EM DESENVOLVIMENTO]
+// + [STATUS: APROVADO]
 
 // ================================================
 // TOGGLE DA SIDEBAR
