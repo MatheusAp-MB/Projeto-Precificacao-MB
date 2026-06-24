@@ -1,48 +1,117 @@
+<!--
+* [RESUMO] → Template da tela de login do sistema.
+* Página independente — não herda o estrutura_base_global.html
+* pois o login não tem sidebar nem toolbar.
+* Carrega Bootstrap e as fontes do projeto diretamente.
+-->
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
-    <!--
-    * [RESUMO] → Template da tela de login do sistema.
-    * Estilo simples e funcional — será refinado visualmente depois.
-    -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login — Sistema Interno MB/SV</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- CSS da página de login -->
+    <link rel="stylesheet" href="{% static 'pagina_login/css/layout_login.css' %}">
 </head>
-<body>
 
-    <h1>Sistema Interno MB/SV</h1>
-    <h2>Login</h2>
+<body class="login-body">
 
     <!--
-    * [EXPLICAÇÃO] → Exibe a mensagem de erro se as credenciais
-    * estiverem incorretas. O erro vem da view_login.
+    * [EXPLICAÇÃO] → Flex centraliza o card vertical e horizontalmente
+    * na tela inteira, independente do tamanho da resolução.
     -->
-    {% if erro %}
-        <p style="color: red;">{{ erro }}</p>
-    {% endif %}
+    <div class="login-wrapper">
 
-    <!--
-    * [EXPLICAÇÃO] → O method POST envia os dados de forma segura.
-    * O csrf_token é obrigatório em todo formulário Django — protege
-    * contra ataques CSRF (Cross-Site Request Forgery).
-    -->
-    <form method="POST">
-        {% csrf_token %}
+        <div class="login-card">
 
-        <div>
-            <label for="username">Usuário</label>
-            <input type="text" id="username" name="username" required>
+            <!-- Logo -->
+            <div class="login-logo">
+                <img src="{% static 'base_compartilhada/img/logo.jpg' %}" alt="Logo MB/SV">
+            </div>
+
+            <!-- Título -->
+            <h1 class="login-titulo">Sistema Interno MB/SV</h1>
+            <p class="login-subtitulo">Acesso restrito — faça login para continuar</p>
+
+            <!--
+            * [EXPLICAÇÃO] → Mensagem de erro exibida quando as credenciais
+            * são inválidas. Vem da view_login via contexto do template.
+            * Usa mensagem genérica por segurança — não informa se foi
+            * o usuário ou a senha que estava incorreto.
+            -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="login-erro">
+                        <i class="fas fa-exclamation-circle"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!--
+            * [EXPLICAÇÃO] → method="POST" envia os dados de forma segura.
+            * { % csrf_token % } é obrigatório em todo formulário Django —
+            * protege contra ataques CSRF.
+            -->
+            <form method="POST" class="login-form">
+                {% csrf_token %}
+
+                <div class="login-campo">
+                    <label for="username">
+                        <i class="fas fa-user"></i> Usuário
+                    </label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        class="form-control"
+                        placeholder="Digite seu usuário"
+                        required
+                        autofocus>
+                </div>
+
+                <div class="login-campo">
+                    <label for="password">
+                        <i class="fas fa-lock"></i> Senha
+                    </label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        class="form-control"
+                        placeholder="Digite sua senha"
+                        required>
+                </div>
+
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Entrar
+                </button>
+
+            </form>
+
+            <!-- Mensagem de contato -->
+            <p class="login-contato">
+                Não possui acesso? Entre em contato com um administrador.
+            </p>
+
         </div>
 
-        <div>
-            <label for="password">Senha</label>
-            <input type="password" id="password" name="password" required>
-        </div>
+    </div>
 
-        <button type="submit">Entrar</button>
-
-    </form>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

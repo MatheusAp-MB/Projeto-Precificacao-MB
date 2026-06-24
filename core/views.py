@@ -4,6 +4,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 # ================================================
 # LOGIN
@@ -11,33 +12,27 @@ from django.contrib.auth.decorators import login_required
 
 def view_login(request):
     # * [EXPLICAÇÃO] → Se o usuário já está autenticado, redireciona
-    #                  direto para a homepage — sem mostrar o login.
+    #                  direto para a homepage.
     if request.user.is_authenticated:
         return redirect('/')
 
-    erro = None
-
     if request.method == 'POST':
-        # * [EXPLICAÇÃO] → Pega os dados do formulário enviado pelo usuário.
         usuario = request.POST.get('username')
         senha   = request.POST.get('password')
 
-        # * [EXPLICAÇÃO] → O authenticate() verifica se o usuário e senha
-        #                  existem no banco. Retorna o objeto User se correto,
-        #                  ou None se incorreto.
         user = authenticate(request, username=usuario, password=senha)
 
         if user is not None:
-            # * [EXPLICAÇÃO] → O login() inicia a sessão do usuário —
-            #                  salva os dados de autenticação no cookie.
             login(request, user)
             return redirect('/')
         else:
-            # * [EXPLICAÇÃO] → Se authenticate() retornou None, as credenciais
-            #                  estão erradas. Passamos o erro para o template.
-            erro = 'Usuário ou senha incorretos.'
+            # * [EXPLICAÇÃO] → PRG Pattern — após erro, adiciona a mensagem
+            #                  e redireciona para GET. Isso evita o aviso do
+            #                  navegador ao recarregar a página.
+            messages.error(request, 'Usuário ou senha incorretos.')
+            return redirect('login')
 
-    return render(request, 'pagina_login/estrutura_login.html', {'erro': erro})
+    return render(request, 'pagina_login/estrutura_login.html')
 
 
 # ================================================
