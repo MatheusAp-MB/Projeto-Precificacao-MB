@@ -14,7 +14,7 @@ function inicializar_tabela(tableId, opcoes) {
     TABELA_ATIVA = tableId;
 
     var config = Object.assign({
-        scrollX: true,
+        // scrollX: true,
         autoWidth: false,
         language: {
             emptyTable:     'Nenhum registro encontrado',
