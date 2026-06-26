@@ -16,4 +16,7 @@ urlpatterns = [
     # * [EXPLICAÇÃO] → Rotas do app de precificação por marketplace.
     #                  O prefixo 'precificacao/' agrupa todas as telas do módulo.
     path('precificacao/', include('precificacao_marketplaces.urls')),
+
+    # * [EXPLICAÇÃO] → Rotas do app de produtos.
+    path('produtos/', include('produtos.urls')),
 ]

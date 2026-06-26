@@ -45,6 +45,9 @@ INSTALLED_APPS = [
 
     # * [STATUS: DESENVOLVIMENTO] → App de precificação por marketplace (ML e futuros)
     'precificacao_marketplaces',
+
+    # * [STATUS: DESENVOLVIMENTO] → App de produtos — cadastro e gestão de produtos do sistema
+    'produtos',
     
 ]
 
