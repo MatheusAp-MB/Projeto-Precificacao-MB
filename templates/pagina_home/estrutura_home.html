@@ -28,19 +28,19 @@
         </a>
     </div>
 
-    <!-- Card: Configurações — ATIVO -->
+    <!-- Card: Produtos — ATIVO -->
     <div class="col-md-4">
-        <a href="#" class="text-decoration-none">
+        <a href="{% url 'produtos' %}" class="text-decoration-none">
             <div class="card-modulo">
-                <i class="fas fa-sliders-h fa-2x mb-3"></i>
-                <h5>Configurações</h5>
-                <p>Gerencie usuários e permissões do sistema</p>
+                <i class="fas fa-box fa-2x mb-3"></i>
+                <h5>Produtos</h5>
+                <p>Consulte o catálogo completo de produtos</p>
             </div>
         </a>
     </div>
 
     <!-- Cards em branco — reservados para módulos futuros -->
-    {% for i in "1234567" %}
+    {% for i in "123456" %}
     <div class="col-md-4">
         <div class="card-modulo card-modulo-vazio">
             <i class="fas fa-plus fa-2x mb-3"></i>

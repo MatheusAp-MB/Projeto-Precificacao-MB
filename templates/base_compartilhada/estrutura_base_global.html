@@ -31,8 +31,20 @@
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
     <!-- Layout global do sistema -->
     <link rel="stylesheet" href="{% static 'base_compartilhada/css/layout_global.css' %}">
+
+    <!-- DataTables — estilos compartilhados -->
+    <link rel="stylesheet" href="{% static 'base_compartilhada/css/layout_datatables.css' %}">
 
     <!--
     * [EXPLICAÇÃO] → Block para CSS específico de cada página.
@@ -174,6 +186,9 @@
 
     <!-- Script global do sistema -->
     <script src="{% static 'base_compartilhada/js/script_global.js' %}"></script>
+
+    <!-- DataTables — funções compartilhadas -->
+    <script src="{% static 'base_compartilhada/js/script_datatables.js' %}"></script>
 
     <!--
     * [EXPLICAÇÃO] → Block para JS específico de cada página.

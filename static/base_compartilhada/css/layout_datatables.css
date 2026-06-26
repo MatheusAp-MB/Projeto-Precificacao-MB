@@ -1,0 +1,226 @@
+/*
+* [RESUMO] → CSS do DataTables — compartilhado entre todas as telas que usam tabelas.
+* Adaptado da old_dev usando as variáveis de cor do projeto.
+*/
+
+/* ================================================
+   BARRA DE AÇÕES
+   ================================================ */
+
+.barra-acoes {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.btn-acao {
+    background-color: var(--cor-primaria-clara);
+    border: 2px solid var(--cor-primaria);
+    color: var(--cor-texto-claro);
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.btn-acao:hover {
+    background-color: var(--cor-primaria);
+}
+
+/* ================================================
+   PAINEL DE OPÇÕES DE COLUNAS
+   ================================================ */
+
+#painel-colunas {
+    display: none;
+    background-color: var(--cor-primaria);
+    border: 2px solid var(--cor-primaria-clara);
+    color: var(--cor-texto-claro);
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 6px;
+}
+
+#painel-colunas h6 {
+    color: var(--cor-texto-claro);
+    border-bottom: 2px solid var(--cor-primaria-clara);
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+    font-size: 1rem;
+}
+
+.grid-botoes-colunas {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+}
+
+.grid-botoes-colunas button {
+    height: 36px;
+    border-radius: 6px;
+    border: none;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.grid-botoes-colunas button.active {
+    background-color: var(--cor-positivo);
+    color: var(--cor-texto-claro);
+}
+
+.grid-botoes-colunas button.not_active {
+    background-color: var(--cor-negativo);
+    color: var(--cor-texto-claro);
+}
+
+.grid-botoes-colunas button:hover {
+    opacity: 0.85;
+    outline: 3px solid white;
+}
+
+/* ================================================
+   WRAPPER DO DATATABLES
+   ================================================ */
+
+.dataTables_wrapper {
+    background-color: rgba(174, 206, 255, 0.15);
+    border: 1px solid var(--cor-borda);
+    border-radius: 6px;
+    padding: 8px;
+}
+
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter {
+    padding: 8px 12px;
+    font-size: 0.95rem;
+}
+
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.dataTables_wrapper .dataTables_info {
+    text-align: center;
+    min-width: 100%;
+}
+
+.dataTables_wrapper .dataTables_paginate {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+/* ================================================
+   CABEÇALHO DA TABELA
+   ================================================ */
+
+table.dataTable thead th {
+    background-color: var(--cor-primaria);
+    color: var(--cor-texto-claro);
+    border-bottom: 2px solid var(--cor-primaria-clara);
+    white-space: nowrap;
+}
+
+table.dataTable thead th:hover {
+    background-color: var(--cor-primaria-clara);
+}
+
+table.dataTable tbody tr:hover {
+    background-color: rgba(46, 123, 181, 0.08);
+    cursor: pointer;
+}
+
+/* ================================================
+   PAGINAÇÃO
+   ================================================ */
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: var(--cor-primaria) !important;
+    color: var(--cor-texto-claro) !important;
+    border: 1px solid var(--cor-primaria) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: var(--cor-primaria-clara) !important;
+    color: var(--cor-texto-claro) !important;
+    border: 1px solid var(--cor-primaria-clara) !important;
+}
+
+/* ================================================
+   INPUTS DE BUSCA E LENGTH
+   ================================================ */
+
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_length select {
+    background-color: var(--cor-fundo-card) !important;
+    border: 1px solid var(--cor-primaria-clara) !important;
+    border-radius: 6px !important;
+    padding: 4px 10px !important;
+    font-size: 0.9rem;
+    outline: none;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    min-width: 300px;
+}
+
+.dataTables_wrapper .dataTables_filter input:focus {
+    border-color: var(--cor-primaria) !important;
+    box-shadow: 0 0 0 2px rgba(46, 123, 181, 0.25) !important;
+}
+
+/* ================================================
+   CÉLULAS
+   ================================================ */
+
+table.dataTable td,
+table.dataTable th {
+    height: 44px;
+    border: 1px solid var(--cor-borda) !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* * [EXPLICAÇÃO] → Cores dos botões de coluna — ativo azul, inativo cinza. */
+.btn-ativo {
+    background-color: var(--cor-primaria-clara);
+    color: var(--cor-texto-claro);
+    border: 1px solid var(--cor-primaria);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-ativo:hover {
+    background-color: var(--cor-primaria);
+}
+
+.btn-inativo {
+    background-color: #495057;
+    color: var(--cor-texto-claro);
+    border: 1px solid #6c757d;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-inativo:hover {
+    background-color: #6c757d;
+}
+
+.dataTables_wrapper {
+    overflow-x: auto;
+}

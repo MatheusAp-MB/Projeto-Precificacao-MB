@@ -1,0 +1,79 @@
+/*
+* [RESUMO] → CSS específico da tela de produtos.
+*/
+
+/* ================================================
+   TABELA
+   ================================================ */
+
+#tabela-produtos td,
+#tabela-produtos th {
+    height: 44px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ================================================
+   PAINEL DE COLUNAS — CARDS
+   ================================================ */
+
+/* * [EXPLICAÇÃO] → Títulos dos cards centralizados e em destaque. */
+.painel-card-titulo {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* * [EXPLICAÇÃO] → Botões internos dos cards em flex wrap. */
+.painel-card-botoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+   
+}
+
+.painel-card-botoes > button {
+    min-width: 110px;
+    max-width: 110px;
+
+    max-height: 50px;
+    min-height: 50px;
+    text-wrap: inherit;
+    /* background-color: red; */
+}
+
+/* * [EXPLICAÇÃO] → Larguras individuais por card. */
+@media (min-width: 768px) {
+    .painel-col-identificacao { flex: 0 0 auto; width: 480px;  }
+    .painel-col-financeiro    { flex: 0 0 auto; width: 400px;  }
+    .painel-col-controle      { flex: 0 0 auto; width: 400px;  }
+    .painel-col-fiscal        { flex: 0 0 auto; width: 480px;}
+    .painel-col-dimensoes     { flex: 0 0 auto; width: 480px; }
+}
+
+/* * [EXPLICAÇÃO] → Estilo visual dos cards do painel de colunas. */
+.painel-card {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 8px 12px;
+    height: 100%;
+}
+
+.painel-card-titulo {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+}
+
+#painel-colunas > div, #painel-colunas > h6{
+    justify-content: center;
+    text-align: center;
+
+}
