@@ -12,4 +12,10 @@ urlpatterns = [
 
     # * [EXPLICAÇÃO] → Tabela de frete do Mercado Livre.
     path('mercado-livre/tabela-de-frete/', views.view_tabela_frete_ml, name='tabela_frete_ml'),
+
+    # * [EXPLICAÇÃO] → Endpoint HTMX da calculadora de frete ML.
+    path('mercado-livre/tabela-de-frete/calcular/', views.view_calcular_frete_ml, name='calcular_frete_ml'),
+
+
+
 ]
