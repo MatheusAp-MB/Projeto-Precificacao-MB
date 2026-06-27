@@ -43,3 +43,29 @@
 .tabela-tipos tbody td:first-child {
     text-align: left;
 }
+
+/* * [EXPLICAÇÃO] → Altura mínima das linhas e largura mínima das colunas da tabela de tipos. */
+.tabela-tipos tbody tr {
+    height: 48px;
+}
+
+.tabela-tipos th,
+.tabela-tipos td {
+    min-width: 92px;
+    max-width: 92px;
+}
+
+.tabela-tipos th:first-child,
+.tabela-tipos td:first-child {
+    min-width: 280px;
+}
+
+
+/* * [EXPLICAÇÃO] → Largura das colunas da tabela de logística FULL. */
+.tabela-logistica .modal-col-dado {
+    width: 65%;
+}
+
+.tabela-logistica .modal-col-valor {
+    width: 35%;
+}

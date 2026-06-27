@@ -25,7 +25,7 @@
                 <strong><i class="fas fa-warehouse"></i> Logística FULL</strong>
             </div>
             <div class="card-body p-0">
-                <table class="modal-tabela w-100">
+                <table class="modal-tabela tabela-logistica">
                     <colgroup>
                         <col class="modal-col-dado">
                         <col class="modal-col-valor">
@@ -58,13 +58,13 @@
                             <th>Margem Mín.</th>
                             <th>Margem Padrão</th>
                             <th>Margem Máx.</th>
-                            <th>Atacado 2un</th>
-                            <th>Atacado 3un</th>
+                            <th>Atacado 2 unidades</th>
+                            <th>Atacado 3 unidades</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for tipo in tipos %}
-                        <tr class="{% if tipo.tipo_anuncio == 'gold_special' %}linha-classico{% else %}linha-premium{% endif %}">
+                        <tr class="{% if tipo.tipo_anuncio == 'gold_special' %}{% if tipo.tipo_logistico == 'fulfillment' %}{% if tipo.catalogo %}anuncio-classico-full-cat{% else %}anuncio-classico-full{% endif %}{% else %}{% if tipo.catalogo %}anuncio-classico-flex-cat{% else %}anuncio-classico-flex{% endif %}{% endif %}{% elif tipo.tipo_anuncio == 'gold_pro' %}{% if tipo.tipo_logistico == 'fulfillment' %}{% if tipo.catalogo %}anuncio-premium-full-cat{% else %}anuncio-premium-full{% endif %}{% else %}{% if tipo.catalogo %}anuncio-premium-flex-cat{% else %}anuncio-premium-flex{% endif %}{% endif %}{% endif %}">
                             <td>
                                 {% if tipo.tipo_anuncio == 'gold_special' %}
                                     <span class="badge-anuncio badge-classico">Clássico</span>
