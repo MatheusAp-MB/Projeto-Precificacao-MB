@@ -1,0 +1,45 @@
+/*
+* [RESUMO] → CSS específico da tela de configurações do Mercado Livre.
+*/
+
+/* * [EXPLICAÇÃO] → Tabela de tipos de anúncio. */
+.tabela-tipos {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.tabela-tipos thead tr {
+    background-color: var(--cor-primaria);
+    color: var(--cor-texto-claro);
+}
+
+.tabela-tipos thead th {
+    padding: 8px 12px;
+    text-align: center;
+}
+
+.tabela-tipos thead th:first-child {
+    text-align: left;
+}
+
+.tabela-tipos tbody tr {
+    border-bottom: 1px solid rgb(220, 233, 248);
+}
+
+.tabela-tipos tbody tr.linha-classico {
+    background-color: rgb(255, 253, 231);
+}
+
+.tabela-tipos tbody tr.linha-premium {
+    background-color: rgb(255, 248, 225);
+}
+
+.tabela-tipos tbody td {
+    padding: 8px 12px;
+    text-align: center;
+}
+
+.tabela-tipos tbody td:first-child {
+    text-align: left;
+}

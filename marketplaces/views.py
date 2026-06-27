@@ -1,3 +1,36 @@
-from django.shortcuts import render
+# * [RESUMO] → Views do app de marketplaces.
 
-# Create your views here.
+from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
+from .models import Marketplace, TipoAnuncioML, ConfiguracaoLogisticaML
+
+
+# ================================================
+# MARKETPLACES — GRID
+# ================================================
+
+def view_marketplaces(request):
+    # * [EXPLICAÇÃO] → Tela inicial do módulo de marketplaces — grid de seleção.
+    return render(request, 'pagina_marketplaces/estrutura_marketplaces.html', {
+        'urls_marketplaces': {
+            'mercado_livre': reverse('configuracoes_ml'),
+        }
+    })
+
+
+# ================================================
+# CONFIGURAÇÕES — MERCADO LIVRE
+# ================================================
+
+def view_configuracoes_ml(request):
+    # * [EXPLICAÇÃO] → Tela de configurações do Mercado Livre.
+    #                  Exibe parâmetros gerais, logística e os 8 tipos de anúncio.
+    marketplace = get_object_or_404(Marketplace, sigla='ML')
+    tipos       = TipoAnuncioML.objects.filter(marketplace=marketplace)
+    logistica   = ConfiguracaoLogisticaML.objects.filter(marketplace=marketplace).first()
+
+    return render(request, 'pagina_configuracoes_ml/estrutura_configuracoes_ml.html', {
+        'marketplace': marketplace,
+        'tipos':       tipos,
+        'logistica':   logistica,
+    })
