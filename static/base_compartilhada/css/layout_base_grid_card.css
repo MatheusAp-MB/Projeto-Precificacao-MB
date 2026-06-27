@@ -73,3 +73,10 @@
     transform: none;
     box-shadow: none;
 }
+/** [EXPLICAÇÃO] → Padroniza o tamanho e espaçamento das logos dos marketplaces nos cards. */
+.card-modulo img {
+    height: 80px;
+    width: auto;
+    object-fit: contain;
+    margin-bottom: 12px;
+}
