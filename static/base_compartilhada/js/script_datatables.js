@@ -8,6 +8,26 @@ var TABELA_ATIVA = null;
 // INICIALIZAÇÃO
 // ================================================
 
+// * [EXPLICAÇÃO] → Comparador personalizado para ordenação de strings.
+//                  Remove acentos antes de comparar — garante que "Ó" venha
+//                  junto de "O" e não após "Z". Vazios sempre vêm primeiro.
+jQuery.extend(jQuery.fn.dataTableExt.oSort, {
+    'pt-string-asc': function(a, b) {
+        if (a === '' || a === null) return -1;
+        if (b === '' || b === null) return 1;
+        a = a.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        b = b.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        return a < b ? -1 : a > b ? 1 : 0;
+    },
+    'pt-string-desc': function(a, b) {
+        if (a === '' || a === null) return 1;
+        if (b === '' || b === null) return -1;
+        a = a.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        b = b.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        return a < b ? 1 : a > b ? -1 : 0;
+    }
+});
+
 // * [EXPLICAÇÃO] → Inicializa o DataTables com configurações padrão em português.
 //                  Cada página passa suas próprias opções que sobrescrevem o padrão.
 function inicializar_tabela(tableId, opcoes) {

@@ -168,3 +168,5 @@
 }
 
 
+.painel-col-controle-db  { flex: 0 0 auto; width: 300px; }
+.painel-col-controle-erp { flex: 0 0 auto; width: 300px; }

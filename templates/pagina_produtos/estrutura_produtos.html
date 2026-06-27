@@ -39,6 +39,21 @@
                         <button id="5"  class="btn-ativo"          onclick="mudar(this)">Marca</button>
                         <button id="6"  class="btn-ativo"          onclick="mudar(this)">Estoque</button>
                         <button id="7"  class="btn-inativo not_active" onclick="mudar(this)">Curva</button>
+                        <button id="26" class="btn-inativo not_active" onclick="mudar(this)">Categoria</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dimensões -->
+            <div class="col-md-6 painel-col-dimensoes">
+                <div class="painel-card">
+                    <div class="painel-card-titulo">Dimensões</div>
+                    <div class="painel-card-botoes">
+                        <button id="10" class="btn-inativo not_active" onclick="mudar(this)">Peso</button>
+                        <button id="11" class="btn-inativo not_active" onclick="mudar(this)">Peso Cubado</button>
+                        <button id="12" class="btn-inativo not_active" onclick="mudar(this)">Altura</button>
+                        <button id="13" class="btn-inativo not_active" onclick="mudar(this)">Largura</button>
+                        <button id="14" class="btn-inativo not_active" onclick="mudar(this)">Profundidade</button>
                     </div>
                 </div>
             </div>
@@ -54,48 +69,49 @@
                 </div>
             </div>
 
-            <!-- Controle -->
-            <div class="col-md-4 painel-col-controle">
-                <div class="painel-card">
-                    <div class="painel-card-titulo">Controle</div>
-                    <div class="painel-card-botoes">
-                        <button id="24" class="btn-inativo not_active" onclick="mudar(this)">Criado em</button>
-                        <button id="25" class="btn-inativo not_active" onclick="mudar(this)">Atualizado em</button>
-                    </div>
-                </div>
-            </div>
-
             <!-- Fiscal -->
             <div class="col-md-6 painel-col-fiscal">
                 <div class="painel-card">
                     <div class="painel-card-titulo">Fiscal</div>
                     <div class="painel-card-botoes">
-                        <button id="10" class="btn-inativo not_active" onclick="mudar(this)">NCM</button>
-                        <button id="11" class="btn-inativo not_active" onclick="mudar(this)">IPI</button>
-                        <button id="12" class="btn-inativo not_active" onclick="mudar(this)">ICMS Entrada</button>
-                        <button id="13" class="btn-inativo not_active" onclick="mudar(this)">ICMS Saída SP</button>
-                        <button id="14" class="btn-inativo not_active" onclick="mudar(this)">ICMS Saída Média</button>
-                        <button id="15" class="btn-inativo not_active" onclick="mudar(this)">PIS/COFINS</button>
-                        <button id="16" class="btn-inativo not_active" onclick="mudar(this)">MVA</button>
-                        <button id="17" class="btn-inativo not_active" onclick="mudar(this)">ST Valor</button>
-                        <button id="18" class="btn-inativo not_active" onclick="mudar(this)">Frete CIF/FOB</button>
+                        <button id="15" class="btn-inativo not_active" onclick="mudar(this)">NCM</button>
+                        <button id="16" class="btn-inativo not_active" onclick="mudar(this)">IPI</button>
+                        <button id="17" class="btn-inativo not_active" onclick="mudar(this)">ICMS Entrada</button>
+                        <button id="18" class="btn-inativo not_active" onclick="mudar(this)">ICMS Saída SP</button>
+                        <button id="19" class="btn-inativo not_active" onclick="mudar(this)">ICMS Saída Média</button>
+                        <button id="20" class="btn-inativo not_active" onclick="mudar(this)">PIS/COFINS</button>
+                        <button id="21" class="btn-inativo not_active" onclick="mudar(this)">MVA</button>
+                        <button id="22" class="btn-inativo not_active" onclick="mudar(this)">ST Valor</button>
+                        <button id="23" class="btn-inativo not_active" onclick="mudar(this)">Frete CIF/FOB</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Dimensões -->
-            <div class="col-md-6 painel-col-dimensoes">
+
+            <!-- Controle DB -->
+            <div class="col-md-4 painel-col-controle-db">
                 <div class="painel-card">
-                    <div class="painel-card-titulo">Dimensões</div>
+                    <div class="painel-card-titulo">Controle DB</div>
                     <div class="painel-card-botoes">
-                        <button id="19" class="btn-inativo not_active" onclick="mudar(this)">Peso</button>
-                        <button id="20" class="btn-inativo not_active" onclick="mudar(this)">Peso Cubado</button>
-                        <button id="21" class="btn-inativo not_active" onclick="mudar(this)">Altura</button>
-                        <button id="22" class="btn-inativo not_active" onclick="mudar(this)">Largura</button>
-                        <button id="23" class="btn-inativo not_active" onclick="mudar(this)">Profundidade</button>
+                        <button id="24" class="btn-inativo not_active" onclick="mudar(this)">Entrada no DB</button>
+                        <button id="25" class="btn-inativo not_active" onclick="mudar(this)">Atualização no DB</button>
                     </div>
                 </div>
             </div>
+
+            <!-- Controle ERP -->
+            <div class="col-md-4 painel-col-controle-erp">
+                <div class="painel-card">
+                    <div class="painel-card-titulo">Controle ERP</div>
+                    <div class="painel-card-botoes">
+                        <button id="27" class="btn-inativo not_active" onclick="mudar(this)">Última Compra</button>
+                        <button id="28" class="btn-inativo not_active" onclick="mudar(this)">Cadastro no ERP</button>
+                    </div>
+                </div>
+            </div>
+
+
+
 
         </div>
     </div>
@@ -128,43 +144,49 @@
                 <th>Frete CIF/FOB</th>
                 <th>Criado em</th>
                 <th>Atualizado em</th>
+                <th>Categoria</th>
+                <th>Última Compra</th>
+                <th>Cadastro no ERP</th>
             </tr>
         </thead>
         <tbody>
             {% for produto in produtos %}
             <!-- * [EXPLICAÇÃO] → Ao clicar na linha, HTMX busca os dados do produto
-                 e injeta no modal antes de abri-lo. -->
+                    e injeta no modal antes de abri-lo. -->
             <tr
                 hx-get="{% url 'painel_produto' produto.id %}"
                 hx-target="#modal-conteudo"
                 hx-swap="innerHTML"
                 onclick="abrirModal()"
                 style="cursor: pointer;">
-                <td>{{ produto.ean }}</td>
-                <td>{{ produto.sku|default:"—" }}</td>
-                <td>{{ produto.cod_fabricante|default:"—" }}</td>
-                <td>{{ produto.titulo }}</td>
-                <td>{{ produto.marca|default:"—" }}</td>
-                <td>{{ produto.estoque }}</td>
-                <td>{{ produto.curva|default:"—" }}</td>
-                <td>R$ {{ produto.custo|floatformat:2 }}</td>
-                <td>{{ produto.custo_com_boni|floatformat:2|default:"—" }}</td>
-                <td>{{ produto.peso|floatformat:3 }} kg</td>
-                <td>{{ produto.peso_cubado|floatformat:3 }} kg</td>
-                <td>{{ produto.altura|floatformat:2 }} cm</td>
-                <td>{{ produto.largura|floatformat:2 }} cm</td>
-                <td>{{ produto.profundidade|floatformat:2 }} cm</td>
-                <td>{{ produto.ncm|default:"—" }}</td>
-                <td>{{ produto.ipi|floatformat:2 }}%</td>
-                <td>{{ produto.icms_entrada|floatformat:2 }}%</td>
-                <td>{{ produto.icms_saida_sp|floatformat:2 }}%</td>
-                <td>{{ produto.icms_saida_media|floatformat:2 }}%</td>
-                <td>{{ produto.pis_cofins|floatformat:2 }}%</td>
-                <td>{{ produto.mva|default:"—" }}</td>
-                <td>{{ produto.st_valor|default:"—" }}</td>
-                <td>{{ produto.frete_cif_fob|default:"—" }}</td>
-                <td>{{ produto.criado_em|date:"d/m/Y H:i" }}</td>
-                <td>{{ produto.atualizado_em|date:"d/m/Y H:i" }}</td>
+                <td>{{ produto.ean|default:"" }}</td>
+                <td>{{ produto.sku|default:"" }}</td>
+                <td>{{ produto.cod_fabricante|default:"" }}</td>
+                <td>{{ produto.titulo|default:"" }}</td>
+                <td>{{ produto.marca|default:"" }}</td>
+                <td data-order="{{ produto.estoque|default:0 }}">{{ produto.estoque|default:"" }}</td>
+                <td>{{ produto.curva|default:"" }}</td>
+                <td data-order="{{ produto.custo|default:0 }}">R$ {{ produto.custo|floatformat:2|default:"" }}</td>
+                <td data-order="{{ produto.custo_com_boni|default:0 }}">{{ produto.custo_com_boni|floatformat:2|default:"" }}</td>
+                <td data-order="{{ produto.peso|default:0 }}">{{ produto.peso|floatformat:3|default:"" }} kg</td>
+                <td data-order="{{ produto.peso_cubado|default:0 }}">{{ produto.peso_cubado|floatformat:3|default:"" }} kg</td>
+                <td data-order="{{ produto.altura|default:0 }}">{{ produto.altura|floatformat:2|default:"" }} cm</td>
+                <td data-order="{{ produto.largura|default:0 }}">{{ produto.largura|floatformat:2|default:"" }} cm</td>
+                <td data-order="{{ produto.profundidade|default:0 }}">{{ produto.profundidade|floatformat:2|default:"" }} cm</td>
+                <td>{{ produto.ncm|default:"" }}</td>
+                <td data-order="{{ produto.ipi|default:0 }}">{{ produto.ipi|floatformat:2|default:"" }}%</td>
+                <td data-order="{{ produto.icms_entrada|default:0 }}">{{ produto.icms_entrada|floatformat:2|default:"" }}%</td>
+                <td data-order="{{ produto.icms_saida_sp|default:0 }}">{{ produto.icms_saida_sp|floatformat:2|default:"" }}%</td>
+                <td data-order="{{ produto.icms_saida_media|default:0 }}">{{ produto.icms_saida_media|floatformat:2|default:"" }}%</td>
+                <td data-order="{{ produto.pis_cofins|default:0 }}">{{ produto.pis_cofins|floatformat:2|default:"" }}%</td>
+                <td data-order="{{ produto.mva|default:0 }}">{{ produto.mva|default:"" }}</td>
+                <td data-order="{{ produto.st_valor|default:0 }}">{{ produto.st_valor|default:"" }}</td>
+                <td data-order="{{ produto.frete_cif_fob|default:0 }}">{{ produto.frete_cif_fob|default:"" }}</td>
+                <td data-order="{{ produto.criado_em|date:'Y-m-d H:i'|default:'' }}">{{ produto.criado_em|date:"d/m/Y H:i"|default:"" }}</td>
+                <td data-order="{{ produto.atualizado_em|date:'Y-m-d H:i'|default:'' }}">{{ produto.atualizado_em|date:"d/m/Y H:i"|default:"" }}</td>
+                <td>{{ produto.categoria|default:"" }}</td>
+                <td data-order="{{ produto.ultima_compra|date:'Y-m-d'|default:'' }}">{{ produto.ultima_compra|date:"d/m/Y"|default:"" }}</td>
+                <td data-order="{{ produto.cadastrado_erp_em|date:'Y-m-d'|default:'' }}">{{ produto.cadastrado_erp_em|date:"d/m/Y"|default:"" }}</td>
             </tr>
             {% endfor %}
         </tbody>
