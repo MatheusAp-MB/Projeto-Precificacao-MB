@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     # * [STATUS: DESENVOLVIMENTO] → App de produtos — cadastro e gestão de produtos do sistema
     'produtos',
     
+    # * [STATUS: DESENVOLVIMENTO] → App de anúncios — integração com marketplaces e API ML
+    'anuncios',
 ]
 
 MIDDLEWARE = [
@@ -144,3 +146,43 @@ STATIC_URL = 'static/'
 
 # * [EXPLICAÇÃO] → Aponta para a pasta static/ na raiz do projeto
 STATICFILES_DIRS = [BASE_DIR / 'static']
+
+
+# * [RESUMO] → Configuração de logging do sistema.
+#              Exibe logs no terminal durante desenvolvimento.
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+
+    'formatters': {
+        # * [EXPLICAÇÃO] → Formato padrão com timestamp, nível e mensagem.
+        'padrao': {
+            'format': '[{asctime}] {levelname} {name} → {message}',
+            'style': '{',
+            'datefmt': '%d/%m/%Y %H:%M:%S',
+        },
+    },
+
+    'handlers': {
+        # * [EXPLICAÇÃO] → Exibe os logs no terminal (stdout).
+        'terminal': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'padrao',
+        },
+    },
+
+    'loggers': {
+        # * [EXPLICAÇÃO] → Logger do app anuncios — captura signals e cálculos.
+        'anuncios': {
+            'handlers': ['terminal'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        # * [EXPLICAÇÃO] → Logger raiz — captura logs de todos os outros módulos.
+        '': {
+            'handlers': ['terminal'],
+            'level': 'WARNING',
+        },
+    },
+}
