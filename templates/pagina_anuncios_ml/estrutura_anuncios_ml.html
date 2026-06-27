@@ -2,6 +2,8 @@
 * [RESUMO] → Template da tela de anúncios do Mercado Livre.
 * Herda de estrutura_base_global.html.
 * Exibe a listagem de anúncios via DataTables com painel de colunas.
+* Cor de linha identifica tipo de anúncio + logística + catálogo.
+* Badges visuais nas células de tipo, logística e catálogo.
 -->
 {% extends 'base_compartilhada/estrutura_base_global.html' %}
 {% load static %}
@@ -10,152 +12,204 @@
 {% block toolbar_titulo %}Anúncios — Mercado Livre{% endblock %}
 
 {% block head_extra %}
-    <link rel="stylesheet" href="{% static 'pagina_anuncios_ml/css/layout_anuncios_ml.css' %}">
+<link rel="stylesheet" href="{% static 'pagina_anuncios_ml/css/layout_anuncios_ml.css' %}">
 {% endblock %}
 
 {% block conteudo %}
 
-    <!-- Barra de ações -->
-    <div class="barra-acoes">
-        <button class="btn-acao" onclick="opcoes_exibicao()">
-            <i class="fas fa-columns"></i> Opções de exibição
-        </button>
-    </div>
+<!-- Barra de ações -->
+<div class="barra-acoes">
+    <button class="btn-acao" onclick="opcoes_exibicao()">
+        <i class="fas fa-columns"></i> Opções de exibição
+    </button>
+</div>
 
-    <!-- Painel de colunas -->
-    <div id="painel-colunas">
-        <h6>Colunas visíveis</h6>
-        <div class="row g-3">
+<!-- Painel de colunas -->
+<div id="painel-colunas">
+    <h6>Colunas visíveis</h6>
+    <div class="row g-3">
 
-            <!-- Identificação -->
-            <div class="col-md-4 painel-col-identificacao">
-                <div class="painel-card">
-                    <div class="painel-card-titulo">Identificação</div>
-                    <div class="painel-card-botoes">
-                        <button id="1"  class="btn-ativo"           onclick="mudar(this)">MLB</button>
-                        <button id="2"  class="btn-ativo"           onclick="mudar(this)">SKU</button>
-                        <button id="3"  class="btn-ativo"           onclick="mudar(this)">Título do Anúncio</button>
-                        <button id="4"  class="btn-inativo not_active" onclick="mudar(this)">MLBU</button>
-                        <button id="5"  class="btn-inativo not_active" onclick="mudar(this)">Título do Produto</button>
-                    </div>
+        <!-- Identificação -->
+        <div class="col-md-4 painel-col-identificacao">
+            <div class="painel-card">
+                <div class="painel-card-titulo">Identificação</div>
+                <div class="painel-card-botoes">
+                    <button id="1" class="btn-ativo" onclick="mudar(this)">MLB</button>
+                    <button id="2" class="btn-ativo" onclick="mudar(this)">SKU</button>
+                    <button id="3" class="btn-ativo" onclick="mudar(this)">Título do Anúncio</button>
+                    <button id="4" class="btn-inativo not_active" onclick="mudar(this)">MLBU</button>
+                    <button id="5" class="btn-inativo not_active" onclick="mudar(this)">Título do Produto</button>
                 </div>
             </div>
-
-            <!-- Tipo -->
-            <div class="col-md-4 painel-col-tipo">
-                <div class="painel-card">
-                    <div class="painel-card-titulo">Tipo</div>
-                    <div class="painel-card-botoes">
-                        <button id="6"  class="btn-ativo"           onclick="mudar(this)">Tipo de Anúncio</button>
-                        <button id="7"  class="btn-ativo"           onclick="mudar(this)">Tipo Logístico</button>
-                        <button id="8"  class="btn-ativo"           onclick="mudar(this)">Catálogo</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Estado -->
-            <div class="col-md-4 painel-col-estado">
-                <div class="painel-card">
-                    <div class="painel-card-titulo">Estado</div>
-                    <div class="painel-card-botoes">
-                        <button id="9"  class="btn-inativo not_active" onclick="mudar(this)">Status</button>
-                        <button id="10" class="btn-inativo not_active" onclick="mudar(this)">Estoque</button>
-                        <button id="11" class="btn-inativo not_active" onclick="mudar(this)">Score</button>
-                        <button id="12" class="btn-inativo not_active" onclick="mudar(this)">Nível</button>
-                        <button id="13" class="btn-inativo not_active" onclick="mudar(this)">Qtd Vendas</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Precificação -->
-            <div class="col-md-4 painel-col-precificacao">
-                <div class="painel-card">
-                    <div class="painel-card-titulo">Precificação</div>
-                    <div class="painel-card-botoes">
-                        <button id="14" class="btn-inativo not_active" onclick="mudar(this)">Preço</button>
-                        <button id="15" class="btn-inativo not_active" onclick="mudar(this)">Frete Calculado</button>
-                        <button id="16" class="btn-inativo not_active" onclick="mudar(this)">Frete Real</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Controle -->
-            <div class="col-md-4 painel-col-controle">
-                <div class="painel-card">
-                    <div class="painel-card-titulo">Controle</div>
-                    <div class="painel-card-botoes">
-                        <button id="17" class="btn-inativo not_active" onclick="mudar(this)">Permalink</button>
-                        <button id="18" class="btn-inativo not_active" onclick="mudar(this)">Criado em ML</button>
-                        <button id="19" class="btn-inativo not_active" onclick="mudar(this)">Atualizado em ML</button>
-                    </div>
-                </div>
-            </div>
-
         </div>
-    </div>
 
-    <!-- Linha de filtros ativos -->
-    <div id="linha-filtros">
-        <div id="filtros-ativos-texto">Nenhum filtro ativo</div>
-        <button id="btn-toggle-filtros" onclick="toggle_filtros()">
-            <i class="fas fa-filter"></i> Filtros <span id="btn-filtros-caret">▼</span>
-        </button>
-    </div>
+        <!-- Tipo -->
+        <div class="col-md-4 painel-col-tipo">
+            <div class="painel-card">
+                <div class="painel-card-titulo">Tipo</div>
+                <div class="painel-card-botoes">
+                    <button id="6" class="btn-ativo" onclick="mudar(this)">Tipo de Anúncio</button>
+                    <button id="7" class="btn-ativo" onclick="mudar(this)">Tipo Logístico</button>
+                    <button id="8" class="btn-ativo" onclick="mudar(this)">Catálogo</button>
+                </div>
+            </div>
+        </div>
 
-    <!-- Tabela de anúncios -->
-    <table id="tabela-anuncios-ml" class="display" style="width:100%">
-        <thead>
-            <tr>
-                <th>MLB</th>
-                <th>SKU</th>
-                <th>Título do Anúncio</th>
-                <th>MLBU</th>
-                <th>Título do Produto</th>
-                <th>Tipo de Anúncio</th>
-                <th>Tipo Logístico</th>
-                <th>Catálogo</th>
-                <th>Status</th>
-                <th>Estoque</th>
-                <th>Score</th>
-                <th>Nível</th>
-                <th>Qtd Vendas</th>
-                <th>Preço</th>
-                <th>Frete Calculado</th>
-                <th>Frete Real</th>
-                <th>Permalink</th>
-                <th>Criado em ML</th>
-                <th>Atualizado em ML</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for anuncio in anuncios %}
-            <tr>
-                <td>{{ anuncio.mlb|default:"" }}</td>
-                <td>{{ anuncio.produto.sku|default:"" }}</td>
-                <td>{{ anuncio.titulo_anuncio|default:"" }}</td>
-                <td>{{ anuncio.mlbu|default:"" }}</td>
-                <td>{{ anuncio.produto.titulo|default:"" }}</td>
-                <td>{{ anuncio.get_tipo_anuncio_display|default:"" }}</td>
-                <td>{{ anuncio.get_tipo_logistico_display|default:"" }}</td>
-                <td>{{ anuncio.catalogo|yesno:"Sim,Não" }}</td>
-                <td>{{ anuncio.get_status_display|default:"" }}</td>
-                <td data-order="{{ anuncio.estoque|default:0 }}">{{ anuncio.estoque|default:"" }}</td>
-                <td data-order="{{ anuncio.score|default:0 }}">{{ anuncio.score|default:"" }}</td>
-                <td>{{ anuncio.get_nivel_display|default:"" }}</td>
-                <td data-order="{{ anuncio.qtd_vendas|default:0 }}">{{ anuncio.qtd_vendas|default:"" }}</td>
-                <td data-order="{{ anuncio.preco|default:0 }}">{{ anuncio.preco|floatformat:2|default:"" }}</td>
-                <td data-order="{{ anuncio.frete_calculado|default:0 }}">{{ anuncio.frete_calculado|floatformat:2|default:"" }}</td>
-                <td data-order="{{ anuncio.frete_real|default:0 }}">{{ anuncio.frete_real|floatformat:2|default:"" }}</td>
-                <td>{{ anuncio.permalink|default:"" }}</td>
-                <td data-order="{{ anuncio.data_criacao_ml|date:'Y-m-d'|default:'' }}">{{ anuncio.data_criacao_ml|date:"d/m/Y"|default:"" }}</td>
-                <td data-order="{{ anuncio.ultima_atualizacao_ml|date:'Y-m-d'|default:'' }}">{{ anuncio.ultima_atualizacao_ml|date:"d/m/Y"|default:"" }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        <!-- Estado -->
+        <div class="col-md-4 painel-col-estado">
+            <div class="painel-card">
+                <div class="painel-card-titulo">Estado</div>
+                <div class="painel-card-botoes">
+                    <button id="9" class="btn-inativo not_active" onclick="mudar(this)">Status</button>
+                    <button id="10" class="btn-inativo not_active" onclick="mudar(this)">Estoque</button>
+                    <button id="11" class="btn-inativo not_active" onclick="mudar(this)">Score</button>
+                    <button id="12" class="btn-inativo not_active" onclick="mudar(this)">Nível</button>
+                    <button id="13" class="btn-inativo not_active" onclick="mudar(this)">Qtd Vendas</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Precificação -->
+        <div class="col-md-4 painel-col-precificacao">
+            <div class="painel-card">
+                <div class="painel-card-titulo">Precificação</div>
+                <div class="painel-card-botoes">
+                    <button id="14" class="btn-inativo not_active" onclick="mudar(this)">Preço</button>
+                    <button id="15" class="btn-inativo not_active" onclick="mudar(this)">Frete Calculado</button>
+                    <button id="16" class="btn-inativo not_active" onclick="mudar(this)">Frete Real</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controle -->
+        <div class="col-md-4 painel-col-controle">
+            <div class="painel-card">
+                <div class="painel-card-titulo">Controle</div>
+                <div class="painel-card-botoes">
+                    <button id="17" class="btn-inativo not_active" onclick="mudar(this)">Permalink</button>
+                    <button id="18" class="btn-inativo not_active" onclick="mudar(this)">Criado em ML</button>
+                    <button id="19" class="btn-inativo not_active" onclick="mudar(this)">Atualizado em ML</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Linha de filtros ativos -->
+<div id="linha-filtros">
+    <div id="filtros-ativos-texto">Nenhum filtro ativo</div>
+    <button id="btn-toggle-filtros" onclick="toggle_filtros()">
+        <i class="fas fa-filter"></i> Filtros <span id="btn-filtros-caret">▼</span>
+    </button>
+</div>
+
+<!-- Tabela de anúncios -->
+<table id="tabela-anuncios-ml" class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th>MLB</th>
+            <th>SKU</th>
+            <th>Título do Anúncio</th>
+            <th>MLBU</th>
+            <th>Título do Produto</th>
+            <th>Tipo de Anúncio</th>
+            <th>Tipo Logístico</th>
+            <th>Catálogo</th>
+            <th>Status</th>
+            <th>Estoque</th>
+            <th>Score</th>
+            <th>Nível</th>
+            <th>Qtd Vendas</th>
+            <th>Preço</th>
+            <th>Frete Calculado</th>
+            <th>Frete Real</th>
+            <th>Permalink</th>
+            <th>Criado em ML</th>
+            <th>Atualizado em ML</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for anuncio in anuncios %}
+
+        <!-- * [EXPLICAÇÃO] → Classe da linha combina tipo + logística + catálogo.
+                 Lógica: Flex=amarelo | FULL=verde | Clássico=suave | Premium=saturado | Catálogo=mais intenso -->
+        <tr
+            class="{% if anuncio.tipo_anuncio == 'gold_special' %}{% if anuncio.tipo_logistico == 'fulfillment' %}{% if anuncio.catalogo %}anuncio-classico-full-cat{% else %}anuncio-classico-full{% endif %}{% else %}{% if anuncio.catalogo %}anuncio-classico-flex-cat{% else %}anuncio-classico-flex{% endif %}{% endif %}{% elif anuncio.tipo_anuncio == 'gold_pro' %}{% if anuncio.tipo_logistico == 'fulfillment' %}{% if anuncio.catalogo %}anuncio-premium-full-cat{% else %}anuncio-premium-full{% endif %}{% else %}{% if anuncio.catalogo %}anuncio-premium-flex-cat{% else %}anuncio-premium-flex{% endif %}{% endif %}{% endif %}">
+
+            <td>{{ anuncio.mlb|default:"" }}</td>
+            <td>{{ anuncio.produto.sku|default:"" }}</td>
+
+            <!-- * [EXPLICAÇÃO] → Célula rica com título e badges de tipo, logística e catálogo. -->
+            <td class="celula-titulo">
+                <span class="titulo-principal">{{ anuncio.titulo_anuncio|default:"—" }}</span>
+                <div class="titulo-badges">
+                    {% if anuncio.tipo_anuncio == 'gold_special' %}
+                    <span class="badge-anuncio badge-classico">Clássico</span>
+                    {% elif anuncio.tipo_anuncio == 'gold_pro' %}
+                    <span class="badge-anuncio badge-premium">⭐ Premium</span>
+                    {% endif %}
+                    {% if anuncio.tipo_logistico == 'fulfillment' %}
+                    <span class="badge-logistica badge-full"><i class="fas fa-warehouse"></i> FULL</span>
+                    {% elif anuncio.tipo_logistico == 'flex' %}
+                    <span class="badge-logistica badge-flex"><i class="fas fa-bolt"></i> Flex</span>
+                    {% else %}
+                    <span class="badge-logistica badge-padrao"><i class="fas fa-box"></i> Padrão</span>
+                    {% endif %}
+                    {% if anuncio.catalogo %}
+                    <span class="badge-catalogo"><i class="fas fa-book"></i> Catálogo</span>
+                    {% endif %}
+                </div>
+            </td>
+
+            <td>{{ anuncio.mlbu|default:"" }}</td>
+            <td>{{ anuncio.produto.titulo|default:"" }}</td>
+
+            <!-- * [EXPLICAÇÃO] → Colunas de tipo com badges visuais em vez de texto simples. -->
+            <td data-search="{{ anuncio.get_tipo_anuncio_display|default:'' }}">
+                {% if anuncio.tipo_anuncio == 'gold_special' %}
+                <span class="badge-anuncio badge-classico">Clássico</span>
+                {% elif anuncio.tipo_anuncio == 'gold_pro' %}
+                <span class="badge-anuncio badge-premium">⭐ Premium</span>
+                {% endif %}
+            </td>
+            <td data-search="{{ anuncio.get_tipo_logistico_display|default:'' }}">
+                {% if anuncio.tipo_logistico == 'fulfillment' %}
+                <span class="badge-logistica badge-full"><i class="fas fa-warehouse"></i> FULL</span>
+                {% elif anuncio.tipo_logistico == 'flex' %}
+                <span class="badge-logistica badge-flex"><i class="fas fa-bolt"></i> Flex</span>
+                {% else %}
+                <span class="badge-logistica badge-padrao"><i class="fas fa-box"></i> Padrão</span>
+                {% endif %}
+            </td>
+            <td data-search="{{ anuncio.catalogo|yesno:'Sim,Não' }}">
+                {% if anuncio.catalogo %}
+                <span class="badge-catalogo"><i class="fas fa-book"></i> Catálogo</span>
+                {% else %}
+                —
+                {% endif %} 
+            </td>
+            <td>{{ anuncio.get_status_display|default:"" }}</td>
+            <td data-order="{{ anuncio.estoque|default:0 }}">{{ anuncio.estoque|default:"" }}</td>
+            <td data-order="{{ anuncio.score|default:0 }}">{{ anuncio.score|default:"" }}</td>
+            <td>{{ anuncio.get_nivel_display|default:"" }}</td>
+            <td data-order="{{ anuncio.qtd_vendas|default:0 }}">{{ anuncio.qtd_vendas|default:"" }}</td>
+            <td data-order="{{ anuncio.preco|default:0 }}">{{ anuncio.preco|floatformat:2|default:"" }}</td>
+            <td data-order="{{ anuncio.frete_calculado|default:0 }}">{{ anuncio.frete_calculado|floatformat:2|default:""
+                }}</td>
+            <td data-order="{{ anuncio.frete_real|default:0 }}">{{ anuncio.frete_real|floatformat:2|default:"" }}</td>
+            <td>{{ anuncio.permalink|default:"" }}</td>
+            <td data-order="{{ anuncio.data_criacao_ml|date:'Y-m-d'|default:'' }}">{{
+                anuncio.data_criacao_ml|date:"d/m/Y"|default:"" }}</td>
+            <td data-order="{{ anuncio.ultima_atualizacao_ml|date:'Y-m-d'|default:'' }}">{{
+                anuncio.ultima_atualizacao_ml|date:"d/m/Y"|default:"" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
 {% endblock %}
 
 {% block scripts %}
-    <script src="{% static 'pagina_anuncios_ml/js/script_anuncios_ml.js' %}"></script>
+<script src="{% static 'pagina_anuncios_ml/js/script_anuncios_ml.js' %}"></script>
 {% endblock %}
