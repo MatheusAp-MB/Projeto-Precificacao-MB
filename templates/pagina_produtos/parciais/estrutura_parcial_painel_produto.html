@@ -32,25 +32,6 @@
         </div>
     </div>
 
-    <!-- Financeiro -->
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header modal-card-cabecalho">
-                <strong>Financeiro</strong>
-            </div>
-            <div class="card-body">
-                <table class="modal-tabela">
-                    <colgroup>
-                        <col class="modal-col-dado">
-                        <col class="modal-col-valor">
-                    </colgroup>
-                    <tr><td class="modal-td-dado">Custo</td><td class="modal-td-valor">R$ {{ produto.custo|floatformat:2 }}</td></tr>
-                    <tr><td class="modal-td-dado">Custo c/ Boni</td><td class="modal-td-valor">{{ produto.custo_com_boni|floatformat:2|default:"—" }}</td></tr>
-                </table>
-            </div>
-        </div>
-    </div>
-
     <!-- Fiscal -->
     <div class="col-md-6">
         <div class="card">
@@ -98,5 +79,28 @@
             </div>
         </div>
     </div>
+
+
+
+    <!-- Financeiro -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header modal-card-cabecalho">
+                <strong>Financeiro</strong>
+            </div>
+            <div class="card-body">
+                <table class="modal-tabela">
+                    <colgroup>
+                        <col class="modal-col-dado">
+                        <col class="modal-col-valor">
+                    </colgroup>
+                    <tr><td class="modal-td-dado">Custo</td><td class="modal-td-valor">R$ {{ produto.custo|floatformat:2 }}</td></tr>
+                    <tr><td class="modal-td-dado">Custo c/ Boni</td><td class="modal-td-valor">{{ produto.custo_com_boni|floatformat:2|default:"—" }}</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
 
 </div>

@@ -27,6 +27,10 @@ class Produto(models.Model):
     marca = models.CharField(max_length=100, blank=True, null=True)
     estoque = models.IntegerField(default=0)
     cod_fabricante = models.CharField(max_length=50, blank=True, null=True)
+    categoria         = models.CharField(max_length=100, blank=True, null=True)
+    ultima_compra     = models.DateTimeField(blank=True, null=True)
+    # * [EXPLICAÇÃO] → Data de cadastro no ERP — distinto do criado_em que é a data de entrada no DB.
+    cadastrado_erp_em = models.DateTimeField(blank=True, null=True)
 
     # Financeiro
     custo = models.DecimalField(max_digits=10, decimal_places=2)
