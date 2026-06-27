@@ -12,14 +12,14 @@ var TABELA_ATIVA = null;
 //                  Remove acentos antes de comparar — garante que "Ó" venha
 //                  junto de "O" e não após "Z". Vazios sempre vêm primeiro.
 jQuery.extend(jQuery.fn.dataTableExt.oSort, {
-    'pt-string-asc': function(a, b) {
+    'pt-string-asc': function (a, b) {
         if (a === '' || a === null) return -1;
         if (b === '' || b === null) return 1;
         a = a.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
         b = b.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
         return a < b ? -1 : a > b ? 1 : 0;
     },
-    'pt-string-desc': function(a, b) {
+    'pt-string-desc': function (a, b) {
         if (a === '' || a === null) return 1;
         if (b === '' || b === null) return -1;
         a = a.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
@@ -37,21 +37,33 @@ function inicializar_tabela(tableId, opcoes) {
         // scrollX: true,
         autoWidth: false,
         language: {
-            emptyTable:     'Nenhum registro encontrado',
-            info:           'Mostrando _START_ até _END_ de _TOTAL_ registros',
-            infoEmpty:      'Mostrando 0 até 0 de 0 registros',
-            infoFiltered:   '(filtrado de _MAX_ registros no total)',
-            lengthMenu:     'Exibir _MENU_ resultados por página',
+            emptyTable: 'Nenhum registro encontrado',
+            info: 'Mostrando _START_ até _END_ de _TOTAL_ registros',
+            infoEmpty: 'Mostrando 0 até 0 de 0 registros',
+            infoFiltered: '(filtrado de _MAX_ registros no total)',
+            lengthMenu: 'Exibir _MENU_ resultados por página',
             loadingRecords: 'Carregando...',
-            processing:     'Processando...',
-            search:         'Buscar:',
-            zeroRecords:    'Nenhum registro encontrado',
+            processing: 'Processando...',
+            search: 'Buscar:',
+            zeroRecords: 'Nenhum registro encontrado',
             paginate: {
-                first:    'Primeiro',
-                last:     'Último',
-                next:     'Próximo',
+                first: 'Primeiro',
+                last: 'Último',
+                next: 'Próximo',
                 previous: 'Anterior'
-            }
+            },
+            searchPanes: {
+                clearMessage: 'Limpar',
+                collapse: 'Filtros',
+                count: '{total}',
+                countFiltered: '{shown} de {total}',
+                emptyMessage: 'Sem dados',
+                loadMessage: 'Carregando...',
+                title: 'Filtros Ativos - %d',
+                collapseMessage: 'Recolher tudo',
+                showMessage: 'Mostrar tudo',
+                clearMessage: 'Limpar tudo'
+            },
         }
     }, opcoes);
 
@@ -78,7 +90,7 @@ function inicializar_tabela(tableId, opcoes) {
 //                  O índice do botão corresponde ao número da coluna (1-based).
 function fnShowHide(iCol, toggle = null) {
     var colIndex = parseInt(iCol) - 1;
-    var oTable   = $(TABELA_ATIVA).dataTable();
+    var oTable = $(TABELA_ATIVA).dataTable();
 
     if (toggle === null) {
         var bVis = oTable.fnSettings().aoColumns[colIndex].bVisible;
