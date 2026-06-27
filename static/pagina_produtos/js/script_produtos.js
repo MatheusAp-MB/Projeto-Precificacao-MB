@@ -5,18 +5,24 @@
 // DATATABLES
 // ================================================
 
-inicializar_tabela('#tabela-produtos', {
-    autoWidth: true,
-    dom: 'Plfrtip',
-    searchPanes: {
-        layout: 'columns-4',
-        threshold: 1,
-        // initCollapsed: true
-    },
-    columnDefs: [
-        { type: 'pt-string', targets: [0, 1, 2, 3, 4, 6, 14, 25] },
-        { searchPanes: { show: true }, targets: '_all' }
-    ]
+$(document).ready(function () {
+    inicializar_tabela('#tabela-produtos', {
+        autoWidth: true,
+        dom: 'Plfrtip',
+        searchPanes: {
+            layout: 'columns-4',
+            threshold: 1,
+        },
+        columnDefs: [
+            { type: 'pt-string', targets: [0, 1, 2, 3, 4, 6, 14, 25] },
+            { searchPanes: { show: true }, targets: '_all' }
+        ]
+    });
+
+    // * [EXPLICAÇÃO] → Atualiza o texto de filtros ativos a cada redraw da tabela.
+    $('#tabela-produtos').on('draw.dt', function () {
+        atualizar_filtros_ativos();
+    });
 });
 // ================================================
 // MODAL
@@ -50,6 +56,12 @@ function toggle_filtros() {
         $(painel).show();
         caret.textContent = '▲';
         filtrosAbertos = true;
+        // * [EXPLICAÇÃO] → Força o SearchPanes a recalcular as larguras após
+        //                  o container sair de display:none. Sem isso, os painéis
+        //                  ficam com dtsp-narrow aplicado incorretamente.
+        setTimeout(function () {
+            $(window).trigger('resize');
+        }, 50);
     }
 }
 
