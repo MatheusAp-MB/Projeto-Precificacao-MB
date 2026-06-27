@@ -4,7 +4,6 @@
 // ================================================
 // DATATABLES
 // ================================================
-
 $(document).ready(function () {
     inicializar_tabela('#tabela-produtos', {
         autoWidth: true,
@@ -23,7 +22,18 @@ $(document).ready(function () {
     $('#tabela-produtos').on('draw.dt', function () {
         atualizar_filtros_ativos();
     });
+
+    // * [EXPLICAÇÃO] → Abre o painel brevemente para o SearchPanes calcular
+    //                  as larguras corretamente, depois recolhe e esconde.
+    setTimeout(function () {
+        $('.dtsp-panesContainer').show();
+        $(window).trigger('resize');
+        setTimeout(function () {
+            $('.dtsp-panesContainer').hide();
+        }, 100);
+    }, 200);
 });
+
 // ================================================
 // MODAL
 // ================================================
@@ -56,15 +66,23 @@ function toggle_filtros() {
         $(painel).show();
         caret.textContent = '▲';
         filtrosAbertos = true;
-        // * [EXPLICAÇÃO] → Força o SearchPanes a recalcular as larguras após
-        //                  o container sair de display:none. Sem isso, os painéis
-        //                  ficam com dtsp-narrow aplicado incorretamente.
+        $(window).trigger('resize');
+
+        // * [EXPLICAÇÃO] → Recolhe todos os painéis individuais clicando no botão ^
+        //                  de cada um. O delay garante que o resize foi processado.
         setTimeout(function () {
-            $(window).trigger('resize');
-        }, 50);
+            $('.dtsp-collapseButton').each(function () {
+                var pane = $(this).closest('.dtsp-searchPane');
+                var temFiltroAtivo = pane.find('tr.selected').length > 0;
+                var estaAberto = !pane.find('.dataTables_scrollBody').is(':hidden');
+
+                if (estaAberto && !temFiltroAtivo) {
+                    $(this).trigger('click');
+                }
+            });
+        }, 100);
     }
 }
-
 // ================================================
 // FILTROS ATIVOS
 // ================================================
