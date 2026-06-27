@@ -51,6 +51,9 @@ INSTALLED_APPS = [
     
     # * [STATUS: DESENVOLVIMENTO] → App de anúncios — integração com marketplaces e API ML
     'anuncios',
+
+    # * [STATUS: DESENVOLVIMENTO] → App central de configuração de marketplaces
+    'marketplaces',
 ]
 
 MIDDLEWARE = [

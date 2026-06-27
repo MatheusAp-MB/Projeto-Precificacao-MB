@@ -22,4 +22,7 @@ urlpatterns = [
 
     # * [EXPLICAÇÃO] → Rotas do app de anúncios.
     path('anuncios/', include('anuncios.urls')),
+
+    # * [EXPLICAÇÃO] → Rotas do app de marketplaces.
+    path('marketplaces/', include('marketplaces.urls')),
 ]
