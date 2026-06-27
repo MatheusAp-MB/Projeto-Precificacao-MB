@@ -1,0 +1,14 @@
+<!--
+* [RESUMO] → Template da tela de anúncios — grid de marketplaces.
+* Herda de estrutura_base_grid_card.html.
+* Usa o parcial compartilhado de marketplaces.
+-->
+{% extends 'base_compartilhada/estrutura_base_grid_card.html' %}
+{% load static %}
+
+{% block titulo %}Anúncios — Sistema Interno MB/SV{% endblock %}
+{% block toolbar_titulo %}Anúncios{% endblock %}
+
+{% block cards %}
+    {% include 'base_compartilhada/estrutura_parcial_grid_marketplaces.html' %}
+{% endblock %}

@@ -3,6 +3,7 @@
 
 from django.shortcuts import render
 from .models import FreteML
+from django.urls import reverse
 
 # ================================================
 # PRECIFICAÇÃO — GRID PRINCIPAL
@@ -10,9 +11,12 @@ from .models import FreteML
 
 def view_precificacao(request):
     # * [EXPLICAÇÃO] → Tela inicial do módulo de precificação.
-    #                  Exibe um grid com os marketplaces disponíveis.
-    return render(request, 'pagina_precificacao/estrutura_precificacao.html')
-
+    #                  Passa as URLs dos marketplaces com tela de precificação disponível.
+    return render(request, 'pagina_precificacao/estrutura_precificacao.html', {
+        'urls_marketplaces': {
+            'mercado_livre': reverse('mercado_livre'),
+        }
+    })
 
 # ================================================
 # MERCADO LIVRE — GRID DE OPÇÕES
