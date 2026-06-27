@@ -1,0 +1,12 @@
+/*
+* [RESUMO] → CSS específico da tela de anúncios do Mercado Livre.
+*/
+
+/* * [EXPLICAÇÃO] → Larguras das colunas do painel de visibilidade. */
+@media (min-width: 768px) {
+    .painel-col-identificacao { flex: 0 0 auto; width: 25%; }
+    .painel-col-tipo          { flex: 0 0 auto; width: 20%; }
+    .painel-col-estado        { flex: 0 0 auto; width: 20%; }
+    .painel-col-precificacao  { flex: 0 0 auto; width: 20%; }
+    .painel-col-controle      { flex: 0 0 auto; width: 15%; }
+}
