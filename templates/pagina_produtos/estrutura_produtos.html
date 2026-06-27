@@ -174,13 +174,18 @@
     <div class="modal fade" id="modal-produto" tabindex="-1">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Detalhes do Produto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+
+                <!-- * [EXPLICAÇÃO] → Cabeçalho do modal com título e botão de fechar customizado. -->
+                <div class="modal-header" id="modal-produto-header">
+                    <h5 class="modal-title" id="modal-produto-titulo-header">Detalhes do Produto</h5>
+                    <button type="button" id="modal-produto-btn-fechar" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
-                <div class="modal-body" id="modal-conteudo">
-                    <!-- * [EXPLICAÇÃO] → Conteúdo injetado pelo HTMX ao clicar na linha. -->
-                </div>
+
+                <!-- * [EXPLICAÇÃO] → Conteúdo injetado pelo HTMX ao clicar na linha. -->
+                <div class="modal-body" id="modal-conteudo"></div>
+
             </div>
         </div>
     </div>
