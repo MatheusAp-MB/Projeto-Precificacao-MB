@@ -25,17 +25,18 @@ class Command(BaseCommand):
         self.stdout.write(f'Lendo arquivo: {arquivo}')
 
         try:
-            wb = openpyxl.load_workbook(arquivo, read_only=True, data_only=True)
+            wb = openpyxl.load_workbook(
+                arquivo, read_only=True, data_only=True)
         except Exception as e:
             self.stdout.write(self.style.ERROR(f'Erro ao abrir arquivo: {e}'))
             return
 
-        ws          = wb['Planilha1']
-        criados     = 0
+        ws = wb['Planilha1']
+        criados = 0
         atualizados = 0
-        ignorados   = 0
-        erros       = 0
-        contador    = 1
+        ignorados = 0
+        erros = 0
+        contador = 1
 
         def seguro(val):
             # * [EXPLICAÇÃO] → Retorna None se o valor for erro de fórmula.
@@ -44,7 +45,7 @@ class Command(BaseCommand):
             if isinstance(val, str) and val.strip().startswith('#'):
                 return None
             return val
-        
+
         def dec(val, max_val=99999):
             # * [EXPLICAÇÃO] → Descarta valores negativos ou absurdamente grandes —
             #                  indicam fórmula inválida na planilha.
@@ -57,7 +58,8 @@ class Command(BaseCommand):
                 return resultado
             except:
                 return None
-                
+            
+        eans_processados = set()
         for i, row in enumerate(ws.iter_rows(min_row=2, values_only=True)):
 
             if not any(v is not None for v in row[:5]):
@@ -66,32 +68,45 @@ class Command(BaseCommand):
 
             try:
                 ean = str(seguro(row[3])).strip() if seguro(row[3]) else None
+
                 if not ean:
                     ignorados += 1
                     continue
+                if ean in eans_processados:
+                    ignorados += 1
+                    continue
+                eans_processados.add(ean)
 
                 # * [EXPLICAÇÃO] → Busca o produto pelo EAN para obter o SKU.
                 try:
                     produto = Produto.objects.get(ean=ean)
                 except Produto.DoesNotExist:
-                    self.stdout.write(f'  [IGNORADO] Linha {i+2}: produto EAN {ean} não encontrado no banco')
+                    self.stdout.write(
+                        f'  [IGNORADO] Linha {i+2}: produto EAN {ean} não encontrado no banco')
                     ignorados += 1
                     continue
 
                 preco_classico = dec(seguro(row[60]))
-                frete_real     = dec(seguro(row[72]))
+                frete_real = dec(seguro(row[72]))
+                preco_real_premium = dec(seguro(row[73]))
+                margem_real_classico = dec(seguro(row[71]))
+                margem_real_premium = dec(seguro(row[78]))
 
                 mlb_classico = f'TEMP{contador:04d}C'
-                mlb_premium  = f'TEMP{contador:04d}P'
+                mlb_premium = f'TEMP{contador:04d}P'
 
                 # * [EXPLICAÇÃO] → Cria ou atualiza o anúncio Clássico.
                 _, criado = AnuncioML.objects.update_or_create(
                     mlb=mlb_classico,
                     defaults={
-                        'produto':       produto,
-                        'tipo_anuncio':  AnuncioML.TipoAnuncio.CLASSICO,
-                        'preco':         preco_classico,
-                        'frete_real':    frete_real,
+                        'produto':         produto,
+                        'tipo_anuncio':    AnuncioML.TipoAnuncio.CLASSICO,
+                        'tipo_logistico':  AnuncioML.TipoLogistico.FLEX,
+                        'preco':           preco_classico,
+                        'frete_real':      frete_real,
+                        'margem_real_classico': margem_real_classico,
+                        'margem_real_premium':  margem_real_premium,
+                        'preco_real_premium':   preco_real_premium,
                     }
                 )
                 criados += 1 if criado else 0
@@ -101,9 +116,14 @@ class Command(BaseCommand):
                 _, criado = AnuncioML.objects.update_or_create(
                     mlb=mlb_premium,
                     defaults={
-                        'produto':      produto,
-                        'tipo_anuncio': AnuncioML.TipoAnuncio.PREMIUM,
-                        'frete_real':   frete_real,
+                        'produto':         produto,
+                        'tipo_anuncio':    AnuncioML.TipoAnuncio.PREMIUM,
+                        'tipo_logistico':  AnuncioML.TipoLogistico.FLEX,
+                        'frete_real':      frete_real,
+                        'preco':                preco_real_premium,
+                        'preco_real_premium':   preco_real_premium,
+                        'margem_real_classico': margem_real_classico,
+                        'margem_real_premium':  margem_real_premium,
                     }
                 )
                 criados += 1 if criado else 0
@@ -113,7 +133,8 @@ class Command(BaseCommand):
 
             except Exception as e:
                 erros += 1
-                self.stdout.write(self.style.ERROR(f'  [ERRO] Linha {i+2}: {e}'))
+                self.stdout.write(self.style.ERROR(
+                    f'  [ERRO] Linha {i+2}: {e}'))
 
         self.stdout.write('\n' + '=' * 50)
         self.stdout.write(self.style.SUCCESS(

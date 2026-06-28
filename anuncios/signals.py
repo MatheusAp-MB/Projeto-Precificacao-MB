@@ -157,6 +157,11 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
     # SALVA NA BASE DE CÁLCULO
     # ================================================
 
+    # * [EXPLICAÇÃO] → Salva o preço premium calculado diretamente no AnuncioML.
+    type(anuncio).objects.filter(pk=anuncio.pk).update(
+        preco_calculado_premium=round(preco_premium, 2)
+    )
+
     BaseDeCalculo.objects.update_or_create(
         anuncio=anuncio,
         defaults={

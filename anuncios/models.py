@@ -55,6 +55,18 @@ class AnuncioML(models.Model):
     preco = models.DecimalField(
         max_digits=10, decimal_places=2, blank=True, null=True)
 
+    # Valores reais — vindos da planilha
+    preco_real_premium = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
+    margem_real_classico = models.DecimalField(
+        max_digits=6,  decimal_places=2, null=True, blank=True)
+    margem_real_premium = models.DecimalField(
+        max_digits=6,  decimal_places=2, null=True, blank=True)
+
+    # Valores calculados — gerados pelo signal
+    preco_calculado_premium = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
+
     # ================================================
     # TIPO
     # ================================================
