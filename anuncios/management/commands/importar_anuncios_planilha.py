@@ -27,17 +27,18 @@ class Command(BaseCommand):
         self.stdout.write(f'Lendo arquivo: {arquivo}')
 
         try:
-            wb = openpyxl.load_workbook(arquivo, read_only=True, data_only=True)
+            wb = openpyxl.load_workbook(
+                arquivo, read_only=True, data_only=True)
         except Exception as e:
             self.stdout.write(self.style.ERROR(f'Erro ao abrir arquivo: {e}'))
             return
 
-        ws         = wb['Planilha1']
-        criados    = 0
+        ws = wb['Planilha1']
+        criados = 0
         atualizados = 0
-        ignorados  = 0
-        erros      = 0
-        contador   = 1
+        ignorados = 0
+        erros = 0
+        contador = 1
 
         def seguro(val):
             # * [EXPLICAÇÃO] → Retorna None se o valor for erro de fórmula (#N/A, #REF!, etc).
@@ -98,14 +99,18 @@ class Command(BaseCommand):
                 # LEITURA DOS VALORES DA PLANILHA
                 # ================================================
 
-                preco_classico_real  = dec(seguro(row[60]))   # BI — Preço Clássico
-                frete_real           = dec(seguro(row[72]))   # BU — Frete ML
-                margem_classico_real = dec(seguro(row[71]))   # BT — Margem % Clássico
-                preco_premium_real   = dec(seguro(row[73]))   # BV — Preço Premium
-                margem_premium_real  = dec(seguro(row[78]))   # CA — Margem % Premium
+                preco_classico_real = dec(
+                    seguro(row[60]))   # BI — Preço Clássico
+                frete_real = dec(seguro(row[72]))   # BU — Frete ML
+                # BT — Margem % Clássico
+                margem_classico_real = dec(seguro(row[71]))
+                preco_premium_real = dec(
+                    seguro(row[73]))   # BV — Preço Premium
+                # CA — Margem % Premium
+                margem_premium_real = dec(seguro(row[78]))
 
                 mlb_classico = f'TEMP{contador:04d}C'
-                mlb_premium  = f'TEMP{contador:04d}P'
+                mlb_premium = f'TEMP{contador:04d}P'
 
                 # ================================================
                 # ANÚNCIO CLÁSSICO
@@ -123,15 +128,10 @@ class Command(BaseCommand):
                         'preco_classico_real':  preco_classico_real,
                         'margem_classico_real': margem_classico_real,
                         'frete_real':           frete_real,
-                        'comissao_classico_planilha':   dec(seguro(row[67])) if seguro(row[67]) else None,
-                        'icms_classico_planilha':       dec(seguro(row[69])) if seguro(row[69]) else None,
-                        'pis_cofins_classico_planilha': dec(seguro(row[70])) if seguro(row[70]) else None,
-                        'comissao_premium_planilha':    dec(seguro(row[74])) if seguro(row[74]) else None,
-                        'icms_premium_planilha':        dec(seguro(row[76])) if seguro(row[76]) else None,
-                        'pis_cofins_premium_planilha':  dec(seguro(row[77])) if seguro(row[77]) else None,
+                        
                     }
                 )
-                criados    += 1 if criado else 0
+                criados += 1 if criado else 0
                 atualizados += 0 if criado else 1
 
                 # ================================================
@@ -151,14 +151,15 @@ class Command(BaseCommand):
                         'frete_real':          frete_real,
                     }
                 )
-                criados    += 1 if criado else 0
+                criados += 1 if criado else 0
                 atualizados += 0 if criado else 1
 
                 contador += 1
 
             except Exception as e:
                 erros += 1
-                self.stdout.write(self.style.ERROR(f'  [ERRO] Linha {i+2}: {e}'))
+                self.stdout.write(self.style.ERROR(
+                    f'  [ERRO] Linha {i+2}: {e}'))
 
         self.stdout.write('\n' + '=' * 50)
         self.stdout.write(self.style.SUCCESS(

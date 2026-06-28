@@ -45,12 +45,13 @@ def calcular_frete_para_anuncio(anuncio):
     from precificacao_marketplaces.models import FreteML
 
     if not anuncio.produto or not anuncio.preco_classico_calculado:
-        logger.info(f'[FRETE] {anuncio.mlb} → ignorado (sem produto ou preço calculado)')
+        logger.info(
+            f'[FRETE] {anuncio.mlb} → ignorado (sem produto ou preço calculado)')
         return None
 
     produto = anuncio.produto
-    peso    = max(produto.peso, produto.peso_cubado)
-    preco   = anuncio.preco_classico_calculado
+    peso = max(produto.peso, produto.peso_cubado)
+    preco = anuncio.preco_classico_calculado
 
     frete = FreteML.objects.filter(
         peso_min__lte=peso,
@@ -62,8 +63,10 @@ def calcular_frete_para_anuncio(anuncio):
     ).first()
 
     novo_valor = frete.valor if frete else None
-    type(anuncio).objects.filter(pk=anuncio.pk).update(frete_calculado=novo_valor)
-    logger.info(f'[FRETE] {anuncio.mlb} → peso={peso}kg | preco=R${preco} | frete=R${novo_valor}')
+    type(anuncio).objects.filter(pk=anuncio.pk).update(
+        frete_calculado=novo_valor)
+    logger.info(
+        f'[FRETE] {anuncio.mlb} → peso={peso}kg | preco=R${preco} | frete=R${novo_valor}')
     return novo_valor
 
 
@@ -76,7 +79,8 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
     from marketplaces.models import TipoAnuncioML, ConfiguracaoLogisticaML, FaixaArmazenagem
 
     if not anuncio.produto or not anuncio.preco_classico_calculado:
-        logger.info(f'[PRECIF] {anuncio.mlb} → ignorado (sem produto ou preco calculado)')
+        logger.info(
+            f'[PRECIF] {anuncio.mlb} → ignorado (sem produto ou preco calculado)')
         return
 
     produto = anuncio.produto
@@ -89,7 +93,8 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
             catalogo=anuncio.catalogo
         )
     except TipoAnuncioML.DoesNotExist:
-        logger.warning(f'[PRECIF] {anuncio.mlb} → TipoAnuncioML Classico nao encontrado')
+        logger.warning(
+            f'[PRECIF] {anuncio.mlb} → TipoAnuncioML Classico nao encontrado')
         return
 
     try:
@@ -100,25 +105,27 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
             catalogo=anuncio.catalogo
         )
     except TipoAnuncioML.DoesNotExist:
-        logger.warning(f'[PRECIF] {anuncio.mlb} → TipoAnuncioML Premium nao encontrado')
+        logger.warning(
+            f'[PRECIF] {anuncio.mlb} → TipoAnuncioML Premium nao encontrado')
         return
 
-    logistica = ConfiguracaoLogisticaML.objects.filter(marketplace__sigla='ML').first()
+    logistica = ConfiguracaoLogisticaML.objects.filter(
+        marketplace__sigla='ML').first()
 
-    preco_classico        = anuncio.preco_classico_calculado
-    custo                 = produto.custo
-    custo_com_boni        = produto.custo_com_boni or produto.custo
-    ipi                   = (produto.ipi or Decimal('0')) / 100
-    frete_cif_fob         = (produto.frete_cif_fob or Decimal('0')) / 100
-    st_valor              = produto.st_valor or Decimal('0')
-    icms_entrada          = (produto.icms_entrada or Decimal('0')) / 100
-    icms_saida_media      = (produto.icms_saida_media or Decimal('0')) / 100
-    pis_cofins            = (produto.pis_cofins or Decimal('0')) / 100
+    preco_classico = anuncio.preco_classico_calculado
+    custo = produto.custo
+    custo_com_boni = produto.custo_com_boni or produto.custo
+    ipi = (produto.ipi or Decimal('0')) / 100
+    frete_cif_fob = (produto.frete_cif_fob or Decimal('0')) / 100
+    st_valor = produto.st_valor or Decimal('0')
+    icms_entrada = (produto.icms_entrada or Decimal('0')) / 100
+    icms_saida_media = (produto.icms_saida_media or Decimal('0')) / 100
+    pis_cofins = (produto.pis_cofins or Decimal('0')) / 100
     comissao_classico_pct = tipo_classico.comissao / 100
-    comissao_premium_pct  = tipo_premium.comissao / 100
-    acrescimo_premium     = tipo_premium.acrescimo_preco / 100
-    fator_coleta          = logistica.fator_coleta if logistica else Decimal('0')
-    periodo_armaz         = logistica.periodo_armazenagem if logistica else 0
+    comissao_premium_pct = tipo_premium.comissao / 100
+    acrescimo_premium = tipo_premium.acrescimo_preco / 100
+    fator_coleta = logistica.fator_coleta if logistica else Decimal('0')
+    periodo_armaz = logistica.periodo_armazenagem if logistica else 0
 
     # Armazenagem _dinamico
     faixa_armazenagem = FaixaArmazenagem.objects.filter(
@@ -134,66 +141,81 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
             marketplace__sigla='ML', ativo=True
         ).order_by('-ordem').first()
 
-    faixa_valor          = faixa_armazenagem.valor_diario if faixa_armazenagem else Decimal('0')
+    faixa_valor = faixa_armazenagem.valor_diario if faixa_armazenagem else Decimal(
+        '0')
     armazenagem_dinamico = faixa_valor * periodo_armaz
 
     # Armazenagem _planilha
     armazenagem_planilha = produto.armazenagem_planilha or Decimal('0')
-    coleta_planilha      = produto.coleta_planilha      or Decimal('0')
-    custo_final_planilha = produto.custo_final_planilha  or Decimal('0')
-    comissao_classico_planilha   = anuncio.comissao_classico_planilha   or Decimal('0')
-    icms_classico_planilha       = anuncio.icms_classico_planilha       or Decimal('0')
-    pis_cofins_classico_planilha = anuncio.pis_cofins_classico_planilha or Decimal('0')
-    comissao_premium_planilha    = anuncio.comissao_premium_planilha    or Decimal('0')
-    icms_premium_planilha        = anuncio.icms_premium_planilha        or Decimal('0')
-    pis_cofins_premium_planilha  = anuncio.pis_cofins_premium_planilha  or Decimal('0')
-    preco_premium_planilha       = anuncio.preco_premium_real           or Decimal('0')
+
+    # * [EXPLICAÇÃO] → _planilha usa armazenagem importada da planilha (BH).
+    #                  Os demais intermediários são calculados pelo sistema —
+    #                  os valores intermediários da planilha têm cache corrompido
+    #                  por dependências de arquivos externos (XLOOKUP).
+    #                  preco_premium_planilha: busca do anúncio Premium irmão.
+    from anuncios.models import AnuncioML
+    anuncio_premium = AnuncioML.objects.filter(
+        produto=anuncio.produto,
+        tipo_anuncio='gold_pro'
+    ).first()
+    preco_premium_planilha = (
+        anuncio_premium.preco_premium_real if anuncio_premium and anuncio_premium.preco_premium_real
+        else preco_premium
+    )
 
     # Intermediários comuns
-    metro_cubico            = (produto.altura / 100) * (produto.largura / 100) * (produto.profundidade / 100)
-    custo_final             = custo_com_boni + (custo_com_boni * ipi) + (custo_com_boni * frete_cif_fob) + st_valor
-    coleta                  = metro_cubico * fator_coleta
-    frete                   = frete_valor or Decimal('0')
-    preco_premium           = round_up_to_90(preco_classico * (1 + acrescimo_premium))
+    metro_cubico = (produto.altura / 100) * \
+        (produto.largura / 100) * (produto.profundidade / 100)
+    custo_final = custo_com_boni + \
+        (custo_com_boni * ipi) + (custo_com_boni * frete_cif_fob) + st_valor
+    coleta = metro_cubico * fator_coleta
+    frete = frete_valor or Decimal('0')
+    preco_premium = round_up_to_90(preco_classico * (1 + acrescimo_premium))
     comissao_classico_valor = preco_classico * comissao_classico_pct
-    comissao_premium_valor  = preco_premium  * comissao_premium_pct
-    icms_classico           = (preco_classico * icms_saida_media) - (custo * icms_entrada)
-    icms_premium            = (preco_premium  * icms_saida_media) - (custo * icms_entrada)
-    pis_cofins_classico     = (preco_classico - custo) * pis_cofins
-    pis_cofins_premium      = (preco_premium  - custo) * pis_cofins
+    comissao_premium_valor = preco_premium * comissao_premium_pct
+    icms_classico = (preco_classico * icms_saida_media) - \
+        (custo * icms_entrada)
+    icms_premium = (preco_premium * icms_saida_media) - (custo * icms_entrada)
+    pis_cofins_classico = (preco_classico - custo) * pis_cofins
+    pis_cofins_premium = (preco_premium - custo) * pis_cofins
 
     # Resultados _dinamico
-    margem_valor_classico_din = (preco_classico - frete - coleta - armazenagem_dinamico - custo_final - comissao_classico_valor - icms_classico - pis_cofins_classico)
-    margem_pct_classico_din   = (margem_valor_classico_din / preco_classico * 100) if preco_classico else Decimal('0')
-    margem_valor_premium_din  = (preco_premium - frete - coleta - armazenagem_dinamico - custo_final - comissao_premium_valor - icms_premium - pis_cofins_premium)
-    margem_pct_premium_din    = (margem_valor_premium_din / preco_premium * 100) if preco_premium else Decimal('0')
+    margem_valor_classico_din = (preco_classico - frete - coleta - armazenagem_dinamico -
+                                 custo_final - comissao_classico_valor - icms_classico - pis_cofins_classico)
+    margem_pct_classico_din = (margem_valor_classico_din /
+                               preco_classico * 100) if preco_classico else Decimal('0')
+    margem_valor_premium_din = (preco_premium - frete - coleta - armazenagem_dinamico -
+                                custo_final - comissao_premium_valor - icms_premium - pis_cofins_premium)
+    margem_pct_premium_din = (
+        margem_valor_premium_din / preco_premium * 100) if preco_premium else Decimal('0')
 
-    # Resultados _planilha
+    # * [EXPLICAÇÃO] → _planilha: mesmos intermediários do _dinamico,
+    #                  exceto armazenagem que vem da planilha (BH).
+    #                  Diferença entre _dinamico e _planilha = impacto da faixa de armazenagem.
     margem_valor_classico_pla = (
-        preco_classico - frete - coleta_planilha - armazenagem_planilha
-        - custo_final_planilha - comissao_classico_planilha
-        - icms_classico_planilha - pis_cofins_classico_planilha
+        preco_classico - frete - coleta - armazenagem_planilha
+        - custo_final - comissao_classico_valor
+        - icms_classico - pis_cofins_classico
     )
     margem_pct_classico_pla = (
         margem_valor_classico_pla / preco_classico * 100
     ) if preco_classico else Decimal('0')
 
     margem_valor_premium_pla = (
-        preco_premium_planilha - frete - coleta_planilha - armazenagem_planilha
-        - custo_final_planilha - comissao_premium_planilha
-        - icms_premium_planilha - pis_cofins_premium_planilha
+        preco_premium_planilha - frete - coleta - armazenagem_planilha
+        - custo_final - comissao_premium_valor
+        - icms_premium - pis_cofins_premium
     )
     margem_pct_premium_pla = (
         margem_valor_premium_pla / preco_premium_planilha * 100
     ) if preco_premium_planilha else Decimal('0')
-
     # Salva em AnuncioML
     type(anuncio).objects.filter(pk=anuncio.pk).update(
-        preco_premium_calculado            = preco_premium,
-        margem_classico_calculado          = round(margem_pct_classico_din, 2),
-        margem_premium_calculado           = round(margem_pct_premium_din, 2),
-        margem_classico_calculado_planilha = round(margem_pct_classico_pla, 2),
-        margem_premium_calculado_planilha  = round(margem_pct_premium_pla, 2),
+        preco_premium_calculado=preco_premium,
+        margem_classico_calculado=round(margem_pct_classico_din, 2),
+        margem_premium_calculado=round(margem_pct_premium_din, 2),
+        margem_classico_calculado_planilha=round(margem_pct_classico_pla, 2),
+        margem_premium_calculado_planilha=round(margem_pct_premium_pla, 2),
     )
 
     # Salva na BaseDeCalculo
@@ -240,8 +262,7 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
             'resultado_margem_classico_pct_planilha':   round(margem_pct_classico_pla, 2),
             'resultado_margem_premium_valor_planilha':  round(margem_valor_premium_pla, 2),
             'resultado_margem_premium_pct_planilha':    round(margem_pct_premium_pla, 2),
-            'entrada_coleta_planilha':      coleta_planilha,
-            'entrada_custo_final_planilha': custo_final_planilha,
+
         }
     )
 

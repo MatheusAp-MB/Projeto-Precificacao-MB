@@ -76,13 +76,7 @@ class Produto(models.Model):
     # ================================================
     # ARMAZENAGEM
     # ================================================
-    # * [EXPLICAÇÃO] → coleta_planilha: valor de coleta importado da coluna BG da planilha (BG = Y×72).
-#                  custo_final_planilha: valor de custo final importado da coluna R da planilha
-#                  (R = K + K×N + K×L + I). Usados no cálculo _planilha para total independência.
-    coleta_planilha = models.DecimalField(
-        max_digits=10, decimal_places=4, blank=True, null=True)
-    custo_final_planilha = models.DecimalField(
-        max_digits=10, decimal_places=2, blank=True, null=True)
+
     
     # * [EXPLICAÇÃO] → armazenagem_planilha: valor mensal importado diretamente da coluna BH
     #                  da planilha de precificação. Representa o custo mensal de armazenagem

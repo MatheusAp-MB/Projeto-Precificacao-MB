@@ -128,14 +128,7 @@ class AnuncioML(models.Model):
     margem_classico_calculado          = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     margem_classico_calculado_planilha = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
 
-    # * [EXPLICAÇÃO] → Valores intermediários importados diretamente da planilha.
-    #                  Usados no cálculo _planilha para total independência de recálculo.
-    comissao_classico_planilha    = models.DecimalField(max_digits=10, decimal_places=4, blank=True, null=True)
-    icms_classico_planilha        = models.DecimalField(max_digits=10, decimal_places=4, blank=True, null=True)
-    pis_cofins_classico_planilha  = models.DecimalField(max_digits=10, decimal_places=4, blank=True, null=True)
-    comissao_premium_planilha     = models.DecimalField(max_digits=10, decimal_places=4, blank=True, null=True)
-    icms_premium_planilha         = models.DecimalField(max_digits=10, decimal_places=4, blank=True, null=True)
-    pis_cofins_premium_planilha   = models.DecimalField(max_digits=10, decimal_places=4, blank=True, null=True)
+
 
     # ================================================
     # PRECIFICAÇÃO — MARGEM PREMIUM
@@ -213,6 +206,7 @@ class BaseDeCalculo(models.Model):
     # * [EXPLICAÇÃO] → Valor mensal de armazenagem importado da planilha (coluna BH).
     #                  Registrado aqui para rastreabilidade do cálculo _planilha.
     entrada_armazenagem_planilha = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+
 
     # ================================================
     # FÓRMULAS — VALORES INTERMEDIÁRIOS
