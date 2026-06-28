@@ -9,3 +9,56 @@
     .painel-col-premium       { flex: 0 0 auto; width: 26%; }
     .painel-col-custos        { flex: 0 0 auto; width: 22%; }
 }
+
+/* * [EXPLICAÇÃO] → Esconde linhas de grupos recolhidos. */
+tr.grupo-recolhido {
+    display: none !important;
+}
+
+/* ================================================
+   GRUPO DE PRODUTO (RowGroup)
+   ================================================ */
+
+/* * [EXPLICAÇÃO] → Linha de cabeçalho de cada grupo de produto. */
+tr.grupo-produto td {
+    background-color: cadetblue !important;
+    color: var(--cor-texto-claro) !important;
+    padding: 8px 16px !important;
+    font-size: 0.82rem !important;
+    cursor: pointer !important;
+    user-select: none;
+}
+
+tr.grupo-produto:hover td {
+    background-color: var(--cor-primaria-clara) !important;
+}
+
+/* * [EXPLICAÇÃO] → Ícone de toggle (▶ / ▼). */
+.grupo-toggle {
+    font-size: 0.75rem;
+    margin-right: 8px;
+    opacity: 0.8;
+}
+
+/* * [EXPLICAÇÃO] → SKU em destaque — identificador principal do grupo. */
+.grupo-sku {
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-right: 4px;
+}
+
+/* * [EXPLICAÇÃO] → Demais dados do produto com separador visual. */
+.grupo-ean,
+.grupo-fab,
+.grupo-marca,
+.grupo-curva,
+.grupo-estoque,
+.grupo-categoria {
+    opacity: 0.85;
+    margin: 0 4px;
+}
+
+/* * [EXPLICAÇÃO] → Esconde linhas de grupos recolhidos. */
+tr.grupo-recolhido {
+    display: none !important;
+}   
