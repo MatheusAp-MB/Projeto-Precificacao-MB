@@ -80,3 +80,15 @@ function atualizar_filtros_ativos() {
         texto.textContent = 'Nenhum filtro ativo';
     }
 }
+
+// ================================================
+// MODAL
+// ================================================
+
+// * [EXPLICAÇÃO] → Abre o modal após o HTMX injetar o conteúdo.
+function abrirModalPrecificar() {
+    setTimeout(function () {
+        var modal = new bootstrap.Modal(document.getElementById('modal-precificar'));
+        modal.show();
+    }, 100);
+}

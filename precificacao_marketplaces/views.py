@@ -9,6 +9,7 @@ from django.urls import reverse
 # PRECIFICAÇÃO — GRID PRINCIPAL
 # ================================================
 
+
 def view_precificacao(request):
     # * [EXPLICAÇÃO] → Tela inicial do módulo de precificação.
     #                  Passa as URLs dos marketplaces com tela de precificação disponível.
@@ -21,6 +22,7 @@ def view_precificacao(request):
 # ================================================
 # MERCADO LIVRE — GRID DE OPÇÕES
 # ================================================
+
 
 def view_mercado_livre(request):
     # * [EXPLICAÇÃO] → Tela do Mercado Livre — exibe um grid
@@ -71,6 +73,7 @@ def view_tabela_frete_ml(request):
         'linhas': linhas,
     })
 
+
 def view_calcular_frete_ml(request):
     # * [EXPLICAÇÃO] → Endpoint HTMX — recebe peso e preço via POST,
     #                  busca a célula correta no banco e retorna o parcial com o resultado.
@@ -78,16 +81,18 @@ def view_calcular_frete_ml(request):
     from django.db import models as db_models
 
     try:
-        peso  = Decimal(request.POST.get('peso', '0'))
+        peso = Decimal(request.POST.get('peso', '0'))
         preco = Decimal(request.POST.get('preco', '0'))
 
         frete = FreteML.objects.filter(
             peso_min__lte=peso,
             preco_min__lte=preco
         ).filter(
-            db_models.Q(peso_max__gte=peso) | db_models.Q(peso_max__isnull=True)
+            db_models.Q(peso_max__gte=peso) | db_models.Q(
+                peso_max__isnull=True)
         ).filter(
-            db_models.Q(preco_max__gte=preco) | db_models.Q(preco_max__isnull=True)
+            db_models.Q(preco_max__gte=preco) | db_models.Q(
+                preco_max__isnull=True)
         ).first()
 
         if frete:
@@ -106,7 +111,7 @@ def view_calcular_frete_ml(request):
             'valor': None,
             'erro':  str(e),
         })
-    
+
 
 def view_precificar_ml(request):
     # * [EXPLICAÇÃO] → Tela de precificação de anúncios do Mercado Livre.
@@ -117,4 +122,19 @@ def view_precificar_ml(request):
     ).all()
     return render(request, 'pagina_precificar_ml/estrutura_precificar_ml.html', {
         'anuncios': anuncios
+    })
+
+
+def view_painel_precificar_ml(request, anuncio_id):
+    # * [EXPLICAÇÃO] → Endpoint HTMX que retorna o parcial com a BaseDeCalculo
+    #                  do anúncio selecionado. Chamado ao clicar numa linha da tabela.
+    from anuncios.models import AnuncioML
+    from django.shortcuts import get_object_or_404
+    anuncio = get_object_or_404(
+        AnuncioML.objects.select_related('produto', 'base_calculo'),
+        pk=anuncio_id
+    )
+    return render(request, 'pagina_precificar_ml/parciais/estrutura_parcial_painel_precificar_ml.html', {
+        'anuncio': anuncio,
+        'bc': getattr(anuncio, 'base_calculo', None),
     })

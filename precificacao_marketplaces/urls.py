@@ -19,6 +19,8 @@ urlpatterns = [
     # * [EXPLICAÇÃO] → Tela de precificação de anúncios do Mercado Livre.
     path('mercado-livre/precificar/', views.view_precificar_ml, name='precificar_ml'),
 
+    path('mercado-livre/precificar/<int:anuncio_id>/painel/', views.view_painel_precificar_ml, name='painel_precificar_ml'),
+
 
 
 ]

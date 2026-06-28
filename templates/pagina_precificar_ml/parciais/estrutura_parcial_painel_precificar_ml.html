@@ -1,0 +1,157 @@
+<!--
+* [RESUMO] → Template parcial do modal de Base de Cálculo.
+* Retornado pelo HTMX ao clicar em uma linha da tabela de precificação.
+* Exibe todos os dados de entrada, fórmulas e resultados do cálculo.
+-->
+{% load static %}
+
+{% if bc %}
+
+    <!-- Cabeçalho com identificação do anúncio -->
+    <h6 class="modal-produto-titulo">
+        {{ anuncio.produto.sku }} — {{ anuncio.titulo_anuncio|default:anuncio.produto.titulo }}
+        {% if anuncio.tipo_anuncio == 'gold_special' %}
+            <span class="badge-anuncio badge-classico">Clássico</span>
+        {% elif anuncio.tipo_anuncio == 'gold_pro' %}
+            <span class="badge-anuncio badge-premium">⭐ Premium</span>
+        {% endif %}
+        {% if anuncio.tipo_logistico == 'fulfillment' %}
+            <span class="badge-logistica badge-full"><i class="fas fa-warehouse"></i> FULL</span>
+        {% elif anuncio.tipo_logistico == 'flex' %}
+            <span class="badge-logistica badge-flex"><i class="fas fa-bolt"></i> Flex</span>
+        {% endif %}
+    </h6>
+
+    <div class="row g-3">
+
+        <!-- Dados de Entrada — Produto -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header modal-card-cabecalho">
+                    <strong><i class="fas fa-box"></i> Entrada — Produto</strong>
+                </div>
+                <div class="card-body p-0">
+                    <table class="modal-tabela w-100">
+                        <tr><td class="modal-td-dado">Custo</td><td class="modal-td-valor">R$ {{ bc.entrada_custo|floatformat:2|default:"—" }}</td></tr>
+                        <tr><td class="modal-td-dado">Custo c/ Boni</td><td class="modal-td-valor">R$ {{ bc.entrada_custo_com_boni|floatformat:2|default:"—" }}</td></tr>
+                        <tr><td class="modal-td-dado">IPI</td><td class="modal-td-valor">{{ bc.entrada_ipi|floatformat:2|default:"—" }}%</td></tr>
+                        <tr><td class="modal-td-dado">Frete CIF/FOB</td><td class="modal-td-valor">{{ bc.entrada_frete_cif_fob|floatformat:2|default:"—" }}%</td></tr>
+                        <tr><td class="modal-td-dado">ST Valor</td><td class="modal-td-valor">R$ {{ bc.entrada_st_valor|floatformat:2|default:"—" }}</td></tr>
+                        <tr><td class="modal-td-dado">ICMS Entrada</td><td class="modal-td-valor">{{ bc.entrada_icms_entrada|floatformat:2|default:"—" }}%</td></tr>
+                        <tr><td class="modal-td-dado">ICMS Saída Média</td><td class="modal-td-valor">{{ bc.entrada_icms_saida_media|floatformat:2|default:"—" }}%</td></tr>
+                        <tr><td class="modal-td-dado">PIS/COFINS</td><td class="modal-td-valor">{{ bc.entrada_pis_cofins|floatformat:2|default:"—" }}%</td></tr>
+                        <tr><td class="modal-td-dado">Peso</td><td class="modal-td-valor">{{ bc.entrada_peso|floatformat:3|default:"—" }} kg</td></tr>
+                        <tr><td class="modal-td-dado">Peso Cubado</td><td class="modal-td-valor">{{ bc.entrada_peso_cubado|floatformat:3|default:"—" }} kg</td></tr>
+                        <tr><td class="modal-td-dado">Altura</td><td class="modal-td-valor">{{ bc.entrada_altura|floatformat:2|default:"—" }} cm</td></tr>
+                        <tr><td class="modal-td-dado">Largura</td><td class="modal-td-valor">{{ bc.entrada_largura|floatformat:2|default:"—" }} cm</td></tr>
+                        <tr><td class="modal-td-dado">Profundidade</td><td class="modal-td-valor">{{ bc.entrada_profundidade|floatformat:2|default:"—" }} cm</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dados de Entrada — Marketplace -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header modal-card-cabecalho">
+                    <strong><i class="fas fa-store"></i> Entrada — Marketplace</strong>
+                </div>
+                <div class="card-body p-0">
+                    <table class="modal-tabela w-100">
+                        <tr><td class="modal-td-dado">Preço Clássico</td><td class="modal-td-valor">R$ {{ bc.entrada_preco_classico|floatformat:2|default:"—" }}</td></tr>
+                        <tr><td class="modal-td-dado">Comissão</td><td class="modal-td-valor">{{ bc.entrada_comissao|floatformat:2|default:"—" }}%</td></tr>
+                        <tr><td class="modal-td-dado">Acréscimo Premium</td><td class="modal-td-valor">{{ bc.entrada_acrescimo_premium|floatformat:2|default:"—" }}%</td></tr>
+                        <tr><td class="modal-td-dado">Fator Coleta</td><td class="modal-td-valor">R$ {{ bc.entrada_fator_coleta|floatformat:2|default:"—" }}/m³</td></tr>
+                        <tr><td class="modal-td-dado">Tarifa Armazenagem</td><td class="modal-td-valor">R$ {{ bc.entrada_armaz_faixa|floatformat:4|default:"—" }}/dia</td></tr>
+                        <tr><td class="modal-td-dado">Período Armazenagem</td><td class="modal-td-valor">{{ bc.entrada_periodo_armaz|default:"—" }} dias</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Valores Intermediários -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header modal-card-cabecalho">
+                    <strong><i class="fas fa-calculator"></i> Valores Calculados</strong>
+                </div>
+                <div class="card-body p-0">
+                    <table class="modal-tabela w-100">
+                        <tr><td class="modal-td-dado">Metro Cúbico</td><td class="modal-td-valor">{{ bc.calc_metro_cubico|floatformat:6|default:"—" }} m³</td></tr>
+                        <tr class="bc-formula"><td colspan="2" class="modal-td-formula">{{ bc.formula_metro_cubico }}</td></tr>
+
+                        <tr><td class="modal-td-dado">Custo Final</td><td class="modal-td-valor">R$ {{ bc.calc_custo_final|floatformat:2|default:"—" }}</td></tr>
+                        <tr class="bc-formula"><td colspan="2" class="modal-td-formula">{{ bc.formula_custo_final }}</td></tr>
+
+                        <tr><td class="modal-td-dado">Coleta</td><td class="modal-td-valor">R$ {{ bc.calc_coleta|floatformat:2|default:"—" }}</td></tr>
+                        <tr class="bc-formula"><td colspan="2" class="modal-td-formula">{{ bc.formula_coleta }}</td></tr>
+
+                        <tr><td class="modal-td-dado">Armazenagem</td><td class="modal-td-valor">R$ {{ bc.calc_armazenagem|floatformat:2|default:"—" }}</td></tr>
+                        <tr class="bc-formula"><td colspan="2" class="modal-td-formula">{{ bc.formula_armazenagem }}</td></tr>
+
+                        <tr><td class="modal-td-dado">Preço Premium</td><td class="modal-td-valor">R$ {{ bc.calc_preco_premium|floatformat:2|default:"—" }}</td></tr>
+                        <tr class="bc-formula"><td colspan="2" class="modal-td-formula">{{ bc.formula_preco_premium }}</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resultado Clássico -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header modal-card-cabecalho">
+                    <strong><span class="badge-anuncio badge-classico">Clássico</span> Resultado</strong>
+                </div>
+                <div class="card-body p-0">
+                    <table class="modal-tabela w-100">
+                        <tr><td class="modal-td-dado">Comissão</td><td class="modal-td-valor">R$ {{ bc.calc_comissao_classico|floatformat:2|default:"—" }}</td></tr>
+                        <tr class="bc-formula"><td colspan="2" class="modal-td-formula">{{ bc.formula_comissao_classico }}</td></tr>
+
+                        <tr><td class="modal-td-dado">ICMS</td><td class="modal-td-valor">R$ {{ bc.calc_icms_classico|floatformat:2|default:"—" }}</td></tr>
+                        <tr class="bc-formula"><td colspan="2" class="modal-td-formula">{{ bc.formula_icms_classico }}</td></tr>
+
+                        <tr><td class="modal-td-dado">PIS/COFINS</td><td class="modal-td-valor">R$ {{ bc.calc_pis_cofins_classico|floatformat:2|default:"—" }}</td></tr>
+                        <tr class="bc-formula"><td colspan="2" class="modal-td-formula">{{ bc.formula_pis_cofins_classico }}</td></tr>
+
+                        <tr class="bc-resultado"><td class="modal-td-dado"><strong>Margem R$</strong></td><td class="modal-td-valor"><strong>R$ {{ bc.resultado_margem_valor_classico|floatformat:2|default:"—" }}</strong></td></tr>
+                        <tr class="bc-formula"><td colspan="2" class="modal-td-formula">{{ bc.formula_margem_classico }}</td></tr>
+
+                        <tr class="bc-resultado"><td class="modal-td-dado"><strong>Margem %</strong></td><td class="modal-td-valor"><strong>{{ bc.resultado_margem_pct_classico|floatformat:2|default:"—" }}%</strong></td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resultado Premium -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header modal-card-cabecalho">
+                    <strong><span class="badge-anuncio badge-premium">⭐ Premium</span> Resultado</strong>
+                </div>
+                <div class="card-body p-0">
+                    <table class="modal-tabela w-100">
+                        <tr><td class="modal-td-dado">Comissão</td><td class="modal-td-valor">R$ {{ bc.calc_comissao_premium|floatformat:2|default:"—" }}</td></tr>
+                        <tr class="bc-formula"><td colspan="2" class="modal-td-formula">{{ bc.formula_comissao_premium }}</td></tr>
+
+                        <tr><td class="modal-td-dado">ICMS</td><td class="modal-td-valor">R$ {{ bc.calc_icms_premium|floatformat:2|default:"—" }}</td></tr>
+                        <tr class="bc-formula"><td colspan="2" class="modal-td-formula">{{ bc.formula_icms_premium }}</td></tr>
+
+                        <tr><td class="modal-td-dado">PIS/COFINS</td><td class="modal-td-valor">R$ {{ bc.calc_pis_cofins_premium|floatformat:2|default:"—" }}</td></tr>
+                        <tr class="bc-formula"><td colspan="2" class="modal-td-formula">{{ bc.formula_pis_cofins_premium }}</td></tr>
+
+                        <tr class="bc-resultado"><td class="modal-td-dado"><strong>Margem R$</strong></td><td class="modal-td-valor"><strong>R$ {{ bc.resultado_margem_valor_premium|floatformat:2|default:"—" }}</strong></td></tr>
+                        <tr class="bc-formula"><td colspan="2" class="modal-td-formula">{{ bc.formula_margem_premium }}</td></tr>
+
+                        <tr class="bc-resultado"><td class="modal-td-dado"><strong>Margem %</strong></td><td class="modal-td-valor"><strong>{{ bc.resultado_margem_pct_premium|floatformat:2|default:"—" }}%</strong></td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <small class="text-muted">Calculado em: {{ bc.calculado_em|date:"d/m/Y H:i" }}</small>
+
+{% else %}
+    <p class="text-center text-muted mt-3">Base de cálculo ainda não gerada para este anúncio.</p>
+{% endif %}

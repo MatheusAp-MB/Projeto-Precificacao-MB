@@ -9,3 +9,52 @@
     .painel-col-premium       { flex: 0 0 auto; width: 26%; }
     .painel-col-custos        { flex: 0 0 auto; width: 22%; }
 }
+
+/* ================================================
+   MODAL — BASE DE CÁLCULO
+   ================================================ */
+
+/* * [EXPLICAÇÃO] → Header do modal de precificação. */
+#modal-precificar-header {
+    background-color: var(--cor-primaria);
+    color: var(--cor-texto-claro);
+}
+
+#modal-precificar-titulo-header {
+    width: 100%;
+    text-align: center;
+}
+
+#modal-precificar-btn-fechar {
+    background: none;
+    border: none;
+    color: var(--cor-texto-claro);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+#modal-precificar-btn-fechar:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+#modal-precificar-conteudo {
+    background-color: azure;
+}
+
+/* * [EXPLICAÇÃO] → Linha de fórmula — texto explicativo abaixo do valor calculado. */
+.bc-formula td {
+    background-color: rgb(240, 247, 255) !important;
+    color: #555 !important;
+    font-size: 0.75rem !important;
+    font-style: italic !important;
+    padding: 3px 8px !important;
+    border-bottom: 2px solid rgb(180, 210, 240) !important;
+}
+
+/* * [EXPLICAÇÃO] → Linha de resultado final — destaque visual. */
+.bc-resultado td {
+    background-color: rgb(220, 233, 248) !important;
+}
