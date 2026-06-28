@@ -64,7 +64,6 @@ class Produto(models.Model):
     largura = models.DecimalField(max_digits=8, decimal_places=2)
     profundidade = models.DecimalField(max_digits=8, decimal_places=2)
 
-
     peso_cubado = GeneratedField(
         expression=ExpressionWrapper(
             (F('altura') * F('largura') * F('profundidade')) / 6000,
@@ -73,6 +72,30 @@ class Produto(models.Model):
         output_field=DecimalField(max_digits=8, decimal_places=3),
         db_persist=True
     )
+
+    # ================================================
+    # ARMAZENAGEM
+    # ================================================
+
+    # * [EXPLICAÇÃO] → armazenagem_planilha: valor mensal importado diretamente da coluna BH
+    #                  da planilha de precificação. Representa o custo mensal de armazenagem
+    #                  definido manualmente na planilha (ex: R$0,21 / R$0,45 / R$3,21).
+    #
+    #                  ATENÇÃO — INCONSISTÊNCIA DOCUMENTADA:
+    #                  A planilha atribui faixas de armazenagem sem seguir uma regra clara
+    #                  baseada nas dimensões do produto. Ex: calcanheiras (produto pequeno)
+    #                  recebem Faixa 4 (R$3,21), enquanto palmilhas (produto longo mas fino)
+    #                  recebem Faixa 1 (R$0,21). A lógica exata não foi confirmada —
+    #                  possivelmente usa dimensão de embalagem ou atribuição manual.
+    #
+    #                  O sistema mantém dois cálculos paralelos:
+    #                  - _dinamico: seleção automática de faixa pelas dimensões do produto
+    #                  - _planilha: usa este campo diretamente (replica a planilha)
+    #
+    # # [STATUS: DESENVOLVIMENTO] → Remover quando a regra de faixas for padronizada
+    #                               e validada com o criador da planilha.
+    armazenagem_planilha = models.DecimalField(
+        max_digits=8, decimal_places=2, blank=True, null=True)
 
     # Validação de frete — temporário
     # * [EXPLICAÇÃO] → Campos temporários para validar o cálculo de frete contra a planilha.

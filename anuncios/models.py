@@ -6,6 +6,11 @@
 #              - Campos com sufixo "_real"      → valor importado da planilha (fonte da verdade externa)
 #              - Campos com sufixo "_calculado" → valor gerado pelo sistema (signal ou Goal Seek)
 #              - As fórmulas sempre usam os campos "_calculado" — os "_real" são apenas para auditoria/comparação.
+#
+#              Sobre os sufixos _dinamico e _planilha na BaseDeCalculo:
+#              - _dinamico  → cálculo idealizado: faixa de armazenagem selecionada pelas dimensões do produto
+#              - _planilha  → cálculo fiel à planilha: usa armazenagem_planilha do produto (coluna BH)
+#              Ver documentação completa em produtos/models.py (campo armazenagem_planilha).
 
 from django.db import models
 from produtos.models import Produto
@@ -117,18 +122,22 @@ class AnuncioML(models.Model):
     # ================================================
 
     # * [EXPLICAÇÃO] → margem_classico_real      → importado da planilha (resultado do cálculo do Excel).
-    #                  margem_classico_calculado → calculado pelo sistema a partir de preco_classico_calculado.
-    margem_classico_real      = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-    margem_classico_calculado = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    #                  margem_classico_calculado → calculado pelo sistema (_dinamico: faixa por dimensão).
+    #                  margem_classico_calculado_planilha → calculado com armazenagem da planilha (_planilha).
+    margem_classico_real               = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    margem_classico_calculado          = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    margem_classico_calculado_planilha = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
 
     # ================================================
     # PRECIFICAÇÃO — MARGEM PREMIUM
     # ================================================
 
     # * [EXPLICAÇÃO] → margem_premium_real      → importado da planilha.
-    #                  margem_premium_calculado → calculado pelo sistema a partir de preco_premium_calculado.
-    margem_premium_real      = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-    margem_premium_calculado = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    #                  margem_premium_calculado → calculado pelo sistema (_dinamico: faixa por dimensão).
+    #                  margem_premium_calculado_planilha → calculado com armazenagem da planilha (_planilha).
+    margem_premium_real               = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    margem_premium_calculado          = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    margem_premium_calculado_planilha = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
 
     # ================================================
     # META
@@ -153,6 +162,10 @@ class BaseDeCalculo(models.Model):
     #                  o usuário pode conferir cada etapa do cálculo em detalhe.
     #                  Relação OneToOne com AnuncioML — um registro por anúncio,
     #                  sempre sobrescrito quando o cálculo é refeito.
+    #
+    #                  Campos com sufixo _dinamico → usam faixa de armazenagem por dimensão do produto
+    #                  Campos sem sufixo           → são os campos _dinamico (nomenclatura herdada)
+    #                  Campos com sufixo _planilha → usam armazenagem importada da coluna BH da planilha
 
     anuncio      = models.OneToOneField(AnuncioML, on_delete=models.CASCADE, related_name='base_calculo')
     calculado_em = models.DateTimeField(auto_now=True)
@@ -188,6 +201,10 @@ class BaseDeCalculo(models.Model):
     entrada_armazenagem_faixa_valor  = models.DecimalField(max_digits=8,  decimal_places=4, null=True, blank=True)
     entrada_armazenagem_periodo      = models.IntegerField(null=True, blank=True)
 
+    # * [EXPLICAÇÃO] → Valor mensal de armazenagem importado da planilha (coluna BH).
+    #                  Registrado aqui para rastreabilidade do cálculo _planilha.
+    entrada_armazenagem_planilha = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+
     # ================================================
     # FÓRMULAS — VALORES INTERMEDIÁRIOS
     # ================================================
@@ -212,11 +229,14 @@ class BaseDeCalculo(models.Model):
     )
     calc_coleta = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
+    # * [EXPLICAÇÃO] → calc_armazenagem     → versão _dinamico (faixa selecionada por dimensão)
+    #                  calc_armazenagem_planilha → versão _planilha (valor direto do BH da planilha)
     formula_armazenagem = models.CharField(
         max_length=200, blank=True,
-        default='Tarifa Diária da Faixa × Período de Armazenagem'
+        default='[_dinamico] Tarifa Diária da Faixa × Período de Armazenagem'
     )
-    calc_armazenagem = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    calc_armazenagem         = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    calc_armazenagem_planilha = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     formula_preco_premium = models.CharField(
         max_length=200, blank=True,
@@ -261,22 +281,38 @@ class BaseDeCalculo(models.Model):
     calc_pis_cofins_premium = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     # ================================================
-    # RESULTADOS FINAIS
+    # RESULTADOS FINAIS — CÁLCULO _DINAMICO
     # ================================================
+    # * [EXPLICAÇÃO] → Faixa de armazenagem selecionada automaticamente pelas dimensões do produto.
+    #                  Considerado o cálculo tecnicamente correto.
 
     formula_margem_classico = models.CharField(
         max_length=500, blank=True,
-        default='Preço Clássico - Frete - Coleta - Armazenagem - Custo Final - Comissão Clássico - ICMS Clássico - PIS/COFINS Clássico'
+        default='[_dinamico] Preço Clássico - Frete - Coleta - Armazenagem Dinâmica - Custo Final - Comissão Clássico - ICMS Clássico - PIS/COFINS Clássico'
     )
     resultado_margem_classico_valor = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     resultado_margem_classico_pct   = models.DecimalField(max_digits=8,  decimal_places=2, null=True, blank=True)
 
     formula_margem_premium = models.CharField(
         max_length=500, blank=True,
-        default='Preço Premium - Frete - Coleta - Armazenagem - Custo Final - Comissão Premium - ICMS Premium - PIS/COFINS Premium'
+        default='[_dinamico] Preço Premium - Frete - Coleta - Armazenagem Dinâmica - Custo Final - Comissão Premium - ICMS Premium - PIS/COFINS Premium'
     )
     resultado_margem_premium_valor = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     resultado_margem_premium_pct   = models.DecimalField(max_digits=8,  decimal_places=2, null=True, blank=True)
+
+    # ================================================
+    # RESULTADOS FINAIS — CÁLCULO _PLANILHA
+    # ================================================
+    # * [EXPLICAÇÃO] → Usa armazenagem importada diretamente da coluna BH da planilha.
+    #                  Replica exatamente o comportamento da planilha.
+    #                  Existe para comparação com _dinamico e identificação de inconsistências.
+    #                  Ver documentação em produtos/models.py (campo armazenagem_planilha).
+
+    resultado_margem_classico_valor_planilha = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    resultado_margem_classico_pct_planilha   = models.DecimalField(max_digits=8,  decimal_places=2, null=True, blank=True)
+
+    resultado_margem_premium_valor_planilha  = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    resultado_margem_premium_pct_planilha    = models.DecimalField(max_digits=8,  decimal_places=2, null=True, blank=True)
 
     class Meta:
         verbose_name        = 'Base de Cálculo'

@@ -20,7 +20,6 @@ class Command(BaseCommand):
             help='Caminho completo para o arquivo Excel'
         )
 
-
     def handle(self, *args, **options):
         arquivo = options['arquivo']
         self.stdout.write(f'Lendo arquivo: {arquivo}')
@@ -64,7 +63,7 @@ class Command(BaseCommand):
             if isinstance(val, str) and val.strip().startswith('#'):
                 return None
             return val
-        
+
         for i, row in enumerate(ws.iter_rows(min_row=2, values_only=True)):
 
             # * [EXPLICAÇÃO] → Ignora linhas completamente vazias.
@@ -101,6 +100,13 @@ class Command(BaseCommand):
                     'profundidade':     dec(seguro(row[22])),
                     'largura':          dec(seguro(row[23])),
                     'custo_frete_ml_real': dec(seguro(row[57])) if seguro(row[57]) else None,
+
+                    # * [EXPLICAÇÃO] → armazenagem_planilha: valor mensal de armazenagem
+                    #                  importado diretamente da coluna BH da planilha.
+                    #                  Usado no cálculo _planilha para replicar exatamente
+                    #                  o comportamento da planilha, independente da faixa dinâmica.
+                    #                  Ver documentação em produtos/models.py (campo armazenagem_planilha).
+                    'armazenagem_planilha': dec(seguro(row[59])) if seguro(row[59]) else None,
                 }
 
                 _, criado = Produto.objects.update_or_create(
