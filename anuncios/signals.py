@@ -159,8 +159,8 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
         tipo_anuncio='gold_pro'
     ).first()
     preco_premium_planilha = (
-        anuncio_premium.preco_premium_real if anuncio_premium and anuncio_premium.preco_premium_real
-        else preco_premium
+    anuncio_premium.preco_premium_real if anuncio_premium and anuncio_premium.preco_premium_real
+    else round_up_to_90(preco_classico * (1 + acrescimo_premium))
     )
 
     # Intermediários comuns
