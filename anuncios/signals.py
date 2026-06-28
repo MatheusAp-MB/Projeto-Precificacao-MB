@@ -1,12 +1,22 @@
 # * [RESUMO] → Signals do app de anúncios.
 #              Garantem que frete e precificação estão sempre atualizados automaticamente,
-#              independente de onde a mudança veio.
+#              independente de onde a mudança veio (import, admin, API, etc).
+#
+#              Fluxo de cálculo:
+#              1. preco_classico_real (da planilha) → copiado para preco_classico_calculado
+#              2. Todas as fórmulas usam preco_classico_calculado (nunca o _real)
+#              3. preco_premium_calculado = RoundUpTo90(preco_classico_calculado × acréscimo)
+#              4. Margens calculadas e salvas em AnuncioML e BaseDeCalculo
+#
+#              Quando o Goal Seek for implementado, ele sobrescreverá preco_classico_calculado
+#              com o valor otimizado — todo o resto do fluxo permanece igual.
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db.models import Q
 from decimal import Decimal
 import logging
+import math
 
 logger = logging.getLogger(__name__)
 
@@ -15,21 +25,43 @@ logger = logging.getLogger(__name__)
 
 
 # ================================================
+# UTILITÁRIOS
+# ================================================
+
+def round_up_to_90(v: Decimal) -> Decimal:
+    # * [EXPLICAÇÃO] → Arredonda para o próximo valor terminado em ,90 (teto).
+    #                  Equivalente ao RoundUpTo90() do VBA da planilha Excel.
+    #                  Funciona deslocando a escala 0,90 para baixo, aplicando ceil()
+    #                  sobre inteiros e devolvendo o deslocamento — fazendo os ,90
+    #                  agirem como "inteiros" na escala deslocada.
+    #
+    #                  Exemplos:
+    #                    108,50 → 108,90
+    #                    105,98 → 106,90
+    #                    108,89 → 108,90
+    #                    110,91 → 111,90
+    #
+    #                  O epsilon (1e-7) evita imprecisão de ponto flutuante.
+    k = math.ceil(float(v) - 0.90 - 1e-7)
+    return Decimal(str(k)) + Decimal('0.90')
+
+
+# ================================================
 # CÁLCULO DE FRETE
 # ================================================
 
 def calcular_frete_para_anuncio(anuncio):
-    # * [EXPLICAÇÃO] → Calcula o frete via tabela FreteML usando peso efetivo e preço.
-    #                  Usa update() para não disparar o signal novamente (evita loop).
+    # * [EXPLICAÇÃO] → Calcula o frete via tabela FreteML usando peso efetivo e preço calculado.
+    #                  Usa update() direto para não disparar o signal novamente (evita loop).
     from precificacao_marketplaces.models import FreteML
 
-    if not anuncio.produto or not anuncio.preco:
-        logger.info(f'[FRETE] {anuncio.mlb} → ignorado (sem produto ou preço)')
+    if not anuncio.produto or not anuncio.preco_classico_calculado:
+        logger.info(f'[FRETE] {anuncio.mlb} → ignorado (sem produto ou preço calculado)')
         return None
 
     produto = anuncio.produto
     peso    = max(produto.peso, produto.peso_cubado)
-    preco   = anuncio.preco
+    preco   = anuncio.preco_classico_calculado
 
     frete = FreteML.objects.filter(
         peso_min__lte=peso,
@@ -53,21 +85,23 @@ def calcular_frete_para_anuncio(anuncio):
 # ================================================
 
 def calcular_precificacao_anuncio(anuncio, frete_valor):
-    # * [EXPLICAÇÃO] → Calcula todos os valores de precificação do anúncio e
-    #                  salva na BaseDeCalculo. Copia os dados de entrada no momento
-    #                  do cálculo para garantir rastreabilidade.
+    # * [EXPLICAÇÃO] → Calcula todos os valores de precificação do anúncio e salva em:
+    #                    - AnuncioML: preços e margens calculados (campos _calculado)
+    #                    - BaseDeCalculo: registro completo de cada etapa (modo debug)
+    #
+    #                  Sempre usa preco_classico_calculado como base — nunca o _real.
+    #                  Copia os dados de entrada no momento do cálculo para rastreabilidade.
     from anuncios.models import BaseDeCalculo
     from marketplaces.models import TipoAnuncioML, ConfiguracaoLogisticaML, FaixaArmazenagem
 
-    if not anuncio.produto or not anuncio.preco:
-        logger.info(f'[PRECIF] {anuncio.mlb} → ignorado (sem produto ou preço)')
+    if not anuncio.produto or not anuncio.preco_classico_calculado:
+        logger.info(f'[PRECIF] {anuncio.mlb} → ignorado (sem produto ou preço calculado)')
         return
 
     produto = anuncio.produto
 
-    # * [EXPLICAÇÃO] → Busca o TipoAnuncioML Clássico e Premium com mesma logística e catálogo.
-    #                  Sempre buscamos os dois tipos independente de qual tipo é o anúncio,
-    #                  pois precisamos dos parâmetros de ambos para calcular Clássico e Premium.
+    # * [EXPLICAÇÃO] → Busca sempre os dois tipos (Clássico e Premium) independente do tipo do anúncio,
+    #                  pois o cálculo gera os resultados de ambos de uma vez só.
     try:
         tipo_classico = TipoAnuncioML.objects.select_related('marketplace').get(
             marketplace__sigla='ML',
@@ -90,25 +124,21 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
         logger.warning(f'[PRECIF] {anuncio.mlb} → TipoAnuncioML Premium não encontrado')
         return
 
-    # * [EXPLICAÇÃO] → Busca configuração logística para todos os anúncios.
-    #                  Coleta e armazenagem aplicam-se a Flex e FULL.
-    logistica = ConfiguracaoLogisticaML.objects.filter(
-        marketplace__sigla='ML'
-    ).first()
+    logistica = ConfiguracaoLogisticaML.objects.filter(marketplace__sigla='ML').first()
 
     # ================================================
     # DADOS DE ENTRADA
     # ================================================
 
-    preco_classico     = anuncio.preco
-    custo              = produto.custo
-    custo_com_boni     = produto.custo_com_boni or produto.custo
-    ipi                = (produto.ipi or Decimal('0')) / 100
-    frete_cif_fob      = (produto.frete_cif_fob or Decimal('0')) / 100
-    st_valor           = produto.st_valor or Decimal('0')
-    icms_entrada       = (produto.icms_entrada or Decimal('0')) / 100
-    icms_saida_media   = (produto.icms_saida_media or Decimal('0')) / 100
-    pis_cofins         = (produto.pis_cofins or Decimal('0')) / 100
+    preco_classico        = anuncio.preco_classico_calculado
+    custo                 = produto.custo
+    custo_com_boni        = produto.custo_com_boni or produto.custo
+    ipi                   = (produto.ipi or Decimal('0')) / 100
+    frete_cif_fob         = (produto.frete_cif_fob or Decimal('0')) / 100
+    st_valor              = produto.st_valor or Decimal('0')
+    icms_entrada          = (produto.icms_entrada or Decimal('0')) / 100
+    icms_saida_media      = (produto.icms_saida_media or Decimal('0')) / 100
+    pis_cofins            = (produto.pis_cofins or Decimal('0')) / 100
     comissao_classico_pct = tipo_classico.comissao / 100
     comissao_premium_pct  = tipo_premium.comissao / 100
     acrescimo_premium     = tipo_premium.acrescimo_preco / 100
@@ -117,8 +147,8 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
     periodo_armaz = logistica.periodo_armazenagem if logistica else 0
 
     # * [EXPLICAÇÃO] → Seleciona a faixa de armazenagem pelas dimensões do produto.
-    #                  Itera em ordem crescente e usa a primeira onde todas as dimensões cabem.
-    #                  Se nenhuma comportar, usa a maior (fallback).
+    #                  Itera em ordem crescente (ordem=1, 2, 3...) e usa a primeira
+    #                  onde TODAS as dimensões cabem. Fallback: maior faixa cadastrada.
     faixa_armazenagem = FaixaArmazenagem.objects.filter(
         marketplace__sigla='ML',
         ativo=True,
@@ -138,23 +168,23 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
     # CÁLCULOS INTERMEDIÁRIOS
     # ================================================
 
-    # * [EXPLICAÇÃO] → Metro cúbico em m³ — dimensões do produto em cm convertidas para metros.
+    # Metro cúbico em m³ (dimensões do produto em cm → metros)
     metro_cubico = (produto.altura / 100) * (produto.largura / 100) * (produto.profundidade / 100)
 
-    # * [EXPLICAÇÃO] → Custo final inclui IPI, frete CIF/FOB e ST sobre o custo com bonificação.
+    # Custo final = custo c/ bonificação + IPI + frete CIF/FOB + ST
     custo_final = custo_com_boni + (custo_com_boni * ipi) + (custo_com_boni * frete_cif_fob) + st_valor
 
-    # * [EXPLICAÇÃO] → Coleta proporcional ao volume — aplica a todos os produtos.
-    #                  Armazenagem flat por faixa — aplica a todos os produtos.
+    # Coleta proporcional ao volume | Armazenagem flat por faixa — ambas para todos os produtos
     coleta      = metro_cubico * fator_coleta
     armazenagem = faixa_valor * periodo_armaz
 
     frete = frete_valor or Decimal('0')
 
-    # * [EXPLICAÇÃO] → Preço Premium = Preço Clássico × (1 + acréscimo).
-    preco_premium = preco_classico * (1 + acrescimo_premium)
+    # * [EXPLICAÇÃO] → Preço Premium = RoundUpTo90(Preço Clássico × (1 + Acréscimo)).
+    #                  Equivalente ao cálculo do VBA: BV = BI × 1,08 → arredonda para ,90.
+    preco_premium = round_up_to_90(preco_classico * (1 + acrescimo_premium))
 
-    # Comissões — cada tipo tem sua própria comissão
+    # Comissões
     comissao_classico_valor = preco_classico * comissao_classico_pct
     comissao_premium_valor  = preco_premium  * comissao_premium_pct
 
@@ -162,7 +192,7 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
     icms_classico = (preco_classico * icms_saida_media) - (custo * icms_entrada)
     icms_premium  = (preco_premium  * icms_saida_media) - (custo * icms_entrada)
 
-    # PIS/COFINS = (Preço - Custo) × PIS/COFINS
+    # PIS/COFINS = (Preço - Custo) × alíquota
     pis_cofins_classico = (preco_classico - custo) * pis_cofins
     pis_cofins_premium  = (preco_premium  - custo) * pis_cofins
 
@@ -183,6 +213,16 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
         - icms_premium - pis_cofins_premium
     )
     margem_pct_premium = (margem_valor_premium / preco_premium * 100) if preco_premium else Decimal('0')
+
+    # ================================================
+    # SALVA EM ANUNCIOML — campos _calculado
+    # ================================================
+
+    type(anuncio).objects.filter(pk=anuncio.pk).update(
+        preco_premium_calculado   = preco_premium,
+        margem_classico_calculado = round(margem_pct_classico, 2),
+        margem_premium_calculado  = round(margem_pct_premium, 2),
+    )
 
     # ================================================
     # SALVA NA BASE DE CÁLCULO
@@ -206,36 +246,36 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
             'entrada_largura':          produto.largura,
             'entrada_profundidade':     produto.profundidade,
             # Dados de entrada — anúncio e marketplace
-            'entrada_preco_classico':    preco_classico,
-            'entrada_comissao':          tipo_classico.comissao,
-            'entrada_acrescimo_premium': tipo_premium.acrescimo_preco,
-            'entrada_fator_coleta':      fator_coleta,
-            'entrada_armaz_faixa':       faixa_valor,
-            'entrada_periodo_armaz':     periodo_armaz,
+            'entrada_preco_classico_real':     preco_classico,
+            'entrada_comissao_classico':       tipo_classico.comissao,
+            'entrada_acrescimo_premium':       tipo_premium.acrescimo_preco,
+            'entrada_fator_coleta':            fator_coleta,
+            'entrada_armazenagem_faixa_valor': faixa_valor,
+            'entrada_armazenagem_periodo':     periodo_armaz,
             # Intermediários
-            'calc_metro_cubico':          round(metro_cubico, 6),
-            'calc_custo_final':           round(custo_final, 2),
-            'calc_coleta':                round(coleta, 2),
-            'calc_armazenagem':           round(armazenagem, 2),
-            'calc_preco_premium':         round(preco_premium, 2),
-            'calc_comissao_classico':     round(comissao_classico_valor, 2),
-            'calc_comissao_premium':      round(comissao_premium_valor, 2),
-            'calc_icms_classico':         round(icms_classico, 2),
-            'calc_icms_premium':          round(icms_premium, 2),
-            'calc_pis_cofins_classico':   round(pis_cofins_classico, 2),
-            'calc_pis_cofins_premium':    round(pis_cofins_premium, 2),
+            'calc_metro_cubico':        round(metro_cubico, 6),
+            'calc_custo_final':         round(custo_final, 2),
+            'calc_coleta':              round(coleta, 2),
+            'calc_armazenagem':         round(armazenagem, 2),
+            'calc_preco_premium':       round(preco_premium, 2),
+            'calc_comissao_classico':   round(comissao_classico_valor, 2),
+            'calc_comissao_premium':    round(comissao_premium_valor, 2),
+            'calc_icms_classico':       round(icms_classico, 2),
+            'calc_icms_premium':        round(icms_premium, 2),
+            'calc_pis_cofins_classico': round(pis_cofins_classico, 2),
+            'calc_pis_cofins_premium':  round(pis_cofins_premium, 2),
             # Resultados finais
-            'resultado_margem_valor_classico': round(margem_valor_classico, 2),
-            'resultado_margem_pct_classico':   round(margem_pct_classico, 2),
-            'resultado_margem_valor_premium':  round(margem_valor_premium, 2),
-            'resultado_margem_pct_premium':    round(margem_pct_premium, 2),
+            'resultado_margem_classico_valor': round(margem_valor_classico, 2),
+            'resultado_margem_classico_pct':   round(margem_pct_classico, 2),
+            'resultado_margem_premium_valor':  round(margem_valor_premium, 2),
+            'resultado_margem_premium_pct':    round(margem_pct_premium, 2),
         }
     )
 
     logger.info(
         f'[PRECIF] {anuncio.mlb} → '
-        f'Margem Clássico: R${round(margem_valor_classico, 2)} ({round(margem_pct_classico, 2)}%) | '
-        f'Margem Premium: R${round(margem_valor_premium, 2)} ({round(margem_pct_premium, 2)}%)'
+        f'Clássico: R${round(preco_classico, 2)} → {round(margem_pct_classico, 2)}% | '
+        f'Premium:  R${round(preco_premium, 2)} → {round(margem_pct_premium, 2)}%'
     )
 
 
@@ -245,14 +285,27 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
 
 def calcular_tudo_para_anuncio(anuncio):
     # * [EXPLICAÇÃO] → Ponto único de entrada para todos os cálculos de um anúncio.
-    #                  Garante que frete e precificação são sempre calculados juntos,
-    #                  pois são interdependentes.
+    #                  Garante a ordem correta: primeiro define o preço calculado,
+    #                  depois calcula frete (que depende do preço) e por fim as margens.
+    #
+    #                  Sobre preco_classico_calculado:
+    #                  Por enquanto é sempre uma cópia do preco_classico_real.
+    #                  Quando o Goal Seek for implementado, ele sobrescreverá este campo
+    #                  antes de chegar aqui — todo o resto do fluxo permanece igual.
+
+    # Garante que preco_classico_calculado está definido
+    if not anuncio.preco_classico_calculado and anuncio.preco_classico_real:
+        type(anuncio).objects.filter(pk=anuncio.pk).update(
+            preco_classico_calculado=anuncio.preco_classico_real
+        )
+        anuncio.preco_classico_calculado = anuncio.preco_classico_real
+
     frete_valor = calcular_frete_para_anuncio(anuncio)
     calcular_precificacao_anuncio(anuncio, frete_valor)
 
 
 # ================================================
-# SIGNAL — ANUNCIO ML
+# SIGNAL — ANÚNCIO ML
 # ================================================
 
 @receiver(post_save, sender='anuncios.AnuncioML')
@@ -269,7 +322,7 @@ def signal_anuncio_ml_salvo(sender, instance, **kwargs):
 @receiver(post_save, sender='produtos.Produto')
 def signal_produto_salvo(sender, instance, **kwargs):
     # * [EXPLICAÇÃO] → Dispara quando um Produto é salvo.
-    #                  Recalcula tudo para todos os anúncios vinculados.
+    #                  Recalcula tudo para todos os anúncios vinculados ao produto.
     from anuncios.models import AnuncioML
 
     for anuncio in AnuncioML.objects.filter(produto=instance).select_related('produto'):
@@ -283,7 +336,8 @@ def signal_produto_salvo(sender, instance, **kwargs):
 @receiver(post_save, sender='precificacao_marketplaces.FreteML')
 def signal_frete_ml_salvo(sender, instance, **kwargs):
     # * [EXPLICAÇÃO] → Dispara quando qualquer registro da tabela FreteML é salvo.
-    #                  Recalcula tudo para TODOS os anúncios.
+    #                  Uma mudança na tabela de frete pode afetar qualquer anúncio —
+    #                  recalcula tudo.
     from anuncios.models import AnuncioML
 
     for anuncio in AnuncioML.objects.select_related('produto').all():
@@ -296,10 +350,8 @@ def signal_frete_ml_salvo(sender, instance, **kwargs):
 
 @receiver(post_save, sender='marketplaces.TipoAnuncioML')
 def signal_tipo_anuncio_ml_salvo(sender, instance, **kwargs):
-    # * [EXPLICAÇÃO] → Dispara quando um TipoAnuncioML é salvo.
-    #                  Como o signal sempre calcula Clássico E Premium juntos,
-    #                  qualquer mudança em qualquer tipo afeta todos os anúncios
-    #                  com a mesma combinação de logística e catálogo.
+    # * [EXPLICAÇÃO] → Dispara quando um TipoAnuncioML é salvo (comissão, acréscimo, margens).
+    #                  Afeta apenas anúncios com a mesma combinação de logística e catálogo.
     from anuncios.models import AnuncioML
 
     for anuncio in AnuncioML.objects.filter(
@@ -316,11 +368,12 @@ def signal_tipo_anuncio_ml_salvo(sender, instance, **kwargs):
 @receiver(post_save, sender='marketplaces.ConfiguracaoLogisticaML')
 def signal_config_logistica_ml_salvo(sender, instance, **kwargs):
     # * [EXPLICAÇÃO] → Dispara quando a configuração logística do ML é alterada.
-    #                  Coleta e armazenagem afetam todos os anúncios — recalcula tudo.
+    #                  Fator de coleta e período de armazenagem afetam todos os anúncios.
     from anuncios.models import AnuncioML
 
     for anuncio in AnuncioML.objects.select_related('produto').all():
         calcular_tudo_para_anuncio(anuncio)
+
 
 # ================================================
 # SIGNAL — FAIXA DE ARMAZENAGEM
@@ -329,7 +382,7 @@ def signal_config_logistica_ml_salvo(sender, instance, **kwargs):
 @receiver(post_save, sender='marketplaces.FaixaArmazenagem')
 def signal_faixa_armazenagem_salvo(sender, instance, **kwargs):
     # * [EXPLICAÇÃO] → Dispara quando qualquer faixa de armazenagem é alterada.
-    #                  A faixa selecionada pode mudar para qualquer produto —
+    #                  A faixa selecionada por dimensão pode mudar para qualquer produto —
     #                  recalcula todos os anúncios.
     from anuncios.models import AnuncioML
 
