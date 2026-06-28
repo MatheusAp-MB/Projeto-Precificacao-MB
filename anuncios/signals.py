@@ -57,7 +57,7 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
     #                  salva na BaseDeCalculo. Copia os dados de entrada no momento
     #                  do cálculo para garantir rastreabilidade.
     from anuncios.models import BaseDeCalculo
-    from marketplaces.models import TipoAnuncioML, ConfiguracaoLogisticaML
+    from marketplaces.models import TipoAnuncioML, ConfiguracaoLogisticaML, FaixaArmazenagem
 
     if not anuncio.produto or not anuncio.preco:
         logger.info(f'[PRECIF] {anuncio.mlb} → ignorado (sem produto ou preço)')
@@ -90,12 +90,11 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
         logger.warning(f'[PRECIF] {anuncio.mlb} → TipoAnuncioML Premium não encontrado')
         return
 
-    # * [EXPLICAÇÃO] → Busca configuração logística apenas se FULL.
-    logistica = None
-    if anuncio.tipo_logistico == 'fulfillment':
-        logistica = ConfiguracaoLogisticaML.objects.filter(
-            marketplace__sigla='ML'
-        ).first()
+    # * [EXPLICAÇÃO] → Busca configuração logística para todos os anúncios.
+    #                  Coleta e armazenagem aplicam-se a Flex e FULL.
+    logistica = ConfiguracaoLogisticaML.objects.filter(
+        marketplace__sigla='ML'
+    ).first()
 
     # ================================================
     # DADOS DE ENTRADA
@@ -115,8 +114,25 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
     acrescimo_premium     = tipo_premium.acrescimo_preco / 100
 
     fator_coleta  = logistica.fator_coleta if logistica else Decimal('0')
-    armaz_faixa   = logistica.armaz_faixa_2 if logistica else Decimal('0')
     periodo_armaz = logistica.periodo_armazenagem if logistica else 0
+
+    # * [EXPLICAÇÃO] → Seleciona a faixa de armazenagem pelas dimensões do produto.
+    #                  Itera em ordem crescente e usa a primeira onde todas as dimensões cabem.
+    #                  Se nenhuma comportar, usa a maior (fallback).
+    faixa_armazenagem = FaixaArmazenagem.objects.filter(
+        marketplace__sigla='ML',
+        ativo=True,
+        max_altura__gte=produto.altura,
+        max_largura__gte=produto.largura,
+        max_profundidade__gte=produto.profundidade
+    ).order_by('ordem').first()
+
+    if not faixa_armazenagem:
+        faixa_armazenagem = FaixaArmazenagem.objects.filter(
+            marketplace__sigla='ML', ativo=True
+        ).order_by('-ordem').first()
+
+    faixa_valor = faixa_armazenagem.valor_diario if faixa_armazenagem else Decimal('0')
 
     # ================================================
     # CÁLCULOS INTERMEDIÁRIOS
@@ -128,9 +144,10 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
     # * [EXPLICAÇÃO] → Custo final inclui IPI, frete CIF/FOB e ST sobre o custo com bonificação.
     custo_final = custo_com_boni + (custo_com_boni * ipi) + (custo_com_boni * frete_cif_fob) + st_valor
 
-    # * [EXPLICAÇÃO] → Coleta e armazenagem só se logística FULL.
-    coleta      = metro_cubico * fator_coleta if logistica else Decimal('0')
-    armazenagem = metro_cubico * armaz_faixa * periodo_armaz if logistica else Decimal('0')
+    # * [EXPLICAÇÃO] → Coleta proporcional ao volume — aplica a todos os produtos.
+    #                  Armazenagem flat por faixa — aplica a todos os produtos.
+    coleta      = metro_cubico * fator_coleta
+    armazenagem = faixa_valor * periodo_armaz
 
     frete = frete_valor or Decimal('0')
 
@@ -193,7 +210,7 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
             'entrada_comissao':          tipo_classico.comissao,
             'entrada_acrescimo_premium': tipo_premium.acrescimo_preco,
             'entrada_fator_coleta':      fator_coleta,
-            'entrada_armaz_faixa':       armaz_faixa,
+            'entrada_armaz_faixa':       faixa_valor,
             'entrada_periodo_armaz':     periodo_armaz,
             # Intermediários
             'calc_metro_cubico':          round(metro_cubico, 6),
@@ -299,11 +316,22 @@ def signal_tipo_anuncio_ml_salvo(sender, instance, **kwargs):
 @receiver(post_save, sender='marketplaces.ConfiguracaoLogisticaML')
 def signal_config_logistica_ml_salvo(sender, instance, **kwargs):
     # * [EXPLICAÇÃO] → Dispara quando a configuração logística do ML é alterada.
-    #                  Parâmetros de coleta ou armazenagem mudaram —
-    #                  recalcula todos os anúncios FULL do ML.
+    #                  Coleta e armazenagem afetam todos os anúncios — recalcula tudo.
     from anuncios.models import AnuncioML
 
-    for anuncio in AnuncioML.objects.filter(
-        tipo_logistico='fulfillment'
-    ).select_related('produto'):
+    for anuncio in AnuncioML.objects.select_related('produto').all():
+        calcular_tudo_para_anuncio(anuncio)
+
+# ================================================
+# SIGNAL — FAIXA DE ARMAZENAGEM
+# ================================================
+
+@receiver(post_save, sender='marketplaces.FaixaArmazenagem')
+def signal_faixa_armazenagem_salvo(sender, instance, **kwargs):
+    # * [EXPLICAÇÃO] → Dispara quando qualquer faixa de armazenagem é alterada.
+    #                  A faixa selecionada pode mudar para qualquer produto —
+    #                  recalcula todos os anúncios.
+    from anuncios.models import AnuncioML
+
+    for anuncio in AnuncioML.objects.select_related('produto').all():
         calcular_tudo_para_anuncio(anuncio)

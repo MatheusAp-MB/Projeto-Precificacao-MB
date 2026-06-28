@@ -5,6 +5,7 @@
 
 *.xlsx
 *.csv
+*.xlsm
 
 
 ### Django ###
