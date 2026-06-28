@@ -139,6 +139,15 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
 
     # Armazenagem _planilha
     armazenagem_planilha = produto.armazenagem_planilha or Decimal('0')
+    coleta_planilha      = produto.coleta_planilha      or Decimal('0')
+    custo_final_planilha = produto.custo_final_planilha  or Decimal('0')
+    comissao_classico_planilha   = anuncio.comissao_classico_planilha   or Decimal('0')
+    icms_classico_planilha       = anuncio.icms_classico_planilha       or Decimal('0')
+    pis_cofins_classico_planilha = anuncio.pis_cofins_classico_planilha or Decimal('0')
+    comissao_premium_planilha    = anuncio.comissao_premium_planilha    or Decimal('0')
+    icms_premium_planilha        = anuncio.icms_premium_planilha        or Decimal('0')
+    pis_cofins_premium_planilha  = anuncio.pis_cofins_premium_planilha  or Decimal('0')
+    preco_premium_planilha       = anuncio.preco_premium_real           or Decimal('0')
 
     # Intermediários comuns
     metro_cubico            = (produto.altura / 100) * (produto.largura / 100) * (produto.profundidade / 100)
@@ -160,10 +169,23 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
     margem_pct_premium_din    = (margem_valor_premium_din / preco_premium * 100) if preco_premium else Decimal('0')
 
     # Resultados _planilha
-    margem_valor_classico_pla = (preco_classico - frete - coleta - armazenagem_planilha - custo_final - comissao_classico_valor - icms_classico - pis_cofins_classico)
-    margem_pct_classico_pla   = (margem_valor_classico_pla / preco_classico * 100) if preco_classico else Decimal('0')
-    margem_valor_premium_pla  = (preco_premium - frete - coleta - armazenagem_planilha - custo_final - comissao_premium_valor - icms_premium - pis_cofins_premium)
-    margem_pct_premium_pla    = (margem_valor_premium_pla / preco_premium * 100) if preco_premium else Decimal('0')
+    margem_valor_classico_pla = (
+        preco_classico - frete - coleta_planilha - armazenagem_planilha
+        - custo_final_planilha - comissao_classico_planilha
+        - icms_classico_planilha - pis_cofins_classico_planilha
+    )
+    margem_pct_classico_pla = (
+        margem_valor_classico_pla / preco_classico * 100
+    ) if preco_classico else Decimal('0')
+
+    margem_valor_premium_pla = (
+        preco_premium_planilha - frete - coleta_planilha - armazenagem_planilha
+        - custo_final_planilha - comissao_premium_planilha
+        - icms_premium_planilha - pis_cofins_premium_planilha
+    )
+    margem_pct_premium_pla = (
+        margem_valor_premium_pla / preco_premium_planilha * 100
+    ) if preco_premium_planilha else Decimal('0')
 
     # Salva em AnuncioML
     type(anuncio).objects.filter(pk=anuncio.pk).update(
@@ -218,6 +240,8 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
             'resultado_margem_classico_pct_planilha':   round(margem_pct_classico_pla, 2),
             'resultado_margem_premium_valor_planilha':  round(margem_valor_premium_pla, 2),
             'resultado_margem_premium_pct_planilha':    round(margem_pct_premium_pla, 2),
+            'entrada_coleta_planilha':      coleta_planilha,
+            'entrada_custo_final_planilha': custo_final_planilha,
         }
     )
 

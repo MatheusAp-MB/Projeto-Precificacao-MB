@@ -23,12 +23,12 @@ class Produto(models.Model):
     titulo = models.CharField(max_length=255)
     curva = models.CharField(
         max_length=1, choices=Curva.choices, blank=True, null=True)
-    sku   = models.CharField(max_length=50, unique=True, blank=True, null=True)
+    sku = models.CharField(max_length=50, unique=True, blank=True, null=True)
     marca = models.CharField(max_length=100, blank=True, null=True)
     estoque = models.IntegerField(default=0)
     cod_fabricante = models.CharField(max_length=50, blank=True, null=True)
-    categoria         = models.CharField(max_length=100, blank=True, null=True)
-    ultima_compra     = models.DateTimeField(blank=True, null=True)
+    categoria = models.CharField(max_length=100, blank=True, null=True)
+    ultima_compra = models.DateTimeField(blank=True, null=True)
     # * [EXPLICAÇÃO] → Data de cadastro no ERP — distinto do criado_em que é a data de entrada no DB.
     cadastrado_erp_em = models.DateTimeField(blank=True, null=True)
 
@@ -76,7 +76,14 @@ class Produto(models.Model):
     # ================================================
     # ARMAZENAGEM
     # ================================================
-
+    # * [EXPLICAÇÃO] → coleta_planilha: valor de coleta importado da coluna BG da planilha (BG = Y×72).
+#                  custo_final_planilha: valor de custo final importado da coluna R da planilha
+#                  (R = K + K×N + K×L + I). Usados no cálculo _planilha para total independência.
+    coleta_planilha = models.DecimalField(
+        max_digits=10, decimal_places=4, blank=True, null=True)
+    custo_final_planilha = models.DecimalField(
+        max_digits=10, decimal_places=2, blank=True, null=True)
+    
     # * [EXPLICAÇÃO] → armazenagem_planilha: valor mensal importado diretamente da coluna BH
     #                  da planilha de precificação. Representa o custo mensal de armazenagem
     #                  definido manualmente na planilha (ex: R$0,21 / R$0,45 / R$3,21).

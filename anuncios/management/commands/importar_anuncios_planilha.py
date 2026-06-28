@@ -123,6 +123,12 @@ class Command(BaseCommand):
                         'preco_classico_real':  preco_classico_real,
                         'margem_classico_real': margem_classico_real,
                         'frete_real':           frete_real,
+                        'comissao_classico_planilha':   dec(seguro(row[67])) if seguro(row[67]) else None,
+                        'icms_classico_planilha':       dec(seguro(row[69])) if seguro(row[69]) else None,
+                        'pis_cofins_classico_planilha': dec(seguro(row[70])) if seguro(row[70]) else None,
+                        'comissao_premium_planilha':    dec(seguro(row[74])) if seguro(row[74]) else None,
+                        'icms_premium_planilha':        dec(seguro(row[76])) if seguro(row[76]) else None,
+                        'pis_cofins_premium_planilha':  dec(seguro(row[77])) if seguro(row[77]) else None,
                     }
                 )
                 criados    += 1 if criado else 0
