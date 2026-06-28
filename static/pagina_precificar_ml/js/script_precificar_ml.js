@@ -10,9 +10,9 @@ $(document).ready(function () {
             threshold: 1,
         },
         columnDefs: [
-            { type: 'pt-string', targets: [0, 1] },
+            { type: 'pt-string', targets: [0, 1, 2, 3, 4, 5, 6, 7] },
             { searchPanes: { show: true }, targets: '_all' }
-        ]
+        ],
     });
 
     $('#tabela-precificar-ml').on('draw.dt', function () {
@@ -32,7 +32,7 @@ var filtrosAbertos = false;
 
 function toggle_filtros() {
     var painel = document.querySelector('.dtsp-panesContainer');
-    var caret  = document.getElementById('btn-filtros-caret');
+    var caret = document.getElementById('btn-filtros-caret');
 
     if (filtrosAbertos) {
         $(painel).hide();
@@ -61,7 +61,7 @@ function atualizar_filtros_ativos() {
     var filtros = [];
 
     $('.dtsp-searchPane').each(function () {
-        var coluna  = $(this).find('.dtsp-search').attr('placeholder');
+        var coluna = $(this).find('.dtsp-search').attr('placeholder');
         var valores = [];
 
         $(this).find('tr.selected .dtsp-name').each(function () {
