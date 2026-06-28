@@ -106,3 +106,15 @@ def view_calcular_frete_ml(request):
             'valor': None,
             'erro':  str(e),
         })
+    
+
+def view_precificar_ml(request):
+    # * [EXPLICAÇÃO] → Tela de precificação de anúncios do Mercado Livre.
+    #                  Exibe todos os anúncios com dados de precificação calculados.
+    from anuncios.models import AnuncioML
+    anuncios = AnuncioML.objects.select_related(
+        'produto', 'base_calculo'
+    ).all()
+    return render(request, 'pagina_precificar_ml/estrutura_precificar_ml.html', {
+        'anuncios': anuncios
+    })

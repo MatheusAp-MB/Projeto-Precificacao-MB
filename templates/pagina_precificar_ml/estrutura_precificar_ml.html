@@ -1,0 +1,171 @@
+<!--
+* [RESUMO] → Template da tela de precificação de anúncios do Mercado Livre.
+* Herda de estrutura_base_global.html.
+* Exibe anúncios com dados de precificação calculados via BaseDeCalculo.
+-->
+{% extends 'base_compartilhada/estrutura_base_global.html' %}
+{% load static %}
+
+{% block titulo %}Precificar ML — Sistema Interno MB/SV{% endblock %}
+{% block toolbar_titulo %}Precificação — Mercado Livre{% endblock %}
+
+{% block head_extra %}
+    <link rel="stylesheet" href="{% static 'pagina_precificar_ml/css/layout_precificar_ml.css' %}">
+{% endblock %}
+
+{% block conteudo %}
+
+    <!-- Barra de ações -->
+    <div class="barra-acoes">
+        <button class="btn-acao" onclick="opcoes_exibicao()">
+            <i class="fas fa-columns"></i> Opções de exibição
+        </button>
+    </div>
+
+    <!-- Painel de colunas -->
+    <div id="painel-colunas">
+        <h6>Colunas visíveis</h6>
+        <div class="row g-3">
+
+            <!-- Identificação -->
+            <div class="col-md-4 painel-col-identificacao">
+                <div class="painel-card">
+                    <div class="painel-card-titulo">Identificação</div>
+                    <div class="painel-card-botoes">
+                        <button id="1" class="btn-ativo"              onclick="mudar(this)">SKU</button>
+                        <button id="2" class="btn-ativo"              onclick="mudar(this)">Título</button>
+                        <button id="3" class="btn-ativo"              onclick="mudar(this)">Tipo</button>
+                        <button id="4" class="btn-ativo"              onclick="mudar(this)">Logística</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clássico -->
+            <div class="col-md-4 painel-col-classico">
+                <div class="painel-card">
+                    <div class="painel-card-titulo">Clássico</div>
+                    <div class="painel-card-botoes">
+                        <button id="5"  class="btn-ativo"              onclick="mudar(this)">Preço Clássico</button>
+                        <button id="6"  class="btn-ativo"              onclick="mudar(this)">Margem %</button>
+                        <button id="7"  class="btn-ativo"              onclick="mudar(this)">Margem R$</button>
+                        <button id="8"  class="btn-inativo not_active" onclick="mudar(this)">Comissão</button>
+                        <button id="9"  class="btn-inativo not_active" onclick="mudar(this)">ICMS</button>
+                        <button id="10" class="btn-inativo not_active" onclick="mudar(this)">PIS/COFINS</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Premium -->
+            <div class="col-md-4 painel-col-premium">
+                <div class="painel-card">
+                    <div class="painel-card-titulo">Premium</div>
+                    <div class="painel-card-botoes">
+                        <button id="11" class="btn-ativo"              onclick="mudar(this)">Preço Premium</button>
+                        <button id="12" class="btn-ativo"              onclick="mudar(this)">Margem %</button>
+                        <button id="13" class="btn-ativo"              onclick="mudar(this)">Margem R$</button>
+                        <button id="14" class="btn-inativo not_active" onclick="mudar(this)">Comissão</button>
+                        <button id="15" class="btn-inativo not_active" onclick="mudar(this)">ICMS</button>
+                        <button id="16" class="btn-inativo not_active" onclick="mudar(this)">PIS/COFINS</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custos -->
+            <div class="col-md-4 painel-col-custos">
+                <div class="painel-card">
+                    <div class="painel-card-titulo">Custos</div>
+                    <div class="painel-card-botoes">
+                        <button id="17" class="btn-inativo not_active" onclick="mudar(this)">Custo Final</button>
+                        <button id="18" class="btn-inativo not_active" onclick="mudar(this)">Frete</button>
+                        <button id="19" class="btn-inativo not_active" onclick="mudar(this)">Coleta</button>
+                        <button id="20" class="btn-inativo not_active" onclick="mudar(this)">Armazenagem</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Linha de filtros ativos -->
+    <div id="linha-filtros">
+        <div id="filtros-ativos-texto">Nenhum filtro ativo</div>
+        <button id="btn-toggle-filtros" onclick="toggle_filtros()">
+            <i class="fas fa-filter"></i> Filtros <span id="btn-filtros-caret">▼</span>
+        </button>
+    </div>
+
+    <!-- Tabela de precificação -->
+    <table id="tabela-precificar-ml" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>SKU</th>
+                <th>Título</th>
+                <th>Tipo</th>
+                <th>Logística</th>
+                <th>Preço Clássico</th>
+                <th>Margem % Clássico</th>
+                <th>Margem R$ Clássico</th>
+                <th>Comissão Clássico</th>
+                <th>ICMS Clássico</th>
+                <th>PIS/COFINS Clássico</th>
+                <th>Preço Premium</th>
+                <th>Margem % Premium</th>
+                <th>Margem R$ Premium</th>
+                <th>Comissão Premium</th>
+                <th>ICMS Premium</th>
+                <th>PIS/COFINS Premium</th>
+                <th>Custo Final</th>
+                <th>Frete</th>
+                <th>Coleta</th>
+                <th>Armazenagem</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for anuncio in anuncios %}
+            {% with bc=anuncio.base_calculo %}
+            <tr class="{% if anuncio.tipo_anuncio == 'gold_special' %}{% if anuncio.tipo_logistico == 'fulfillment' %}{% if anuncio.catalogo %}anuncio-classico-full-cat{% else %}anuncio-classico-full{% endif %}{% else %}{% if anuncio.catalogo %}anuncio-classico-flex-cat{% else %}anuncio-classico-flex{% endif %}{% endif %}{% elif anuncio.tipo_anuncio == 'gold_pro' %}{% if anuncio.tipo_logistico == 'fulfillment' %}{% if anuncio.catalogo %}anuncio-premium-full-cat{% else %}anuncio-premium-full{% endif %}{% else %}{% if anuncio.catalogo %}anuncio-premium-flex-cat{% else %}anuncio-premium-flex{% endif %}{% endif %}{% endif %}">
+                <td>{{ anuncio.produto.sku|default:"" }}</td>
+                <td>{{ anuncio.produto.titulo|default:"" }}</td>
+                <td data-search="{{ anuncio.get_tipo_anuncio_display|default:'' }}">
+                    {% if anuncio.tipo_anuncio == 'gold_special' %}
+                        <span class="badge-anuncio badge-classico">Clássico</span>
+                    {% elif anuncio.tipo_anuncio == 'gold_pro' %}
+                        <span class="badge-anuncio badge-premium">⭐ Premium</span>
+                    {% endif %}
+                </td>
+                <td data-search="{{ anuncio.get_tipo_logistico_display|default:'' }}">
+                    {% if anuncio.tipo_logistico == 'fulfillment' %}
+                        <span class="badge-logistica badge-full"><i class="fas fa-warehouse"></i> FULL</span>
+                    {% elif anuncio.tipo_logistico == 'flex' %}
+                        <span class="badge-logistica badge-flex"><i class="fas fa-bolt"></i> Flex</span>
+                    {% else %}
+                        <span class="badge-logistica badge-padrao"><i class="fas fa-box"></i> Padrão</span>
+                    {% endif %}
+                </td>
+                <td data-order="{{ bc.entrada_preco_classico|default:0 }}">{{ bc.entrada_preco_classico|floatformat:2|default:"" }}</td>
+                <td data-order="{{ bc.resultado_margem_pct_classico|default:0 }}">{{ bc.resultado_margem_pct_classico|floatformat:2|default:"" }}%</td>
+                <td data-order="{{ bc.resultado_margem_valor_classico|default:0 }}">{{ bc.resultado_margem_valor_classico|floatformat:2|default:"" }}</td>
+                <td data-order="{{ bc.calc_comissao_classico|default:0 }}">{{ bc.calc_comissao_classico|floatformat:2|default:"" }}</td>
+                <td data-order="{{ bc.calc_icms_classico|default:0 }}">{{ bc.calc_icms_classico|floatformat:2|default:"" }}</td>
+                <td data-order="{{ bc.calc_pis_cofins_classico|default:0 }}">{{ bc.calc_pis_cofins_classico|floatformat:2|default:"" }}</td>
+                <td data-order="{{ bc.calc_preco_premium|default:0 }}">{{ bc.calc_preco_premium|floatformat:2|default:"" }}</td>
+                <td data-order="{{ bc.resultado_margem_pct_premium|default:0 }}">{{ bc.resultado_margem_pct_premium|floatformat:2|default:"" }}%</td>
+                <td data-order="{{ bc.resultado_margem_valor_premium|default:0 }}">{{ bc.resultado_margem_valor_premium|floatformat:2|default:"" }}</td>
+                <td data-order="{{ bc.calc_comissao_premium|default:0 }}">{{ bc.calc_comissao_premium|floatformat:2|default:"" }}</td>
+                <td data-order="{{ bc.calc_icms_premium|default:0 }}">{{ bc.calc_icms_premium|floatformat:2|default:"" }}</td>
+                <td data-order="{{ bc.calc_pis_cofins_premium|default:0 }}">{{ bc.calc_pis_cofins_premium|floatformat:2|default:"" }}</td>
+                <td data-order="{{ bc.calc_custo_final|default:0 }}">{{ bc.calc_custo_final|floatformat:2|default:"" }}</td>
+                <td data-order="{{ anuncio.frete_calculado|default:0 }}">{{ anuncio.frete_calculado|floatformat:2|default:"" }}</td>
+                <td data-order="{{ bc.calc_coleta|default:0 }}">{{ bc.calc_coleta|floatformat:2|default:"" }}</td>
+                <td data-order="{{ bc.calc_armazenagem|default:0 }}">{{ bc.calc_armazenagem|floatformat:2|default:"" }}</td>
+            </tr>
+            {% endwith %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'pagina_precificar_ml/js/script_precificar_ml.js' %}"></script>
+{% endblock %}

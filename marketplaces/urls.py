@@ -9,4 +9,5 @@ urlpatterns = [
 
     # * [EXPLICAÇÃO] → Configurações do Mercado Livre.
     path('mercado-livre/', views.view_configuracoes_ml, name='configuracoes_ml'),
+
 ]

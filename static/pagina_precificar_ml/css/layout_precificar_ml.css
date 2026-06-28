@@ -1,0 +1,11 @@
+/*
+* [RESUMO] → CSS específico da tela de precificação do Mercado Livre.
+*/
+
+/* * [EXPLICAÇÃO] → Larguras dos cards do painel de colunas. */
+@media (min-width: 768px) {
+    .painel-col-identificacao { flex: 0 0 auto; width: 22%; }
+    .painel-col-classico      { flex: 0 0 auto; width: 26%; }
+    .painel-col-premium       { flex: 0 0 auto; width: 26%; }
+    .painel-col-custos        { flex: 0 0 auto; width: 22%; }
+}

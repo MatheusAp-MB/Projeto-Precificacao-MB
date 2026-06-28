@@ -16,6 +16,9 @@ urlpatterns = [
     # * [EXPLICAÇÃO] → Endpoint HTMX da calculadora de frete ML.
     path('mercado-livre/tabela-de-frete/calcular/', views.view_calcular_frete_ml, name='calcular_frete_ml'),
 
+    # * [EXPLICAÇÃO] → Tela de precificação de anúncios do Mercado Livre.
+    path('mercado-livre/precificar/', views.view_precificar_ml, name='precificar_ml'),
+
 
 
 ]

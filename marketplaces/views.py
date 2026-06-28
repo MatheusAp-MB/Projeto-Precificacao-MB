@@ -34,3 +34,4 @@ def view_configuracoes_ml(request):
         'tipos':       tipos,
         'logistica':   logistica,
     })
+

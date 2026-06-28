@@ -11,6 +11,17 @@
 
 {% block cards %}
 
+        <!-- Card: Precificar Anúncios — ATIVO -->
+    <div class="col-md-4">
+        <a href="{% url 'precificar_ml' %}" class="text-decoration-none">
+            <div class="card-modulo">
+                <i class="fas fa-calculator fa-2x mb-3"></i>
+                <h5>Precificar Anúncios</h5>
+                <p>Visualize e valide a precificação dos anúncios do Mercado Livre</p>
+            </div>
+        </a>
+    </div>
+
     <!-- Card: Tabela de Frete — ATIVO -->
     <div class="col-md-4">
         <a href="{% url 'tabela_frete_ml' %}" class="text-decoration-none">
@@ -23,7 +34,7 @@
     </div>
 
     <!-- Cards em branco — reservados para funcionalidades futuras -->
-    {% for i in "12345678" %}
+    {% for i in "1234567" %}
     <div class="col-md-4">
         <div class="card-modulo card-modulo-vazio">
             <i class="fas fa-plus fa-2x mb-3"></i>
