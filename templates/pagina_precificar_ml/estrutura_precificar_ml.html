@@ -123,13 +123,7 @@
         <tbody>
             {% for anuncio in anuncios %}
             {% with bc=anuncio.base_calculo %}
-            <tr data-ean="{{ anuncio.produto.ean|default:'' }}"
-    data-fab="{{ anuncio.produto.cod_fabricante|default:'' }}"
-    data-marca="{{ anuncio.produto.marca|default:'' }}"
-    data-curva="{{ anuncio.produto.curva|default:'' }}"
-    data-estoque="{{ anuncio.produto.estoque|default:0 }}"
-    data-categoria="{{ anuncio.produto.categoria|default:'' }}"
-    class="{% if anuncio.tipo_anuncio == 'gold_special' %}{% if anuncio.tipo_logistico == 'fulfillment' %}{% if anuncio.catalogo %}anuncio-classico-full-cat{% else %}anuncio-classico-full{% endif %}{% else %}{% if anuncio.catalogo %}anuncio-classico-flex-cat{% else %}anuncio-classico-flex{% endif %}{% endif %}{% elif anuncio.tipo_anuncio == 'gold_pro' %}{% if anuncio.tipo_logistico == 'fulfillment' %}{% if anuncio.catalogo %}anuncio-premium-full-cat{% else %}anuncio-premium-full{% endif %}{% else %}{% if anuncio.catalogo %}anuncio-premium-flex-cat{% else %}anuncio-premium-flex{% endif %}{% endif %}{% endif %}">
+            <tr class="{% if anuncio.tipo_anuncio == 'gold_special' %}{% if anuncio.tipo_logistico == 'fulfillment' %}{% if anuncio.catalogo %}anuncio-classico-full-cat{% else %}anuncio-classico-full{% endif %}{% else %}{% if anuncio.catalogo %}anuncio-classico-flex-cat{% else %}anuncio-classico-flex{% endif %}{% endif %}{% elif anuncio.tipo_anuncio == 'gold_pro' %}{% if anuncio.tipo_logistico == 'fulfillment' %}{% if anuncio.catalogo %}anuncio-premium-full-cat{% else %}anuncio-premium-full{% endif %}{% else %}{% if anuncio.catalogo %}anuncio-premium-flex-cat{% else %}anuncio-premium-flex{% endif %}{% endif %}{% endif %}">
                 <td>{{ anuncio.produto.sku|default:"" }}</td>
                 <td>{{ anuncio.produto.titulo|default:"" }}</td>
                 <td data-search="{{ anuncio.get_tipo_anuncio_display|default:'' }}">
