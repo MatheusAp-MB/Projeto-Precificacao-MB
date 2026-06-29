@@ -17,7 +17,7 @@ class TipoAnuncioMLAdmin(admin.ModelAdmin):
 
 @admin.register(ConfiguracaoLogisticaML)
 class ConfiguracaoLogisticaMLAdmin(admin.ModelAdmin):
-    list_display  = ['marketplace', 'fator_coleta', 'periodo_armazenagem', 'armaz_faixa_2']
+    list_display  = ['marketplace', 'fator_coleta', 'periodo_armazenagem']
 
 @admin.register(FaixaArmazenagem)
 class FaixaArmazenagemAdmin(admin.ModelAdmin):

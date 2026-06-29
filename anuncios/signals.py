@@ -3,8 +3,8 @@
 #              independente de onde a mudança veio (import, admin, API, etc).
 #
 #              Fluxo de cálculo:
-#              1. preco_classico_real (da planilha) → copiado para preco_classico_calculado
-#              2. Todas as fórmulas usam preco_classico_calculado (nunca o _real)
+#              1. Goal Seek analítico → calcula preco_classico_calculado diretamente
+#              2. Todas as fórmulas usam preco_classico_calculado (nunca o _da_planilha)
 #              3. preco_premium_calculado = RoundUpTo90(preco_classico_calculado × acréscimo)
 #              4. Dois cálculos paralelos de margem são salvos:
 #                 - _dinamico:  armazenagem selecionada por faixa dinâmica (dimensão do produto)
@@ -306,10 +306,9 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
         tipo_anuncio='gold_pro'
     ).first()
     preco_premium_planilha = (
-    anuncio_premium.preco_premium_real if anuncio_premium and anuncio_premium.preco_premium_real
+    anuncio_premium.preco_premium_da_planilha if anuncio_premium and anuncio_premium.preco_premium_da_planilha
     else round_up_to_90(preco_classico * (1 + acrescimo_premium))
     )
-
     # Intermediários comuns
     metro_cubico = (produto.altura / 100) * \
         (produto.largura / 100) * (produto.profundidade / 100)
@@ -361,8 +360,8 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
         preco_premium_calculado=preco_premium,
         margem_classico_calculado=round(margem_pct_classico_din, 2),
         margem_premium_calculado=round(margem_pct_premium_din, 2),
-        margem_classico_calculado_planilha=round(margem_pct_classico_pla, 2),
-        margem_premium_calculado_planilha=round(margem_pct_premium_pla, 2),
+        margem_classico_calculado_baseado_na_planilha=round(margem_pct_classico_pla, 2),
+        margem_premium_calculado_baseado_na_planilha=round(margem_pct_premium_pla, 2),
     )
 
     # Salva na BaseDeCalculo
@@ -382,18 +381,17 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
             'entrada_altura':                    produto.altura,
             'entrada_largura':                   produto.largura,
             'entrada_profundidade':              produto.profundidade,
-            'entrada_preco_classico_real':       preco_classico,
             'entrada_comissao_classico':         tipo_classico.comissao,
             'entrada_acrescimo_premium':         tipo_premium.acrescimo_preco,
             'entrada_fator_coleta':              fator_coleta,
             'entrada_armazenagem_faixa_valor':   faixa_valor,
             'entrada_armazenagem_periodo':       periodo_armaz,
-            'entrada_armazenagem_planilha':      armazenagem_planilha,
+            'entrada_armazenagem_da_planilha':   armazenagem_planilha,
             'calc_metro_cubico':                 round(metro_cubico, 6),
             'calc_custo_final':                  round(custo_final, 2),
             'calc_coleta':                       round(coleta, 2),
             'calc_armazenagem':                  round(armazenagem_dinamico, 2),
-            'calc_armazenagem_planilha':         round(armazenagem_planilha, 2),
+            'calc_armazenagem_baseada_na_planilha': round(armazenagem_planilha, 2),
             'calc_preco_premium':                round(preco_premium, 2),
             'calc_comissao_classico':            round(comissao_classico_valor, 2),
             'calc_comissao_premium':             round(comissao_premium_valor, 2),
@@ -405,10 +403,10 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
             'resultado_margem_classico_pct':     round(margem_pct_classico_din, 2),
             'resultado_margem_premium_valor':    round(margem_valor_premium_din, 2),
             'resultado_margem_premium_pct':      round(margem_pct_premium_din, 2),
-            'resultado_margem_classico_valor_planilha': round(margem_valor_classico_pla, 2),
-            'resultado_margem_classico_pct_planilha':   round(margem_pct_classico_pla, 2),
-            'resultado_margem_premium_valor_planilha':  round(margem_valor_premium_pla, 2),
-            'resultado_margem_premium_pct_planilha':    round(margem_pct_premium_pla, 2),
+            'resultado_margem_classico_valor_baseado_na_planilha': round(margem_valor_classico_pla, 2),
+            'resultado_margem_classico_pct_baseado_na_planilha':   round(margem_pct_classico_pla, 2),
+            'resultado_margem_premium_valor_baseado_na_planilha':  round(margem_valor_premium_pla, 2),
+            'resultado_margem_premium_pct_baseado_na_planilha':    round(margem_pct_premium_pla, 2),
 
         }
     )
@@ -425,9 +423,9 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
 # ================================================
 
 def calcular_tudo_para_anuncio(anuncio):
-    # * [EXPLICAÇÃO] → Goal Seek substitui a cópia simples de preco_classico_real.
+    # * [EXPLICAÇÃO] → Goal Seek substitui a cópia simples do preco_classico_da_planilha.
     #                  Para anúncios Clássico: calcula o preço ideal via goal_seek_preco_classico().
-    #                  Para anúncios Premium:  goal seek retorna None → fallback usa preco_classico_real.
+    #                  Para anúncios Premium:  goal seek retorna None → fallback usa preco_classico_da_planilha.
     #                  Se goal seek falhar por qualquer motivo (sem marketplace configurado,
     #                  denominador <= 0, etc.), o fallback garante que o fluxo não trava.
     preco_goal_seek = goal_seek_preco_classico(anuncio)
@@ -438,13 +436,13 @@ def calcular_tudo_para_anuncio(anuncio):
         )
         anuncio.preco_classico_calculado = preco_goal_seek
 
-    elif not anuncio.preco_classico_calculado and anuncio.preco_classico_real:
+    elif not anuncio.preco_classico_calculado and anuncio.preco_classico_da_planilha:
         # * [EXPLICAÇÃO] → Fallback: se goal seek não encontrar solução,
-        #                  usa preco_classico_real para não travar o fluxo.
+        #                  usa preco_classico_da_planilha para não travar o fluxo.
         type(anuncio).objects.filter(pk=anuncio.pk).update(
-            preco_classico_calculado=anuncio.preco_classico_real
+            preco_classico_calculado=anuncio.preco_classico_da_planilha
         )
-        anuncio.preco_classico_calculado = anuncio.preco_classico_real
+        anuncio.preco_classico_calculado = anuncio.preco_classico_da_planilha
 
     frete_valor = calcular_frete_para_anuncio(anuncio)
     calcular_precificacao_anuncio(anuncio, frete_valor)

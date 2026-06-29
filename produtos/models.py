@@ -98,16 +98,6 @@ class Produto(models.Model):
     armazenagem_planilha = models.DecimalField(
         max_digits=8, decimal_places=2, blank=True, null=True)
 
-    # Validação de frete — temporário
-    # * [EXPLICAÇÃO] → Campos temporários para validar o cálculo de frete contra a planilha.
-    #                  custo_frete_ml      → calculado pelo sistema
-    #                  custo_frete_ml_real → importado da planilha (coluna BF)
-    # # [STATUS: DESENVOLVIMENTO] → Remover após validação aprovada
-    custo_frete_ml = models.DecimalField(
-        max_digits=10, decimal_places=2, blank=True, null=True)
-    custo_frete_ml_real = models.DecimalField(
-        max_digits=10, decimal_places=2, blank=True, null=True)
-
     # Controle
     criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)

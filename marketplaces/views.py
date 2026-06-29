@@ -24,14 +24,16 @@ def view_marketplaces(request):
 
 def view_configuracoes_ml(request):
     # * [EXPLICAÇÃO] → Tela de configurações do Mercado Livre.
-    #                  Exibe parâmetros gerais, logística e os 8 tipos de anúncio.
+    #                  Exibe parâmetros gerais, logística, faixas de armazenagem e os 8 tipos de anúncio.
+    from .models import FaixaArmazenagem
     marketplace = get_object_or_404(Marketplace, sigla='ML')
     tipos       = TipoAnuncioML.objects.filter(marketplace=marketplace)
     logistica   = ConfiguracaoLogisticaML.objects.filter(marketplace=marketplace).first()
+    faixas      = FaixaArmazenagem.objects.filter(marketplace=marketplace, ativo=True).order_by('ordem')
 
     return render(request, 'pagina_configuracoes_ml/estrutura_configuracoes_ml.html', {
         'marketplace': marketplace,
         'tipos':       tipos,
         'logistica':   logistica,
+        'faixas':      faixas,
     })
-

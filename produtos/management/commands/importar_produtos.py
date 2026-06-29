@@ -99,8 +99,7 @@ class Command(BaseCommand):
                     'altura':           dec(seguro(row[21])),
                     'profundidade':     dec(seguro(row[22])),
                     'largura':          dec(seguro(row[23])),
-                    'custo_frete_ml_real': dec(seguro(row[57])) if seguro(row[57]) else None,
-
+                
                     # * [EXPLICAÇÃO] → armazenagem_planilha: valor mensal de armazenagem
                     #                  importado diretamente da coluna BH da planilha.
                     #                  Usado no cálculo _planilha para replicar exatamente

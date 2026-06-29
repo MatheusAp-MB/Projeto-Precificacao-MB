@@ -109,12 +109,6 @@ class ConfiguracaoLogisticaML(models.Model):
     fator_coleta        = models.DecimalField(max_digits=8, decimal_places=2, default=72)
     periodo_armazenagem = models.IntegerField(default=30)
 
-    # * [EXPLICAÇÃO] → 4 faixas de armazenagem diária (R$/m³/dia).
-    #                  Faixas correspondem a diferentes períodos de permanência no armazém.
-    armaz_faixa_1 = models.DecimalField(max_digits=8, decimal_places=4, default=0.0070)
-    armaz_faixa_2 = models.DecimalField(max_digits=8, decimal_places=4, default=0.0150)
-    armaz_faixa_3 = models.DecimalField(max_digits=8, decimal_places=4, default=0.0500)
-    armaz_faixa_4 = models.DecimalField(max_digits=8, decimal_places=4, default=0.1070)
 
     atualizado_em = models.DateTimeField(auto_now=True)
 

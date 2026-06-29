@@ -3,15 +3,15 @@
 #              BaseDeCalculo (registro detalhado de cada etapa do cálculo de precificação).
 #
 #              Convenção de nomenclatura adotada no projeto:
-#              - Campos com sufixo "_real"      → valor importado da planilha (fonte da verdade externa)
-#              - Campos com sufixo "_calculado" → valor gerado pelo sistema (signal ou Goal Seek)
-#              - As fórmulas sempre usam os campos "_calculado" — os "_real" são apenas para auditoria/comparação.
+#              - Sufixo "_da_planilha"              → valor importado diretamente da planilha (auditoria/comparação)
+#              - Sufixo "_calculado"                → valor gerado pelo sistema (Goal Seek ou signal)
+#              - Sufixo "_baseado_na_planilha"      → calculado pelo sistema usando armazenagem da planilha como input
+#              - As fórmulas sempre usam os campos "_calculado" — os "_da_planilha" são apenas para comparação.
 #
-#              Sobre os sufixos _dinamico e _planilha na BaseDeCalculo:
-#              - _dinamico  → cálculo idealizado: faixa de armazenagem selecionada pelas dimensões do produto
-#              - _planilha  → cálculo fiel à planilha: usa armazenagem_planilha do produto (coluna BH)
+#              Sobre os dois cálculos paralelos de margem:
+#              - _calculado                    → faixa de armazenagem selecionada pelas dimensões do produto
+#              - _calculado_baseado_na_planilha → usa armazenagem_planilha do produto (coluna BH) como input
 #              Ver documentação completa em produtos/models.py (campo armazenagem_planilha).
-
 from django.db import models
 from produtos.models import Produto
 
@@ -91,42 +91,43 @@ class AnuncioML(models.Model):
     # PRECIFICAÇÃO — FRETE
     # ================================================
 
-    # * [EXPLICAÇÃO] → frete_real      → importado da planilha para validação.
-    #                  frete_calculado → calculado pelo sistema via tabela FreteML.
-    # # [STATUS: DESENVOLVIMENTO] → frete_real será removido após validação aprovada.
-    frete_real      = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    frete_calculado = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    # * [EXPLICAÇÃO] → frete_da_planilha → importado da planilha (coluna BF), mantido para comparação.
+    #                  frete_calculado   → calculado pelo sistema via tabela FreteML.
+    frete_da_planilha = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    frete_calculado   = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
     # ================================================
     # PRECIFICAÇÃO — PREÇO CLÁSSICO
     # ================================================
 
-    # * [EXPLICAÇÃO] → preco_classico_real      → importado da planilha (resultado do Goal Seek do Excel).
-    #                  preco_classico_calculado → calculado pelo sistema (Goal Seek interno).
-    #                  Por enquanto, preco_classico_calculado é uma cópia do real.
+    # * [EXPLICAÇÃO] → preco_classico_da_planilha → importado da planilha (resultado do Goal Seek do Excel).
+    #                  preco_classico_calculado   → calculado pelo sistema via Goal Seek analítico.
     #                  Todas as fórmulas do sistema usam preco_classico_calculado.
-    preco_classico_real      = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    preco_classico_calculado = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    preco_classico_da_planilha = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    preco_classico_calculado   = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
     # ================================================
     # PRECIFICAÇÃO — PREÇO PREMIUM
     # ================================================
 
-    # * [EXPLICAÇÃO] → preco_premium_real      → importado da planilha.
-    #                  preco_premium_calculado → calculado pelo sistema via RoundUpTo90(preco_classico × 1.08).
-    preco_premium_real      = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    preco_premium_calculado = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    # * [EXPLICAÇÃO] → preco_premium_da_planilha → importado da planilha.
+    #                  preco_premium_calculado   → calculado pelo sistema via RoundUpTo90(preco_classico × acrescimo).
+    preco_premium_da_planilha = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    preco_premium_calculado   = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+
 
     # ================================================
     # PRECIFICAÇÃO — MARGEM CLÁSSICA
     # ================================================
 
-    # * [EXPLICAÇÃO] → margem_classico_real      → importado da planilha (resultado do cálculo do Excel).
-    #                  margem_classico_calculado → calculado pelo sistema (_dinamico: faixa por dimensão).
-    #                  margem_classico_calculado_planilha → calculado com armazenagem da planilha (_planilha).
-    margem_classico_real               = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-    margem_classico_calculado          = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-    margem_classico_calculado_planilha = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    # * [EXPLICAÇÃO] → margem_classico_da_planilha                    → importado da planilha (%) — coluna BT.
+    #                  margem_classico_valor_da_planilha               → importado da planilha (R$) — coluna BQ.
+    #                  margem_classico_calculado                       → calculado pelo sistema (faixa dinâmica por dimensão).
+    #                  margem_classico_calculado_baseado_na_planilha   → calculado pelo sistema usando armazenagem da planilha.
+    margem_classico_da_planilha                  = models.DecimalField(max_digits=6,  decimal_places=2, blank=True, null=True)
+    margem_classico_valor_da_planilha            = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    margem_classico_calculado                    = models.DecimalField(max_digits=6,  decimal_places=2, blank=True, null=True)
+    margem_classico_calculado_baseado_na_planilha = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
 
 
 
@@ -134,13 +135,15 @@ class AnuncioML(models.Model):
     # PRECIFICAÇÃO — MARGEM PREMIUM
     # ================================================
 
-    # * [EXPLICAÇÃO] → margem_premium_real      → importado da planilha.
-    #                  margem_premium_calculado → calculado pelo sistema (_dinamico: faixa por dimensão).
-    #                  margem_premium_calculado_planilha → calculado com armazenagem da planilha (_planilha).
-    margem_premium_real               = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-    margem_premium_calculado          = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-    margem_premium_calculado_planilha = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-
+    # * [EXPLICAÇÃO] → margem_premium_da_planilha                    → importado da planilha (%) — coluna CA.
+    #                  margem_premium_valor_da_planilha               → importado da planilha (R$) — coluna BX.
+    #                  margem_premium_calculado                       → calculado pelo sistema (faixa dinâmica por dimensão).
+    #                  margem_premium_calculado_baseado_na_planilha   → calculado pelo sistema usando armazenagem da planilha.
+    margem_premium_da_planilha                  = models.DecimalField(max_digits=6,  decimal_places=2, blank=True, null=True)
+    margem_premium_valor_da_planilha            = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    margem_premium_calculado                    = models.DecimalField(max_digits=6,  decimal_places=2, blank=True, null=True)
+    margem_premium_calculado_baseado_na_planilha = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    
     # ================================================
     # META
     # ================================================
@@ -196,7 +199,6 @@ class BaseDeCalculo(models.Model):
     # DADOS DE ENTRADA — ANÚNCIO E MARKETPLACE
     # ================================================
 
-    entrada_preco_classico_real      = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     entrada_comissao_classico        = models.DecimalField(max_digits=5,  decimal_places=2, null=True, blank=True)
     entrada_acrescimo_premium        = models.DecimalField(max_digits=5,  decimal_places=2, null=True, blank=True)
     entrada_fator_coleta             = models.DecimalField(max_digits=8,  decimal_places=2, null=True, blank=True)
@@ -204,8 +206,8 @@ class BaseDeCalculo(models.Model):
     entrada_armazenagem_periodo      = models.IntegerField(null=True, blank=True)
 
     # * [EXPLICAÇÃO] → Valor mensal de armazenagem importado da planilha (coluna BH).
-    #                  Registrado aqui para rastreabilidade do cálculo _planilha.
-    entrada_armazenagem_planilha = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    #                  Registrado aqui para rastreabilidade do cálculo baseado na planilha.
+    entrada_armazenagem_da_planilha = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
 
 
     # ================================================
@@ -232,14 +234,14 @@ class BaseDeCalculo(models.Model):
     )
     calc_coleta = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
-    # * [EXPLICAÇÃO] → calc_armazenagem     → versão _dinamico (faixa selecionada por dimensão)
-    #                  calc_armazenagem_planilha → versão _planilha (valor direto do BH da planilha)
+    # * [EXPLICAÇÃO] → calc_armazenagem                  → faixa selecionada pelas dimensões do produto
+    #                  calc_armazenagem_baseada_na_planilha → valor direto da coluna BH da planilha
     formula_armazenagem = models.CharField(
         max_length=200, blank=True,
-        default='[_dinamico] Tarifa Diária da Faixa × Período de Armazenagem'
+        default='Tarifa Diária da Faixa × Período de Armazenagem'
     )
-    calc_armazenagem         = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    calc_armazenagem_planilha = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    calc_armazenagem                   = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    calc_armazenagem_baseada_na_planilha = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     formula_preco_premium = models.CharField(
         max_length=200, blank=True,
@@ -304,18 +306,17 @@ class BaseDeCalculo(models.Model):
     resultado_margem_premium_pct   = models.DecimalField(max_digits=8,  decimal_places=2, null=True, blank=True)
 
     # ================================================
-    # RESULTADOS FINAIS — CÁLCULO _PLANILHA
+    # RESULTADOS FINAIS — CÁLCULO BASEADO NA PLANILHA
     # ================================================
     # * [EXPLICAÇÃO] → Usa armazenagem importada diretamente da coluna BH da planilha.
-    #                  Replica exatamente o comportamento da planilha.
-    #                  Existe para comparação com _dinamico e identificação de inconsistências.
+    #                  Existe para comparação com o cálculo dinâmico e identificação de inconsistências.
     #                  Ver documentação em produtos/models.py (campo armazenagem_planilha).
 
-    resultado_margem_classico_valor_planilha = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    resultado_margem_classico_pct_planilha   = models.DecimalField(max_digits=8,  decimal_places=2, null=True, blank=True)
+    resultado_margem_classico_valor_baseado_na_planilha = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    resultado_margem_classico_pct_baseado_na_planilha   = models.DecimalField(max_digits=8,  decimal_places=2, null=True, blank=True)
 
-    resultado_margem_premium_valor_planilha  = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    resultado_margem_premium_pct_planilha    = models.DecimalField(max_digits=8,  decimal_places=2, null=True, blank=True)
+    resultado_margem_premium_valor_baseado_na_planilha  = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    resultado_margem_premium_pct_baseado_na_planilha    = models.DecimalField(max_digits=8,  decimal_places=2, null=True, blank=True)
 
     class Meta:
         verbose_name        = 'Base de Cálculo'

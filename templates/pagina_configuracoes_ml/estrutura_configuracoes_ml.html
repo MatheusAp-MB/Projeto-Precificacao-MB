@@ -32,10 +32,12 @@
                     </colgroup>
                     <tr><td class="modal-td-dado">Fator Coleta (R$/m³)</td><td class="modal-td-valor">R$ {{ logistica.fator_coleta }}</td></tr>
                     <tr><td class="modal-td-dado">Período Armazenagem</td><td class="modal-td-valor">{{ logistica.periodo_armazenagem }} dias</td></tr>
-                    <tr><td class="modal-td-dado">Armazenagem Faixa 1</td><td class="modal-td-valor">R$ {{ logistica.armaz_faixa_1 }}/dia</td></tr>
-                    <tr><td class="modal-td-dado">Armazenagem Faixa 2</td><td class="modal-td-valor">R$ {{ logistica.armaz_faixa_2 }}/dia</td></tr>
-                    <tr><td class="modal-td-dado">Armazenagem Faixa 3</td><td class="modal-td-valor">R$ {{ logistica.armaz_faixa_3 }}/dia</td></tr>
-                    <tr><td class="modal-td-dado">Armazenagem Faixa 4</td><td class="modal-td-valor">R$ {{ logistica.armaz_faixa_4 }}/dia</td></tr>
+                    {% for faixa in faixas %}
+                    <tr>
+                        <td class="modal-td-dado">{{ faixa.nome }}</td>
+                        <td class="modal-td-valor">R$ {{ faixa.valor_diario }}/dia</td>
+                    </tr>
+                    {% endfor %}
                 </table>
             </div>
         </div>

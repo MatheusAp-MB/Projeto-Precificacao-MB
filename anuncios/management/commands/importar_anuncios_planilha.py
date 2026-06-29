@@ -1,8 +1,8 @@
 # * [RESUMO] → Comando Django para importar anúncios ML da planilha de precificação.
 #              Cria 2 anúncios por produto: Clássico e Premium.
 #              Cada anúncio recebe apenas os dados que são seus:
-#                - Clássico: preco_classico_real, margem_classico_real, frete_real
-#                - Premium:  preco_premium_real,  margem_premium_real,  frete_real
+#                - Clássico: preco_classico_da_planilha, margem_classico_da_planilha, margem_classico_valor_da_planilha, frete_da_planilha
+#                - Premium:  preco_premium_da_planilha,  margem_premium_da_planilha,  margem_premium_valor_da_planilha,  frete_da_planilha
 #              Uso: python manage.py importar_anuncios_planilha <caminho_do_arquivo>
 
 import openpyxl
@@ -99,15 +99,13 @@ class Command(BaseCommand):
                 # LEITURA DOS VALORES DA PLANILHA
                 # ================================================
 
-                preco_classico_real = dec(
-                    seguro(row[60]))   # BI — Preço Clássico
-                frete_real = dec(seguro(row[72]))   # BU — Frete ML
-                # BT — Margem % Clássico
-                margem_classico_real = dec(seguro(row[71]))
-                preco_premium_real = dec(
-                    seguro(row[73]))   # BV — Preço Premium
-                # CA — Margem % Premium
-                margem_premium_real = dec(seguro(row[78]))
+                preco_classico_da_planilha        = dec(seguro(row[60]))  # BI — Preço Clássico
+                frete_da_planilha                 = dec(seguro(row[72]))  # BU — Frete ML
+                margem_classico_da_planilha       = dec(seguro(row[71]))  # BT — Margem % Clássico
+                margem_classico_valor_da_planilha = dec(seguro(row[68]))  # BQ — Margem R$ Clássico
+                preco_premium_da_planilha         = dec(seguro(row[73]))  # BV — Preço Premium
+                margem_premium_da_planilha        = dec(seguro(row[78]))  # CA — Margem % Premium
+                margem_premium_valor_da_planilha  = dec(seguro(row[75]))  # BX — Margem R$ Premium
 
                 mlb_classico = f'TEMP{contador:04d}C'
                 mlb_premium = f'TEMP{contador:04d}P'
@@ -116,19 +114,18 @@ class Command(BaseCommand):
                 # ANÚNCIO CLÁSSICO
                 # ================================================
 
-                # * [EXPLICAÇÃO] → Recebe apenas os dados do Clássico.
-                #                  preco_classico_calculado será preenchido pelo signal
-                #                  (por enquanto cópia do real; futuramente Goal Seek).
+                # * [EXPLICAÇÃO] → Recebe apenas os dados do Clássico importados da planilha.
+                #                  preco_classico_calculado será preenchido pelo signal via Goal Seek.
                 _, criado = AnuncioML.objects.update_or_create(
                     mlb=mlb_classico,
                     defaults={
-                        'produto':              produto,
-                        'tipo_anuncio':         AnuncioML.TipoAnuncio.CLASSICO,
-                        'tipo_logistico':       AnuncioML.TipoLogistico.FLEX,
-                        'preco_classico_real':  preco_classico_real,
-                        'margem_classico_real': margem_classico_real,
-                        'frete_real':           frete_real,
-                        
+                        'produto':                            produto,
+                        'tipo_anuncio':                       AnuncioML.TipoAnuncio.CLASSICO,
+                        'tipo_logistico':                     AnuncioML.TipoLogistico.FLEX,
+                        'preco_classico_da_planilha':         preco_classico_da_planilha,
+                        'margem_classico_da_planilha':        margem_classico_da_planilha,
+                        'margem_classico_valor_da_planilha':  margem_classico_valor_da_planilha,
+                        'frete_da_planilha':                  frete_da_planilha,
                     }
                 )
                 criados += 1 if criado else 0
@@ -143,12 +140,13 @@ class Command(BaseCommand):
                 _, criado = AnuncioML.objects.update_or_create(
                     mlb=mlb_premium,
                     defaults={
-                        'produto':             produto,
-                        'tipo_anuncio':        AnuncioML.TipoAnuncio.PREMIUM,
-                        'tipo_logistico':      AnuncioML.TipoLogistico.FLEX,
-                        'preco_premium_real':  preco_premium_real,
-                        'margem_premium_real': margem_premium_real,
-                        'frete_real':          frete_real,
+                        'produto':                           produto,
+                        'tipo_anuncio':                      AnuncioML.TipoAnuncio.PREMIUM,
+                        'tipo_logistico':                    AnuncioML.TipoLogistico.FLEX,
+                        'preco_premium_da_planilha':         preco_premium_da_planilha,
+                        'margem_premium_da_planilha':        margem_premium_da_planilha,
+                        'margem_premium_valor_da_planilha':  margem_premium_valor_da_planilha,
+                        'frete_da_planilha':                 frete_da_planilha,
                     }
                 )
                 criados += 1 if criado else 0
