@@ -71,6 +71,153 @@ def calcular_frete_para_anuncio(anuncio):
 
 
 # ================================================
+# GOAL SEEK
+# ================================================
+
+# * [RESUMO] → Calcula o preco_classico_calculado que entrega exatamente a margem_padrao
+#              definida no cadastro do TipoAnuncioML.
+#              Replica o VBA Executar_Atingir_Meta de forma analítica — sem iteração numérica.
+#
+#              Fórmula direta (derivada da fórmula de margem):
+#                  FIXO        = coleta + armazenagem + custo_final - custo*(icms_entrada + pis)
+#                  denominador = 1 - comissao - icms_saida - pis - margem_padrao
+#                  P_exato     = (FIXO + frete_da_faixa) / denominador
+#                  P_final     = round_up_to_90(P_exato)
+#
+#              O frete é resolvido por busca linear nas faixas — sem solver numérico.
+#              Começa pela faixa que contém o custo do produto (piso de preço).
+#              Máximo de 8 verificações no ML. Na prática: 2 a 4.
+
+def goal_seek_preco_classico(anuncio) -> Decimal | None:
+    # * [EXPLICAÇÃO] → Só executa para anúncios Clássico (gold_special).
+    #                  Premium não tem Goal Seek próprio — seu preço é derivado do Clássico.
+    if anuncio.tipo_anuncio != 'gold_special':
+        return None
+
+    from marketplaces.models import TipoAnuncioML, ConfiguracaoLogisticaML, FaixaArmazenagem
+    from precificacao_marketplaces.models import FreteML
+
+    produto = anuncio.produto
+    if not produto:
+        return None
+
+    # --- Configurações de marketplace ---
+    try:
+        tipo_classico = TipoAnuncioML.objects.select_related('marketplace').get(
+            marketplace__sigla='ML',
+            tipo_anuncio='gold_special',
+            tipo_logistico=anuncio.tipo_logistico,
+            catalogo=anuncio.catalogo
+        )
+    except TipoAnuncioML.DoesNotExist:
+        logger.warning(f'[GOAL SEEK] {anuncio.mlb} → TipoAnuncioML nao encontrado')
+        return None
+
+    logistica = ConfiguracaoLogisticaML.objects.filter(marketplace__sigla='ML').first()
+    fator_coleta  = logistica.fator_coleta        if logistica else Decimal('0')
+    periodo_armaz = logistica.periodo_armazenagem  if logistica else 0
+
+    # --- Armazenagem _dinamico ---
+    faixa_armazenagem = FaixaArmazenagem.objects.filter(
+        marketplace__sigla='ML',
+        ativo=True,
+        max_altura__gte=produto.altura,
+        max_largura__gte=produto.largura,
+        max_profundidade__gte=produto.profundidade
+    ).order_by('ordem').first()
+
+    if not faixa_armazenagem:
+        faixa_armazenagem = FaixaArmazenagem.objects.filter(
+            marketplace__sigla='ML', ativo=True
+        ).order_by('-ordem').first()
+
+    faixa_valor  = faixa_armazenagem.valor_diario if faixa_armazenagem else Decimal('0')
+    armazenagem  = faixa_valor * periodo_armaz
+
+    # --- Parâmetros fiscais e de custo ---
+    custo          = produto.custo
+    custo_com_boni = produto.custo_com_boni or custo
+    ipi            = (produto.ipi            or Decimal('0')) / 100
+    frete_cif_fob  = (produto.frete_cif_fob  or Decimal('0')) / 100
+    st_valor       = produto.st_valor or Decimal('0')
+    icms_entrada   = (produto.icms_entrada    or Decimal('0')) / 100
+    icms_saida     = (produto.icms_saida_media or Decimal('0')) / 100
+    pis            = (produto.pis_cofins      or Decimal('0')) / 100
+    comissao       = tipo_classico.comissao / 100
+    margem_meta    = tipo_classico.margem_padrao / 100
+
+    # --- FIXO e denominador — calculados uma única vez ---
+    metro_cubico = (produto.altura / 100) * (produto.largura / 100) * (produto.profundidade / 100)
+    custo_final  = custo_com_boni + (custo_com_boni * ipi) + (custo_com_boni * frete_cif_fob) + st_valor
+    coleta       = metro_cubico * fator_coleta
+    fixo         = coleta + armazenagem + custo_final - custo * (icms_entrada + pis)
+    denominador  = Decimal('1') - comissao - icms_saida - pis - margem_meta
+
+    if denominador <= 0:
+        logger.warning(
+            f'[GOAL SEEK] {anuncio.mlb} → denominador={denominador:.4f} <= 0, '
+            f'margem_padrao de {margem_meta * 100}% inalcancavel com as taxas atuais'
+        )
+        return None
+
+    # --- Busca nas faixas de frete a partir da faixa do custo ---
+    # * [EXPLICAÇÃO] → Busca todas as faixas de preço para o peso do produto,
+    #                  ordenadas do menor para o maior preco_min.
+    #                  Começa pela faixa que contém o custo (piso de preço)
+    #                  e avança até encontrar consistência entre P_90 e o range da faixa.
+    peso = max(produto.peso, produto.peso_cubado)
+
+    faixas = list(
+        FreteML.objects.filter(
+            peso_min__lte=peso
+        ).filter(
+            Q(peso_max__gte=peso) | Q(peso_max__isnull=True)
+        ).order_by('preco_min')
+    )
+
+    if not faixas:
+        logger.warning(
+            f'[GOAL SEEK] {anuncio.mlb} → nenhuma faixa de frete encontrada para peso={peso}kg'
+        )
+        return None
+
+    # Encontra o índice da faixa que contém o custo do produto
+    idx_inicial = 0
+    for i, faixa in enumerate(faixas):
+        preco_min = faixa.preco_min or Decimal('0')
+        preco_max = faixa.preco_max
+        if preco_min <= custo and (preco_max is None or preco_max >= custo):
+            idx_inicial = i
+            break
+
+    # Percorre as faixas a partir da faixa do custo
+    for faixa in faixas[idx_inicial:]:
+        preco_min   = faixa.preco_min or Decimal('0')
+        preco_max   = faixa.preco_max
+        frete_faixa = faixa.valor
+
+        p_exato = (fixo + frete_faixa) / denominador
+        p_90    = round_up_to_90(p_exato)
+
+        dentro_do_min = p_90 >= preco_min
+        dentro_do_max = (preco_max is None) or (p_90 <= preco_max)
+
+        if dentro_do_min and dentro_do_max:
+            logger.info(
+                f'[GOAL SEEK] {anuncio.mlb} → '
+                f'faixa=[R${preco_min}, R${preco_max}] | '
+                f'frete=R${frete_faixa} | '
+                f'p_exato=R${p_exato:.4f} | '
+                f'p_90=R${p_90}'
+            )
+            return p_90
+
+    logger.warning(
+        f'[GOAL SEEK] {anuncio.mlb} → nenhuma faixa gerou solucao valida'
+    )
+    return None
+
+# ================================================
 # CÁLCULO DE PRECIFICAÇÃO
 # ================================================
 
@@ -278,7 +425,22 @@ def calcular_precificacao_anuncio(anuncio, frete_valor):
 # ================================================
 
 def calcular_tudo_para_anuncio(anuncio):
-    if not anuncio.preco_classico_calculado and anuncio.preco_classico_real:
+    # * [EXPLICAÇÃO] → Goal Seek substitui a cópia simples de preco_classico_real.
+    #                  Para anúncios Clássico: calcula o preço ideal via goal_seek_preco_classico().
+    #                  Para anúncios Premium:  goal seek retorna None → fallback usa preco_classico_real.
+    #                  Se goal seek falhar por qualquer motivo (sem marketplace configurado,
+    #                  denominador <= 0, etc.), o fallback garante que o fluxo não trava.
+    preco_goal_seek = goal_seek_preco_classico(anuncio)
+
+    if preco_goal_seek:
+        type(anuncio).objects.filter(pk=anuncio.pk).update(
+            preco_classico_calculado=preco_goal_seek
+        )
+        anuncio.preco_classico_calculado = preco_goal_seek
+
+    elif not anuncio.preco_classico_calculado and anuncio.preco_classico_real:
+        # * [EXPLICAÇÃO] → Fallback: se goal seek não encontrar solução,
+        #                  usa preco_classico_real para não travar o fluxo.
         type(anuncio).objects.filter(pk=anuncio.pk).update(
             preco_classico_calculado=anuncio.preco_classico_real
         )
@@ -286,7 +448,6 @@ def calcular_tudo_para_anuncio(anuncio):
 
     frete_valor = calcular_frete_para_anuncio(anuncio)
     calcular_precificacao_anuncio(anuncio, frete_valor)
-
 
 # ================================================
 # SIGNALS
