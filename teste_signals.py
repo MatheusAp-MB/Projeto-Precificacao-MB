@@ -35,7 +35,7 @@ tipo_premium = TipoAnuncioML.objects.get(
     marketplace__sigla='ML',
     tipo_anuncio=premium.tipo_anuncio,
     tipo_logistico=premium.tipo_logistico,
-    catalogo=premium.catalogo
+    catalogo=premium.catalogo   
 )
 recalcular_combinacao(premium.produto, tipo_premium)
 premium.refresh_from_db()

@@ -95,11 +95,17 @@ def goal_seek_preco_base(produto, tipo_anuncio, margem_meta: Decimal) -> Decimal
     comissao       = tipo_anuncio.comissao / 100
 
     # --- FIXO e denominador — calculados uma única vez ---
+    # * [EXPLICAÇÃO] → O acréscimo é incorporado no denominador para que o preço final
+    #                  (após acréscimo + roundUp90) atinja exatamente a margem_meta.
+    #                  Para acrescimo = 0% (Clássico): denominador inalterado.
+    #                  Para acrescimo = 8% (Premium): denominador × 1,08, garantindo
+    #                  que P_final = roundUp90(P_base × 1,08) atinja a margem_meta.
+    acrescimo    = tipo_anuncio.acrescimo_preco / 100
     metro_cubico = (produto.altura / 100) * (produto.largura / 100) * (produto.profundidade / 100)
     custo_final  = custo_com_boni + (custo_com_boni * ipi) + (custo_com_boni * frete_cif_fob) + st_valor
     coleta       = metro_cubico * fator_coleta
     fixo         = coleta + armazenagem + custo_final - custo * (icms_entrada + pis)
-    denominador  = Decimal('1') - comissao - icms_saida - pis - margem_meta
+    denominador  = (Decimal('1') - comissao - icms_saida - pis - margem_meta) * (Decimal('1') + acrescimo)
 
     if denominador <= 0:
         logger.warning(
@@ -147,19 +153,23 @@ def goal_seek_preco_base(produto, tipo_anuncio, margem_meta: Decimal) -> Decimal
         frete_faixa = faixa.valor
 
         p_exato = (fixo + frete_faixa) / denominador
-        p_90    = round_up_to_90(p_exato)
+        # * [EXPLICAÇÃO] → Consistência verificada no preço FINAL (com acréscimo),
+        #                  pois é o preço que o comprador paga e que determina a faixa de frete.
+        #                  Para acrescimo = 0% (Clássico): p_final = roundUp90(p_exato) — idêntico ao anterior.
+        #                  Para acrescimo > 0% (Premium): p_final = roundUp90(p_exato × 1.08).
+        p_final = round_up_to_90(p_exato * (Decimal('1') + acrescimo))
 
-        dentro_do_min = p_90 >= preco_min
-        dentro_do_max = (preco_max is None) or (p_90 <= preco_max)
+        dentro_do_min = p_final >= preco_min
+        dentro_do_max = (preco_max is None) or (p_final <= preco_max)
 
         if dentro_do_min and dentro_do_max:
             logger.info(
                 f'[GOAL SEEK] {produto.sku} / {tipo_anuncio.nome} / '
                 f'margem={margem_meta * 100:.1f}% → '
                 f'faixa=[R${preco_min}, R${preco_max}] | '
-                f'frete=R${frete_faixa} | p_base=R${p_90}'
+                f'frete=R${frete_faixa} | p_final=R${p_final}'
             )
-            return p_90
+            return p_exato
 
     logger.warning(
         f'[GOAL SEEK] {produto.sku} / {tipo_anuncio.nome} → '
