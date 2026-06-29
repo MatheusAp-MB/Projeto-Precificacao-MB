@@ -37,10 +37,6 @@ class Command(BaseCommand):
             defaults={
                 'fator_coleta':        Decimal('72'),
                 'periodo_armazenagem': 30,
-                'armaz_faixa_1':       Decimal('0.0070'),
-                'armaz_faixa_2':       Decimal('0.0150'),
-                'armaz_faixa_3':       Decimal('0.0500'),
-                'armaz_faixa_4':       Decimal('0.1070'),
             }
         )
         self.stdout.write(f'       {"criada" if criado else "já existe"}')

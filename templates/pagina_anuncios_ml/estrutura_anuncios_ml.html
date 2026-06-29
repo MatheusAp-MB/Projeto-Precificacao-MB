@@ -194,15 +194,12 @@
             <td data-order="{{ anuncio.score|default:0 }}">{{ anuncio.score|default:"" }}</td>
             <td>{{ anuncio.get_nivel_display|default:"" }}</td>
             <td data-order="{{ anuncio.qtd_vendas|default:0 }}">{{ anuncio.qtd_vendas|default:"" }}</td>
-            <td data-order="{{ anuncio.preco|default:0 }}">{{ anuncio.preco|floatformat:2|default:"" }}</td>
-            <td data-order="{{ anuncio.frete_calculado|default:0 }}">{{ anuncio.frete_calculado|floatformat:2|default:""
-                }}</td>
+<td data-order="{{ anuncio.preco_classico_calculado|default:0 }}">{{ anuncio.preco_classico_calculado|floatformat:2|default:"" }}</td>
+            <td data-order="{{ anuncio.frete_calculado|default:0 }}">{{ anuncio.frete_calculado|floatformat:2|default:"" }}</td>
             <td data-order="{{ anuncio.frete_da_planilha|default:0 }}">{{ anuncio.frete_da_planilha|floatformat:2|default:"" }}</td>
             <td>{{ anuncio.permalink|default:"" }}</td>
-            <td data-order="{{ anuncio.data_criacao_ml|date:'Y-m-d'|default:'' }}">{{
-                anuncio.data_criacao_ml|date:"d/m/Y"|default:"" }}</td>
-            <td data-order="{{ anuncio.ultima_atualizacao_ml|date:'Y-m-d'|default:'' }}">{{
-                anuncio.ultima_atualizacao_ml|date:"d/m/Y"|default:"" }}</td>
+            <td data-order="{{ anuncio.data_criacao_ml|date:'Y-m-d'|default:'' }}">{{ anuncio.data_criacao_ml|date:"d/m/Y"|default:"" }}</td>
+            <td data-order="{{ anuncio.ultima_atualizacao_ml|date:'Y-m-d'|default:'' }}">{{ anuncio.ultima_atualizacao_ml|date:"d/m/Y"|default:"" }}</td>
         </tr>
         {% endfor %}
     </tbody>

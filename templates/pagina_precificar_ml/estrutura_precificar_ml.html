@@ -218,17 +218,17 @@
             <td>{{ anuncio.produto.categoria|default:"" }}</td>
 
             <!-- Clássico -->
-            <td data-order="{{ bc.entrada_preco_classico|default:0 }}">R$ {{ bc.entrada_preco_classico|floatformat:2|default:"" }}</td>
-            <td data-order="{{ bc.resultado_margem_pct_classico|default:0 }}">{{ bc.resultado_margem_pct_classico|floatformat:2|default:"" }}%</td>
-            <td data-order="{{ bc.resultado_margem_valor_classico|default:0 }}">R$ {{ bc.resultado_margem_valor_classico|floatformat:2|default:"" }}</td>
+            <td data-order="{{ anuncio.preco_classico_calculado|default:0 }}">R$ {{ anuncio.preco_classico_calculado|floatformat:2|default:"" }}</td>
+            <td data-order="{{ bc.resultado_margem_classico_pct|default:0 }}">{{ bc.resultado_margem_classico_pct|floatformat:2|default:"" }}%</td>
+            <td data-order="{{ bc.resultado_margem_classico_valor|default:0 }}">R$ {{ bc.resultado_margem_classico_valor|floatformat:2|default:"" }}</td>            
             <td data-order="{{ bc.calc_comissao_classico|default:0 }}">R$ {{ bc.calc_comissao_classico|floatformat:2|default:"" }}</td>
             <td data-order="{{ bc.calc_icms_classico|default:0 }}">R$ {{ bc.calc_icms_classico|floatformat:2|default:"" }}</td>
             <td data-order="{{ bc.calc_pis_cofins_classico|default:0 }}">R$ {{ bc.calc_pis_cofins_classico|floatformat:2|default:"" }}</td>
 
             <!-- Premium -->
             <td data-order="{{ bc.calc_preco_premium|default:0 }}">R$ {{ bc.calc_preco_premium|floatformat:2|default:"" }}</td>
-            <td data-order="{{ bc.resultado_margem_pct_premium|default:0 }}">{{ bc.resultado_margem_pct_premium|floatformat:2|default:"" }}%</td>
-            <td data-order="{{ bc.resultado_margem_valor_premium|default:0 }}">R$ {{ bc.resultado_margem_valor_premium|floatformat:2|default:"" }}</td>
+            <td data-order="{{ bc.resultado_margem_premium_pct|default:0 }}">{{ bc.resultado_margem_premium_pct|floatformat:2|default:"" }}%</td>
+            <td data-order="{{ bc.resultado_margem_premium_valor|default:0 }}">R$ {{ bc.resultado_margem_premium_valor|floatformat:2|default:"" }}</td>
             <td data-order="{{ bc.calc_comissao_premium|default:0 }}">R$ {{ bc.calc_comissao_premium|floatformat:2|default:"" }}</td>
             <td data-order="{{ bc.calc_icms_premium|default:0 }}">R$ {{ bc.calc_icms_premium|floatformat:2|default:"" }}</td>
             <td data-order="{{ bc.calc_pis_cofins_premium|default:0 }}">R$ {{ bc.calc_pis_cofins_premium|floatformat:2|default:"" }}</td>
