@@ -19,8 +19,8 @@
 
     <!-- Logística FULL -->
     {% if logistica %}
-    <div class="col-md-4">
-        <div class="card h-100">
+    <div class="col-md-5" id="card_full">
+        <div class="card h-100" >
             <div class="card-header modal-card-cabecalho">
                 <strong><i class="fas fa-warehouse"></i> Logística FULL</strong>
             </div>
@@ -44,8 +44,60 @@
     </div>
     {% endif %}
 
+    <div class="col-md-7" id="card_tags_preco">
+        <div class="card" >
+            <div class="card-header modal-card-cabecalho">
+                <strong><i class="fas fa-tag"></i> Tags de Preço</strong>
+            </div>
+            <div class="card-body p-0">
+            <table class="tabela-tags">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Tipo</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+<tbody>
+                       <tr class="tag-subtitulo-acrescimo">
+                            <td colspan="3">
+                                <i class="fas fa-arrow-up"></i> Tags de Acréscimo
+                            </td>
+                        </tr>
+                        {% for tag in tags %}
+                            {% if tag.tipo == 'acrescimo' %}
+                            <tr class="tag-acrescimo-{{ forloop.counter }}">
+                                <td>{{ tag.nome }}</td>
+                                <td><span class="badge bg-success">Acréscimo</span></td>
+                                <td>+{{ tag.valor_pct }}%</td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                        <tr class="tag-subtitulo-desconto">
+                            <td colspan="3">
+                                <i class="fas fa-arrow-down"></i> Tags de Desconto
+                            </td>
+                        </tr>
+                        {% for tag in tags %}
+                            {% if tag.tipo == 'desconto' %}
+                            <tr class="tag-desconto-{{ forloop.counter }}">
+                                <td>{{ tag.nome }}</td>
+                                <td><span class="badge bg-danger">Desconto</span></td>
+                                <td>−{{ tag.valor_pct }}%</td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row g-4">
     <!-- Tipos de Anúncio -->
-    <div class="col-md-8">
+    <div class="col-12" id="card_anuncios">
         <div class="card h-100">
             <div class="card-header modal-card-cabecalho">
                 <strong><i class="fas fa-tags"></i> Tipos de Anúncio</strong>
@@ -100,5 +152,8 @@
     </div>
 
 </div>
+
+
+
 
 {% endblock %}

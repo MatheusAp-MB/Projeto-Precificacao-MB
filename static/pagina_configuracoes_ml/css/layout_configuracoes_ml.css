@@ -1,71 +1,92 @@
-/*
-* [RESUMO] → CSS específico da tela de configurações do Mercado Livre.
-*/
+/* [RESUMO] → CSS específico da tela de configurações do Mercado Livre. */
 
-/* * [EXPLICAÇÃO] → Tabela de tipos de anúncio. */
+/* ── TABELA DE TIPOS DE ANÚNCIO ── */
 .tabela-tipos {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.85rem;
 }
-
 .tabela-tipos thead tr {
     background-color: var(--cor-primaria);
     color: var(--cor-texto-claro);
 }
-
 .tabela-tipos thead th {
     padding: 8px 12px;
     text-align: center;
+    white-space: nowrap;
 }
-
-.tabela-tipos thead th:first-child {
-    text-align: left;
-}
-
+.tabela-tipos thead th:first-child { text-align: left; }
 .tabela-tipos tbody tr {
     border-bottom: 1px solid rgb(220, 233, 248);
+    height: 48px;
 }
-
-.tabela-tipos tbody tr.linha-classico {
-    background-color: rgb(255, 253, 231);
-}
-
-.tabela-tipos tbody tr.linha-premium {
-    background-color: rgb(255, 248, 225);
-}
-
 .tabela-tipos tbody td {
     padding: 8px 12px;
     text-align: center;
-}
-
-.tabela-tipos tbody td:first-child {
-    text-align: left;
-}
-
-/* * [EXPLICAÇÃO] → Altura mínima das linhas e largura mínima das colunas da tabela de tipos. */
-.tabela-tipos tbody tr {
-    height: 48px;
-}
-
-.tabela-tipos th,
-.tabela-tipos td {
     min-width: 92px;
     max-width: 92px;
 }
-
-.tabela-tipos th:first-child,
-.tabela-tipos td:first-child {
-    min-width: 280px;
+.tabela-tipos tbody td:first-child {
+    text-align: left;
+    min-width: 240px;
+    max-width: 240px;
 }
 
-
-/* * [EXPLICAÇÃO] → Largura das colunas da tabela de logística FULL. */
-.tabela-logistica .modal-col-dado {
-    width: 65%;
+/* ── TABELA DE TAGS ── */
+.tabela-tags {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
 }
-
-.tabela-logistica .modal-col-valor {
-    width: 35%;
+.tabela-tags thead tr {
+    background-color: var(--cor-primaria);
+    color: var(--cor-texto-claro);
 }
+.tabela-tags thead th {
+    padding: 8px 12px;
+    text-align: center;
+}
+.tabela-tags thead th:first-child { text-align: left; }
+.tabela-tags tbody tr {
+    border-bottom: 1px solid rgb(220, 233, 248);
+    height: 40px;
+}
+.tabela-tags tbody td {
+    padding: 7px 12px;
+    text-align: center;
+}
+.tabela-tags tbody td:first-child { text-align: left; }
+
+/* ── LOGÍSTICA FULL ── */
+.tabela-logistica .modal-col-dado  { width: 65%; }
+.tabela-logistica .modal-col-valor { width: 35%; }
+
+/* ── CARDS SUPERIORES ── */
+#card_anuncios  { margin-top: 1.5rem; }
+#card_full      { padding: 10px; }
+#card_tags_preco{ padding: 10px; }
+
+/* ── SUBTÍTULOS DE TAGS ── */
+.tag-subtitulo-acrescimo td,
+.tag-subtitulo-desconto  td {
+    padding: 6px 12px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: #fff;
+}
+.tag-subtitulo-acrescimo td { background-color: #15803d; }
+.tag-subtitulo-desconto  td { background-color: #b91c1c; }
+
+/* ── GRADIENTE ACRÉSCIMO — do mais claro ao mais escuro ── */
+.tag-acrescimo-1 { background-color: #f0fdf4; color: #166534; }
+.tag-acrescimo-2 { background-color: #dcfce7; color: #166534; }
+.tag-acrescimo-3 { background-color: #bbf7d0; color: #166534; }
+.tag-acrescimo-4 { background-color: #86efac; color: #14532d; }
+.tag-acrescimo-5 { background-color: #4ade80; color: #14532d; }
+
+/* ── GRADIENTE DESCONTO — do mais claro ao mais escuro ── */
+.tag-desconto-1  { background-color: #fff1f2; color: #9f1239; }
+.tag-desconto-2  { background-color: #ffe4e6; color: #9f1239; }
+.tag-desconto-3  { background-color: #fecdd3; color: #9f1239; }
+.tag-desconto-4  { background-color: #fda4af; color: #881337; }
+.tag-desconto-5  { background-color: #fb7185; color: #881337; }
