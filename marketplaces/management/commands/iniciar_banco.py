@@ -14,6 +14,7 @@ class Command(BaseCommand):
         self.stdout.write('Iniciando configuração do banco...\n')
 
         self._popular_ml()
+        self._popular_tags()
 
         self.stdout.write(self.style.SUCCESS('\nBanco configurado com sucesso!'))
 
@@ -102,3 +103,36 @@ class Command(BaseCommand):
                 }
             )
             self.stdout.write(f'       {nome}: {"criada" if criado else "já existe"}')
+
+
+
+    def _popular_tags(self):
+        from tags.models import TagPreco
+
+        self.stdout.write('  [TAGS] Tags de preço...')
+        tags = [
+            # Descontos
+            ('Promoção 5%',   'desconto',  Decimal('5'),  '#f59e0b'),
+            ('Promoção 10%',  'desconto',  Decimal('10'), '#f97316'),
+            ('Promoção 15%',  'desconto',  Decimal('15'), '#ef4444'),
+            ('Promoção 20%',  'desconto',  Decimal('20'), '#dc2626'),
+            ('Promoção 25%',  'desconto',  Decimal('25'), '#991b1b'),
+            # Acréscimos
+            ('Alta Demanda 5%',  'acrescimo', Decimal('5'),  '#34d399'),
+            ('Alta Demanda 10%', 'acrescimo', Decimal('10'), '#10b981'),
+            ('Alta Demanda 15%', 'acrescimo', Decimal('15'), '#059669'),
+            ('Alta Demanda 20%', 'acrescimo', Decimal('20'), '#2563eb'),
+            ('Alta Demanda 25%', 'acrescimo', Decimal('25'), '#1e3a5f'),
+        ]
+
+        for nome, tipo, valor_pct, cor in tags:
+            _, criado = TagPreco.objects.get_or_create(
+                nome=nome,
+                defaults={
+                    'tipo':      tipo,
+                    'valor_pct': valor_pct,
+                    'cor':       cor,
+                    'ativo':     True,
+                }
+            )
+            self.stdout.write(f'       {nome}: {"criada" if criado else "já existe"}')            

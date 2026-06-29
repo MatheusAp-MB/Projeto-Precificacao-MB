@@ -144,10 +144,25 @@ class AnuncioML(models.Model):
     margem_premium_calculado                    = models.DecimalField(max_digits=6,  decimal_places=2, blank=True, null=True)
     margem_premium_calculado_baseado_na_planilha = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
 
-    # * [EXPLICAÇÃO] → preco_manual = True → signal não sobrescreve o preço.
-    #                  O usuário definiu manualmente — o Goal Seek interno
-    #                  recalcula apenas quando o usuário alterar explicitamente.
-    preco_manual    = models.BooleanField(default=False)
+    # * [EXPLICAÇÃO] → preco_travado = True → signal não sobrescreve o preço.
+    #                  Pode ser ativado pelo usuário para congelar o preço atual
+    #                  (seja ele calculado pelo sistema ou digitado manualmente).
+    #                  O sistema ainda recalcula e exibe a margem resultante,
+    #                  mas o preço em si não muda.
+    preco_travado = models.BooleanField(default=False)
+
+    # * [EXPLICAÇÃO] → Tag de modificação de preço aplicada a este anúncio.
+    #                  desconto  → preco_final = roundUp90(preco_em_uso × (1 - valor_pct/100))
+    #                  acrescimo → preco_final = roundUp90(preco_em_uso × (1 + valor_pct/100))
+    #                  Reaplicada automaticamente a cada recálculo do CardapioPrecos.
+    #                  Ignorada quando preco_travado = True.
+    tag_preco = models.ForeignKey(
+        'tags.TagPreco',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='anuncios'
+    )
 
     # * [EXPLICAÇÃO] → Cópias locais dos preços de atacado vindos do CardapioPrecos.
     #                  Recalculados sobre o preco_em_uso quando o CardapioPrecos atualiza.

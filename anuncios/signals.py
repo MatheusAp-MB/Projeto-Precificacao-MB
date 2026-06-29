@@ -6,7 +6,7 @@
 #              1. Goal Seek roda por (produto + TipoAnuncioML) — nunca por anúncio individual
 #              2. CardapioPrecos armazena 3 preços (min, padrao, max) + atacado por combinação
 #              3. AnuncioML lê do CardapioPrecos — nunca calcula, apenas copia
-#              4. preco_manual = True → signal não sobrescreve o preço do anúncio
+#              4. preco_travado = True → signal não sobrescreve o preço do anúncio
 #
 #              Escala: N anúncios × M produtos × 8 tipos = M × 8 chamadas de Goal Seek
 #              Independente do número de anúncios.
@@ -271,29 +271,44 @@ def propagar_cardapio_para_anuncios(cardapio):
         tipo_anuncio=tipo.tipo_anuncio,
         tipo_logistico=tipo.tipo_logistico,
         catalogo=tipo.catalogo,
-    ).select_related('produto')
+    ).select_related('produto', 'tag_preco')
 
     for anuncio in anuncios:
-        if anuncio.preco_manual:
-            logger.info(f'[PROPAGAR] {anuncio.mlb} → ignorado (preco_manual=True)')
+        if anuncio.preco_travado:
+            logger.info(f'[PROPAGAR] {anuncio.mlb} → ignorado (preco_travado=True)')
             continue
+
+        # Aplica tag de preço se houver (desconto ou acréscimo sobre preco_em_uso)
+        # * [EXPLICAÇÃO] → Tag é reaplicada a cada recálculo do CardapioPrecos.
+        #                  preco_travado = True → tag ignorada, preço congelado.
+        preco_final = cardapio.preco_em_uso
+        if anuncio.tag_preco and anuncio.tag_preco.ativo:
+            fator = anuncio.tag_preco.valor_pct / 100
+            if anuncio.tag_preco.tipo == 'desconto':
+                preco_final = round_up_to_90(cardapio.preco_em_uso * (1 - fator))
+            else:
+                preco_final = round_up_to_90(cardapio.preco_em_uso * (1 + fator))
+            logger.info(
+                f'[TAG] {anuncio.mlb} → {anuncio.tag_preco} | '
+                f'preco_em_uso=R${cardapio.preco_em_uso} → preco_final=R${preco_final}'
+            )
 
         # Copia preços conforme tipo do anúncio
         is_classico = tipo.tipo_anuncio == 'gold_special'
         if is_classico:
             type(anuncio).objects.filter(pk=anuncio.pk).update(
-                preco_classico_calculado = cardapio.preco_em_uso,
+                preco_classico_calculado = preco_final,
                 preco_atacado_2          = cardapio.preco_atacado_2,
                 preco_atacado_3          = cardapio.preco_atacado_3,
             )
-            anuncio.preco_classico_calculado = cardapio.preco_em_uso
+            anuncio.preco_classico_calculado = preco_final
         else:
             type(anuncio).objects.filter(pk=anuncio.pk).update(
-                preco_premium_calculado = cardapio.preco_em_uso,
+                preco_premium_calculado = preco_final,
                 preco_atacado_2         = cardapio.preco_atacado_2,
                 preco_atacado_3         = cardapio.preco_atacado_3,
             )
-            anuncio.preco_premium_calculado = cardapio.preco_em_uso
+            anuncio.preco_premium_calculado = preco_final
 
         # Calcula frete e margens para este anúncio
         frete_valor = calcular_frete_para_anuncio(anuncio)

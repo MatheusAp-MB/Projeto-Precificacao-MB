@@ -54,6 +54,9 @@ INSTALLED_APPS = [
 
     # * [STATUS: DESENVOLVIMENTO] → App central de configuração de marketplaces
     'marketplaces',
+
+    # * [STATUS: DESENVOLVIMENTO] → App central de TAGS para marketplaces
+    'tags',
 ]
 
 MIDDLEWARE = [
