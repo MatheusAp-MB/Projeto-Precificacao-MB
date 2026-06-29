@@ -143,6 +143,19 @@ class AnuncioML(models.Model):
     margem_premium_valor_da_planilha            = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     margem_premium_calculado                    = models.DecimalField(max_digits=6,  decimal_places=2, blank=True, null=True)
     margem_premium_calculado_baseado_na_planilha = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+
+    # * [EXPLICAÇÃO] → preco_manual = True → signal não sobrescreve o preço.
+    #                  O usuário definiu manualmente — o Goal Seek interno
+    #                  recalcula apenas quando o usuário alterar explicitamente.
+    preco_manual    = models.BooleanField(default=False)
+
+    # * [EXPLICAÇÃO] → Cópias locais dos preços de atacado vindos do CardapioPrecos.
+    #                  Recalculados sobre o preco_em_uso quando o CardapioPrecos atualiza.
+    #                  Se preco_manual = True, recalculados sobre o preço manual do anúncio.
+    preco_atacado_2 = models.DecimalField(max_digits=10, decimal_places=2,
+                                          null=True, blank=True)
+    preco_atacado_3 = models.DecimalField(max_digits=10, decimal_places=2,
+                                          null=True, blank=True)
     
     # ================================================
     # META
@@ -324,3 +337,61 @@ class BaseDeCalculo(models.Model):
 
     def __str__(self):
         return f'Base de Cálculo — {self.anuncio.mlb}'
+
+
+
+class CardapioPrecos(models.Model):
+    # * [RESUMO] → Armazena o cardápio de preços calculados para cada combinação
+    #              produto + tipo de anúncio. O Goal Seek roda aqui — nunca diretamente
+    #              no AnuncioML. Cada AnuncioML lê desta tabela e guarda uma cópia local.
+    #              Uma linha por combinação — 10 anúncios do mesmo tipo = 1 cálculo.
+
+    class PreferenciaPreco(models.TextChoices):
+        MARGEM_PADRAO = 'margem_padrao', 'Margem Padrão'
+        MARGEM_MINIMA = 'margem_minima', 'Margem Mínima'
+        MARGEM_MAXIMA = 'margem_maxima', 'Margem Máxima'
+
+    # Chave única
+    produto      = models.ForeignKey(Produto, on_delete=models.CASCADE,
+                                     related_name='cardapio_precos', to_field='sku')
+    tipo_anuncio = models.ForeignKey('marketplaces.TipoAnuncioML',
+                                     on_delete=models.PROTECT,
+                                     related_name='cardapio_precos')
+
+    # Preço base — resultado puro do Goal Seek, antes do acréscimo
+    preco_base = models.DecimalField(max_digits=10, decimal_places=2,
+                                     null=True, blank=True)
+
+    # Cardápio — já com acréscimo + roundUp90 aplicados
+    preco_margem_padrao = models.DecimalField(max_digits=10, decimal_places=2,
+                                              null=True, blank=True)
+    preco_margem_minima = models.DecimalField(max_digits=10, decimal_places=2,
+                                              null=True, blank=True)
+    preco_margem_maxima = models.DecimalField(max_digits=10, decimal_places=2,
+                                              null=True, blank=True)
+
+    # Decisão do usuário
+    preferencia_preco = models.CharField(max_length=20,
+                                         choices=PreferenciaPreco.choices,
+                                         default=PreferenciaPreco.MARGEM_PADRAO)
+    preco_em_uso      = models.DecimalField(max_digits=10, decimal_places=2,
+                                            null=True, blank=True)
+
+    # Atacado — derivados do preco_em_uso
+    preco_atacado_2 = models.DecimalField(max_digits=10, decimal_places=2,
+                                          null=True, blank=True)
+    preco_atacado_3 = models.DecimalField(max_digits=10, decimal_places=2,
+                                          null=True, blank=True)
+
+    # Controle
+    calculado_em = models.DateTimeField(auto_now=True)
+    valido       = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f'{self.produto.sku} — {self.tipo_anuncio.nome}'
+
+    class Meta:
+            unique_together     = ['produto', 'tipo_anuncio']
+            verbose_name        = 'Cardápio de Preços'
+            verbose_name_plural = 'Cardápios de Preços'
+            ordering            = ['produto', 'tipo_anuncio']
