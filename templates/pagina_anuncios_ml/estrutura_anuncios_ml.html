@@ -3,7 +3,8 @@
 * Herda de estrutura_base_global.html.
 * Exibe a listagem de anúncios via DataTables com painel de colunas.
 * Cor de linha identifica tipo de anúncio + logística + catálogo.
-* Badges visuais nas células de tipo, logística e catálogo.
+* Badges visuais nas células de tipo, logística, catálogo, tag e preço travado.
+* Dados do sistema apenas — sem comparação com planilha.
 -->
 {% extends 'base_compartilhada/estrutura_base_global.html' %}
 {% load static %}
@@ -43,40 +44,26 @@
             </div>
         </div>
 
+        <!-- Produto -->
+        <div class="col-md-4 painel-col-produto">
+            <div class="painel-card">
+                <div class="painel-card-titulo">Produto</div>
+                <div class="painel-card-botoes">
+                    <button id="6" class="btn-ativo" onclick="mudar(this)">Curva</button>
+                    <button id="7" class="btn-ativo" onclick="mudar(this)">Marca</button>
+                    <button id="8" class="btn-ativo" onclick="mudar(this)">Categoria</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Tipo -->
         <div class="col-md-4 painel-col-tipo">
             <div class="painel-card">
                 <div class="painel-card-titulo">Tipo</div>
                 <div class="painel-card-botoes">
-                    <button id="6" class="btn-ativo" onclick="mudar(this)">Tipo de Anúncio</button>
-                    <button id="7" class="btn-ativo" onclick="mudar(this)">Tipo Logístico</button>
-                    <button id="8" class="btn-ativo" onclick="mudar(this)">Catálogo</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Estado -->
-        <div class="col-md-4 painel-col-estado">
-            <div class="painel-card">
-                <div class="painel-card-titulo">Estado</div>
-                <div class="painel-card-botoes">
-                    <button id="9" class="btn-inativo not_active" onclick="mudar(this)">Status</button>
-                    <button id="10" class="btn-inativo not_active" onclick="mudar(this)">Estoque</button>
-                    <button id="11" class="btn-inativo not_active" onclick="mudar(this)">Score</button>
-                    <button id="12" class="btn-inativo not_active" onclick="mudar(this)">Nível</button>
-                    <button id="13" class="btn-inativo not_active" onclick="mudar(this)">Qtd Vendas</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Precificação -->
-        <div class="col-md-4 painel-col-precificacao">
-            <div class="painel-card">
-                <div class="painel-card-titulo">Precificação</div>
-                <div class="painel-card-botoes">
-                    <button id="14" class="btn-inativo not_active" onclick="mudar(this)">Preço</button>
-                    <button id="15" class="btn-inativo not_active" onclick="mudar(this)">Frete Calculado</button>
-                    <button id="16" class="btn-inativo not_active" onclick="mudar(this)">Frete Real</button>
+                    <button id="9" class="btn-ativo" onclick="mudar(this)">Tipo de Anúncio</button>
+                    <button id="10" class="btn-ativo" onclick="mudar(this)">Tipo Logístico</button>
+                    <button id="11" class="btn-ativo" onclick="mudar(this)">Catálogo</button>
                 </div>
             </div>
         </div>
@@ -86,9 +73,46 @@
             <div class="painel-card">
                 <div class="painel-card-titulo">Controle</div>
                 <div class="painel-card-botoes">
-                    <button id="17" class="btn-inativo not_active" onclick="mudar(this)">Permalink</button>
-                    <button id="18" class="btn-inativo not_active" onclick="mudar(this)">Criado em ML</button>
-                    <button id="19" class="btn-inativo not_active" onclick="mudar(this)">Atualizado em ML</button>
+                    <button id="12" class="btn-ativo" onclick="mudar(this)">Tag</button>
+                    <button id="13" class="btn-ativo" onclick="mudar(this)">Preço Travado</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Precificação -->
+        <div class="col-md-4 painel-col-precificacao">
+            <div class="painel-card">
+                <div class="painel-card-titulo">Precificação</div>
+                <div class="painel-card-botoes">
+                    <button id="14" class="btn-ativo" onclick="mudar(this)">Preço</button>
+                    <button id="15" class="btn-ativo" onclick="mudar(this)">Frete Calculado</button>
+                    <button id="16" class="btn-ativo" onclick="mudar(this)">Margem %</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estado -->
+        <div class="col-md-4 painel-col-estado">
+            <div class="painel-card">
+                <div class="painel-card-titulo">Estado</div>
+                <div class="painel-card-botoes">
+                    <button id="17" class="btn-inativo not_active" onclick="mudar(this)">Status</button>
+                    <button id="18" class="btn-inativo not_active" onclick="mudar(this)">Estoque</button>
+                    <button id="19" class="btn-inativo not_active" onclick="mudar(this)">Score</button>
+                    <button id="20" class="btn-inativo not_active" onclick="mudar(this)">Nível</button>
+                    <button id="21" class="btn-inativo not_active" onclick="mudar(this)">Qtd Vendas</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Datas e Controle -->
+        <div class="col-md-4 painel-col-datas">
+            <div class="painel-card">
+                <div class="painel-card-titulo">Datas e Links</div>
+                <div class="painel-card-botoes">
+                    <button id="22" class="btn-inativo not_active" onclick="mudar(this)">Permalink</button>
+                    <button id="23" class="btn-inativo not_active" onclick="mudar(this)">Criado em ML</button>
+                    <button id="24" class="btn-inativo not_active" onclick="mudar(this)">Atualizado em ML</button>
                 </div>
             </div>
         </div>
@@ -113,17 +137,22 @@
             <th>Título do Anúncio</th>
             <th>MLBU</th>
             <th>Título do Produto</th>
+            <th>Curva</th>
+            <th>Marca</th>
+            <th>Categoria</th>
             <th>Tipo de Anúncio</th>
             <th>Tipo Logístico</th>
             <th>Catálogo</th>
+            <th>Tag</th>
+            <th>Preço Travado</th>
+            <th>Preço</th>
+            <th>Frete Calculado</th>
+            <th>Margem %</th>
             <th>Status</th>
             <th>Estoque</th>
             <th>Score</th>
             <th>Nível</th>
             <th>Qtd Vendas</th>
-            <th>Preço</th>
-            <th>Frete Calculado</th>
-            <th>Frete Real</th>
             <th>Permalink</th>
             <th>Criado em ML</th>
             <th>Atualizado em ML</th>
@@ -132,15 +161,15 @@
     <tbody>
         {% for anuncio in anuncios %}
 
-        <!-- * [EXPLICAÇÃO] → Classe da linha combina tipo + logística + catálogo.
-                 Lógica: Flex=amarelo | FULL=verde | Clássico=suave | Premium=saturado | Catálogo=mais intenso -->
-        <tr
-            class="{% if anuncio.tipo_anuncio == 'gold_special' %}{% if anuncio.tipo_logistico == 'fulfillment' %}{% if anuncio.catalogo %}anuncio-classico-full-cat{% else %}anuncio-classico-full{% endif %}{% else %}{% if anuncio.catalogo %}anuncio-classico-flex-cat{% else %}anuncio-classico-flex{% endif %}{% endif %}{% elif anuncio.tipo_anuncio == 'gold_pro' %}{% if anuncio.tipo_logistico == 'fulfillment' %}{% if anuncio.catalogo %}anuncio-premium-full-cat{% else %}anuncio-premium-full{% endif %}{% else %}{% if anuncio.catalogo %}anuncio-premium-flex-cat{% else %}anuncio-premium-flex{% endif %}{% endif %}{% endif %}">
+        <tr class="{% if anuncio.tipo_anuncio == 'gold_special' %}{% if anuncio.tipo_logistico == 'fulfillment' %}{% if anuncio.catalogo %}anuncio-classico-full-cat{% else %}anuncio-classico-full{% endif %}{% else %}{% if anuncio.catalogo %}anuncio-classico-flex-cat{% else %}anuncio-classico-flex{% endif %}{% endif %}{% elif anuncio.tipo_anuncio == 'gold_pro' %}{% if anuncio.tipo_logistico == 'fulfillment' %}{% if anuncio.catalogo %}anuncio-premium-full-cat{% else %}anuncio-premium-full{% endif %}{% else %}{% if anuncio.catalogo %}anuncio-premium-flex-cat{% else %}anuncio-premium-flex{% endif %}{% endif %}{% endif %}">
 
+            <!-- MLB -->
             <td>{{ anuncio.mlb|default:"" }}</td>
+
+            <!-- SKU -->
             <td>{{ anuncio.produto.sku|default:"" }}</td>
 
-            <!-- * [EXPLICAÇÃO] → Célula rica com título e badges de tipo, logística e catálogo. -->
+            <!-- Título do Anúncio — com badges de tipo, logística, catálogo, tag e travado -->
             <td class="celula-titulo">
                 <span class="titulo-principal">{{ anuncio.titulo_anuncio|default:"—" }}</span>
                 <div class="titulo-badges">
@@ -159,13 +188,34 @@
                     {% if anuncio.catalogo %}
                     <span class="badge-catalogo"><i class="fas fa-book"></i> Catálogo</span>
                     {% endif %}
+                    {% if anuncio.tag_preco %}
+                    <span class="badge-tag {% if anuncio.tag_preco.tipo == 'desconto' %}badge-tag-desconto{% else %}badge-tag-acrescimo{% endif %}">
+                        <i class="fas {% if anuncio.tag_preco.tipo == 'desconto' %}fa-arrow-down{% else %}fa-arrow-up{% endif %}"></i>
+                        {{ anuncio.tag_preco.nome }}
+                    </span>
+                    {% endif %}
+                    {% if anuncio.preco_travado %}
+                    <span class="badge-travado"><i class="fas fa-lock"></i> Travado</span>
+                    {% endif %}
                 </div>
             </td>
 
+            <!-- MLBU -->
             <td>{{ anuncio.mlbu|default:"" }}</td>
+
+            <!-- Título do Produto -->
             <td>{{ anuncio.produto.titulo|default:"" }}</td>
 
-            <!-- * [EXPLICAÇÃO] → Colunas de tipo com badges visuais em vez de texto simples. -->
+            <!-- Curva -->
+            <td>{{ anuncio.produto.curva|default:"" }}</td>
+
+            <!-- Marca -->
+            <td>{{ anuncio.produto.marca|default:"" }}</td>
+
+            <!-- Categoria -->
+            <td>{{ anuncio.produto.categoria|default:"" }}</td>
+
+            <!-- Tipo de Anúncio -->
             <td data-search="{{ anuncio.get_tipo_anuncio_display|default:'' }}">
                 {% if anuncio.tipo_anuncio == 'gold_special' %}
                 <span class="badge-anuncio badge-classico">Clássico</span>
@@ -173,6 +223,8 @@
                 <span class="badge-anuncio badge-premium">⭐ Premium</span>
                 {% endif %}
             </td>
+
+            <!-- Tipo Logístico -->
             <td data-search="{{ anuncio.get_tipo_logistico_display|default:'' }}">
                 {% if anuncio.tipo_logistico == 'fulfillment' %}
                 <span class="badge-logistica badge-full"><i class="fas fa-warehouse"></i> FULL</span>
@@ -182,24 +234,90 @@
                 <span class="badge-logistica badge-padrao"><i class="fas fa-box"></i> Padrão</span>
                 {% endif %}
             </td>
+
+            <!-- Catálogo -->
             <td data-search="{{ anuncio.catalogo|yesno:'Sim,Não' }}">
                 {% if anuncio.catalogo %}
                 <span class="badge-catalogo"><i class="fas fa-book"></i> Catálogo</span>
-                {% else %}
-                —
-                {% endif %} 
+                {% else %}—{% endif %}
             </td>
+
+            <!-- Tag -->
+            <td data-search="{{ anuncio.tag_preco.nome|default:'Sem tag' }}">
+                {% if anuncio.tag_preco %}
+                <span class="badge-tag {% if anuncio.tag_preco.tipo == 'desconto' %}badge-tag-desconto{% else %}badge-tag-acrescimo{% endif %}">
+                    <i class="fas {% if anuncio.tag_preco.tipo == 'desconto' %}fa-arrow-down{% else %}fa-arrow-up{% endif %}"></i>
+                    {{ anuncio.tag_preco.nome }}
+                </span>
+                {% else %}—{% endif %}
+            </td>
+
+            <!-- Preço Travado -->
+            <td data-search="{{ anuncio.preco_travado|yesno:'Travado,Livre' }}">
+                {% if anuncio.preco_travado %}
+                <span class="badge-travado"><i class="fas fa-lock"></i> Travado</span>
+                {% else %}
+                <span class="badge-livre"><i class="fas fa-lock-open"></i> Livre</span>
+                {% endif %}
+            </td>
+
+            <!-- Preço -->
+            <td data-order="{% if anuncio.tipo_anuncio == 'gold_special' %}{{ anuncio.preco_classico_calculado|default:0 }}{% else %}{{ anuncio.preco_premium_calculado|default:0 }}{% endif %}">
+                {% if anuncio.tipo_anuncio == 'gold_special' %}
+                    R$ {{ anuncio.preco_classico_calculado|floatformat:2|default:"—" }}
+                {% else %}
+                    R$ {{ anuncio.preco_premium_calculado|floatformat:2|default:"—" }}
+                {% endif %}
+            </td>
+
+            <!-- Frete Calculado -->
+            <td data-order="{{ anuncio.frete_calculado|default:0 }}">
+                {% if anuncio.frete_calculado %}R$ {{ anuncio.frete_calculado|floatformat:2 }}{% else %}—{% endif %}
+            </td>
+
+            <!-- Margem % -->
+            <td data-order="{% if anuncio.tipo_anuncio == 'gold_special' %}{{ anuncio.margem_classico_calculado|default:0 }}{% else %}{{ anuncio.margem_premium_calculado|default:0 }}{% endif %}">
+                {% if anuncio.tipo_anuncio == 'gold_special' %}
+                    {{ anuncio.margem_classico_calculado|floatformat:2|default:"—" }}{% if anuncio.margem_classico_calculado %}%{% endif %}
+                {% else %}
+                    {{ anuncio.margem_premium_calculado|floatformat:2|default:"—" }}{% if anuncio.margem_premium_calculado %}%{% endif %}
+                {% endif %}
+            </td>
+
+            <!-- Status -->
             <td>{{ anuncio.get_status_display|default:"" }}</td>
+
+            <!-- Estoque -->
             <td data-order="{{ anuncio.estoque|default:0 }}">{{ anuncio.estoque|default:"" }}</td>
+
+            <!-- Score -->
             <td data-order="{{ anuncio.score|default:0 }}">{{ anuncio.score|default:"" }}</td>
+
+            <!-- Nível -->
             <td>{{ anuncio.get_nivel_display|default:"" }}</td>
+
+            <!-- Qtd Vendas -->
             <td data-order="{{ anuncio.qtd_vendas|default:0 }}">{{ anuncio.qtd_vendas|default:"" }}</td>
-<td data-order="{{ anuncio.preco_classico_calculado|default:0 }}">{{ anuncio.preco_classico_calculado|floatformat:2|default:"" }}</td>
-            <td data-order="{{ anuncio.frete_calculado|default:0 }}">{{ anuncio.frete_calculado|floatformat:2|default:"" }}</td>
-            <td data-order="{{ anuncio.frete_da_planilha|default:0 }}">{{ anuncio.frete_da_planilha|floatformat:2|default:"" }}</td>
-            <td>{{ anuncio.permalink|default:"" }}</td>
-            <td data-order="{{ anuncio.data_criacao_ml|date:'Y-m-d'|default:'' }}">{{ anuncio.data_criacao_ml|date:"d/m/Y"|default:"" }}</td>
-            <td data-order="{{ anuncio.ultima_atualizacao_ml|date:'Y-m-d'|default:'' }}">{{ anuncio.ultima_atualizacao_ml|date:"d/m/Y"|default:"" }}</td>
+
+            <!-- Permalink -->
+            <td>
+                {% if anuncio.permalink %}
+                <a href="{{ anuncio.permalink }}" target="_blank" rel="noopener">
+                    <i class="fas fa-external-link-alt"></i>
+                </a>
+                {% else %}—{% endif %}
+            </td>
+
+            <!-- Criado em ML -->
+            <td data-order="{{ anuncio.data_criacao_ml|date:'Y-m-d'|default:'' }}">
+                {{ anuncio.data_criacao_ml|date:"d/m/Y"|default:"" }}
+            </td>
+
+            <!-- Atualizado em ML -->
+            <td data-order="{{ anuncio.ultima_atualizacao_ml|date:'Y-m-d'|default:'' }}">
+                {{ anuncio.ultima_atualizacao_ml|date:"d/m/Y"|default:"" }}
+            </td>
+
         </tr>
         {% endfor %}
     </tbody>

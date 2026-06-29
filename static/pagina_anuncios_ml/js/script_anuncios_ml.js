@@ -4,6 +4,14 @@
 // ================================================
 // DATATABLES
 // ================================================
+//0-MLB  1-SKU  2-Título  3-MLBU  4-TítuloProduto
+// 5-Curva  6-Marca  7-Categoria
+// 8-TipoAnúncio  9-TipoLogístico  10-Catálogo
+// 11-Tag  12-PreçoTravado
+// 13-Preço  14-Frete  15-Margem%
+// 16-Status  17-Estoque  18-Score  19-Nível  20-QtdVendas
+// 21-Permalink  22-CriadoML  23-AtualizadoML
+
 
 $(document).ready(function () {
     inicializar_tabela('#tabela-anuncios-ml', {
@@ -14,7 +22,7 @@ $(document).ready(function () {
             threshold: 1,
         },
         columnDefs: [
-            { type: 'pt-string', targets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 11] },
+            { type: 'pt-string', targets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 16, 19, 21] },
             { searchPanes: { show: true }, targets: '_all' }
         ]
     });

@@ -27,7 +27,8 @@ def view_anuncios(request):
 def view_anuncios_ml(request):
     # * [EXPLICAÇÃO] → Tela de anúncios do Mercado Livre.
     #                  Exibe a listagem completa de anúncios via DataTables.
-    anuncios = AnuncioML.objects.select_related('produto').all()
+    #                  select_related em produto e tag_preco evita N queries na renderização.
+    anuncios = AnuncioML.objects.select_related('produto', 'tag_preco').all()
     return render(request, 'pagina_anuncios_ml/estrutura_anuncios_ml.html', {
         'anuncios': anuncios
     })
