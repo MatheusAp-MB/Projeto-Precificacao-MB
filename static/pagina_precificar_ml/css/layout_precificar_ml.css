@@ -4,17 +4,15 @@
 
 /* * [EXPLICAÇÃO] → Larguras dos cards do painel de colunas. */
 @media (min-width: 768px) {
-    .painel-col-identificacao { flex: 0 0 auto; width: 22%; }
-    .painel-col-classico      { flex: 0 0 auto; width: 26%; }
-    .painel-col-premium       { flex: 0 0 auto; width: 26%; }
-    .painel-col-custos        { flex: 0 0 auto; width: 22%; }
+    .painel-col-identificacao { flex: 0 0 auto; width: 20%; }
+    .painel-col-produto       { flex: 0 0 auto; width: 55%; }
+    .painel-col-precificacao  { flex: 0 0 auto; width: 25%; }
 }
 
 /* ================================================
    MODAL — BASE DE CÁLCULO
    ================================================ */
 
-/* * [EXPLICAÇÃO] → Header do modal de precificação. */
 #modal-precificar-header {
     background-color: var(--cor-primaria);
     color: var(--cor-texto-claro);
@@ -44,7 +42,6 @@
     background-color: azure;
 }
 
-/* * [EXPLICAÇÃO] → Linha de fórmula — texto explicativo abaixo do valor calculado. */
 .bc-formula td {
     background-color: rgb(240, 247, 255) !important;
     color: #555 !important;
@@ -54,7 +51,6 @@
     border-bottom: 2px solid rgb(180, 210, 240) !important;
 }
 
-/* * [EXPLICAÇÃO] → Linha de resultado final — destaque visual. */
 .bc-resultado td {
     background-color: rgb(220, 233, 248) !important;
 }

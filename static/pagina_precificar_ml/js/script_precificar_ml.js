@@ -1,5 +1,10 @@
 // * [RESUMO] → Script da tela de precificação do Mercado Livre.
 //              Inicializa o DataTables e gerencia filtros.
+//
+//              Índices das colunas (0-based):
+//              0-8:   Identificação e Controle
+//              9-34:  Produto (ordem da planilha)
+//              35-41: Precificação ML
 
 $(document).ready(function () {
     inicializar_tabela('#tabela-precificar-ml', {
@@ -10,7 +15,8 @@ $(document).ready(function () {
             threshold: 1,
         },
         columnDefs: [
-            { type: 'pt-string', targets: [0, 1, 2, 3, 4, 5, 6, 7] },
+            // * [EXPLICAÇÃO] → Colunas de texto — ordenação pt-string (ignora acentos).
+            { type: 'pt-string', targets: [0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13] },
             { searchPanes: { show: true }, targets: '_all' }
         ],
     });
@@ -85,7 +91,6 @@ function atualizar_filtros_ativos() {
 // MODAL
 // ================================================
 
-// * [EXPLICAÇÃO] → Abre o modal após o HTMX injetar o conteúdo.
 function abrirModalPrecificar() {
     setTimeout(function () {
         var modal = new bootstrap.Modal(document.getElementById('modal-precificar'));
