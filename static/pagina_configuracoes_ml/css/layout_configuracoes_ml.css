@@ -62,9 +62,9 @@
 .tabela-logistica .modal-col-valor { width: 35%; }
 
 /* ── CARDS SUPERIORES ── */
-#card_anuncios  { margin-top: 1.5rem; }
-#card_full      { padding: 10px; }
-#card_tags_preco{ padding: 10px; }
+#card_anuncios  { margin-top: 1.5rem; font-weight: 1000 }
+#card_full      { padding: 10px; font-weight: 1000 }
+#card_tags_preco{ padding: 10px; font-weight: 1000; }
 
 /* ── SUBTÍTULOS DE TAGS ── */
 .tag-subtitulo-acrescimo td,

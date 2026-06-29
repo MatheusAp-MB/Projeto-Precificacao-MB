@@ -10,7 +10,7 @@
 {% block toolbar_titulo %}Configurações — Mercado Livre{% endblock %}
 
 {% block head_extra %}
-    <link rel="stylesheet" href="{% static 'pagina_configuracoes_ml/css/layout_configuracoes_ml.css' %}">
+<link rel="stylesheet" href="{% static 'pagina_configuracoes_ml/css/layout_configuracoes_ml.css' %}">
 {% endblock %}
 
 {% block conteudo %}
@@ -20,7 +20,7 @@
     <!-- Logística FULL -->
     {% if logistica %}
     <div class="col-md-5" id="card_full">
-        <div class="card h-100" >
+        <div class="card h-100">
             <div class="card-header modal-card-cabecalho">
                 <strong><i class="fas fa-warehouse"></i> Logística FULL</strong>
             </div>
@@ -30,8 +30,14 @@
                         <col class="modal-col-dado">
                         <col class="modal-col-valor">
                     </colgroup>
-                    <tr><td class="modal-td-dado">Fator Coleta (R$/m³)</td><td class="modal-td-valor">R$ {{ logistica.fator_coleta }}</td></tr>
-                    <tr><td class="modal-td-dado">Período Armazenagem</td><td class="modal-td-valor">{{ logistica.periodo_armazenagem }} dias</td></tr>
+                    <tr>
+                        <td class="modal-td-dado">Fator Coleta (R$/m³)</td>
+                        <td class="modal-td-valor">R$ {{ logistica.fator_coleta }}</td>
+                    </tr>
+                    <tr>
+                        <td class="modal-td-dado">Período Armazenagem</td>
+                        <td class="modal-td-valor">{{ logistica.periodo_armazenagem }} dias</td>
+                    </tr>
                     {% for faixa in faixas %}
                     <tr>
                         <td class="modal-td-dado">{{ faixa.nome }}</td>
@@ -45,12 +51,12 @@
     {% endif %}
 
     <div class="col-md-7" id="card_tags_preco">
-        <div class="card" >
+        <div class="card">
             <div class="card-header modal-card-cabecalho">
                 <strong><i class="fas fa-tag"></i> Tags de Preço</strong>
             </div>
             <div class="card-body p-0">
-            <table class="tabela-tags">
+                <table class="tabela-tags">
                     <thead>
                         <tr>
                             <th>Nome</th>
@@ -58,34 +64,30 @@
                             <th>Valor</th>
                         </tr>
                     </thead>
-<tbody>
-                       <tr class="tag-subtitulo-acrescimo">
+                    <tbody>
+                        <tr class="tag-subtitulo-acrescimo">
                             <td colspan="3">
                                 <i class="fas fa-arrow-up"></i> Tags de Acréscimo
                             </td>
                         </tr>
-                        {% for tag in tags %}
-                            {% if tag.tipo == 'acrescimo' %}
-                            <tr class="tag-acrescimo-{{ forloop.counter }}">
-                                <td>{{ tag.nome }}</td>
-                                <td><span class="badge bg-success">Acréscimo</span></td>
-                                <td>+{{ tag.valor_pct }}%</td>
-                            </tr>
-                            {% endif %}
+                        {% for tag in tags_acrescimo %}
+                        <tr class="tag-acrescimo-{{ forloop.counter }}">
+                            <td>{{ tag.nome }}</td>
+                            <td><span class="badge bg-success">Acréscimo</span></td>
+                            <td>+{{ tag.valor_pct }}%</td>
+                        </tr>
                         {% endfor %}
                         <tr class="tag-subtitulo-desconto">
                             <td colspan="3">
                                 <i class="fas fa-arrow-down"></i> Tags de Desconto
                             </td>
                         </tr>
-                        {% for tag in tags %}
-                            {% if tag.tipo == 'desconto' %}
-                            <tr class="tag-desconto-{{ forloop.counter }}">
-                                <td>{{ tag.nome }}</td>
-                                <td><span class="badge bg-danger">Desconto</span></td>
-                                <td>−{{ tag.valor_pct }}%</td>
-                            </tr>
-                            {% endif %}
+                        {% for tag in tags_desconto %}
+                        <tr class="tag-desconto-{{ forloop.counter }}">
+                            <td>{{ tag.nome }}</td>
+                            <td><span class="badge bg-danger">Desconto</span></td>
+                            <td>−{{ tag.valor_pct }}%</td>
+                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -118,22 +120,23 @@
                     </thead>
                     <tbody>
                         {% for tipo in tipos %}
-                        <tr class="{% if tipo.tipo_anuncio == 'gold_special' %}{% if tipo.tipo_logistico == 'fulfillment' %}{% if tipo.catalogo %}anuncio-classico-full-cat{% else %}anuncio-classico-full{% endif %}{% else %}{% if tipo.catalogo %}anuncio-classico-flex-cat{% else %}anuncio-classico-flex{% endif %}{% endif %}{% elif tipo.tipo_anuncio == 'gold_pro' %}{% if tipo.tipo_logistico == 'fulfillment' %}{% if tipo.catalogo %}anuncio-premium-full-cat{% else %}anuncio-premium-full{% endif %}{% else %}{% if tipo.catalogo %}anuncio-premium-flex-cat{% else %}anuncio-premium-flex{% endif %}{% endif %}{% endif %}">
+                        <tr
+                            class="{% if tipo.tipo_anuncio == 'gold_special' %}{% if tipo.tipo_logistico == 'fulfillment' %}{% if tipo.catalogo %}anuncio-classico-full-cat{% else %}anuncio-classico-full{% endif %}{% else %}{% if tipo.catalogo %}anuncio-classico-flex-cat{% else %}anuncio-classico-flex{% endif %}{% endif %}{% elif tipo.tipo_anuncio == 'gold_pro' %}{% if tipo.tipo_logistico == 'fulfillment' %}{% if tipo.catalogo %}anuncio-premium-full-cat{% else %}anuncio-premium-full{% endif %}{% else %}{% if tipo.catalogo %}anuncio-premium-flex-cat{% else %}anuncio-premium-flex{% endif %}{% endif %}{% endif %}">
                             <td>
                                 {% if tipo.tipo_anuncio == 'gold_special' %}
-                                    <span class="badge-anuncio badge-classico">Clássico</span>
+                                <span class="badge-anuncio badge-classico">Clássico</span>
                                 {% else %}
-                                    <span class="badge-anuncio badge-premium">⭐ Premium</span>
+                                <span class="badge-anuncio badge-premium">⭐ Premium</span>
                                 {% endif %}
                                 {% if tipo.tipo_logistico == 'fulfillment' %}
-                                    <span class="badge-logistica badge-full"><i class="fas fa-warehouse"></i> FULL</span>
+                                <span class="badge-logistica badge-full"><i class="fas fa-warehouse"></i> FULL</span>
                                 {% elif tipo.tipo_logistico == 'flex' %}
-                                    <span class="badge-logistica badge-flex"><i class="fas fa-bolt"></i> Flex</span>
+                                <span class="badge-logistica badge-flex"><i class="fas fa-bolt"></i> Flex</span>
                                 {% else %}
-                                    <span class="badge-logistica badge-padrao"><i class="fas fa-box"></i> Padrão</span>
+                                <span class="badge-logistica badge-padrao"><i class="fas fa-box"></i> Padrão</span>
                                 {% endif %}
                                 {% if tipo.catalogo %}
-                                    <span class="badge-catalogo"><i class="fas fa-book"></i> Catálogo</span>
+                                <span class="badge-catalogo"><i class="fas fa-book"></i> Catálogo</span>
                                 {% endif %}
                             </td>
                             <td>{{ tipo.comissao }}%</td>

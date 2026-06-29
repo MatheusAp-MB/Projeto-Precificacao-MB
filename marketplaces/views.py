@@ -31,12 +31,14 @@ def view_configuracoes_ml(request):
     tipos       = TipoAnuncioML.objects.filter(marketplace=marketplace)
     logistica   = ConfiguracaoLogisticaML.objects.filter(marketplace=marketplace).first()
     faixas      = FaixaArmazenagem.objects.filter(marketplace=marketplace, ativo=True).order_by('ordem')
-    tags        = TagPreco.objects.filter(ativo=True).order_by('tipo', 'valor_pct')
+    tags_acrescimo = TagPreco.objects.filter(ativo=True, tipo='acrescimo').order_by('valor_pct')
+    tags_desconto  = TagPreco.objects.filter(ativo=True, tipo='desconto').order_by('valor_pct')
 
     return render(request, 'pagina_configuracoes_ml/estrutura_configuracoes_ml.html', {
         'marketplace': marketplace,
         'tipos':       tipos,
         'logistica':   logistica,
         'faixas':      faixas,
-        'tags':        tags,
+        'tags_acrescimo': tags_acrescimo,
+        'tags_desconto':  tags_desconto,
     })
