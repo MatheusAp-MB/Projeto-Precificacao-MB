@@ -63,8 +63,8 @@ def goal_seek_preco_base(produto, tipo_anuncio, margem_meta: Decimal) -> Decimal
     logistica = ConfiguracaoLogisticaML.objects.filter(
         marketplace=tipo_anuncio.marketplace
     ).first()
-    fator_coleta  = logistica.fator_coleta        if logistica else Decimal('0')
-    periodo_armaz = logistica.periodo_armazenagem  if logistica else 0
+    fator_coleta = logistica.fator_coleta if logistica else Decimal('0')
+    periodo_armaz = logistica.periodo_armazenagem if logistica else 0
 
     # --- Armazenagem dinâmica ---
     faixa_armazenagem = FaixaArmazenagem.objects.filter(
@@ -80,19 +80,20 @@ def goal_seek_preco_base(produto, tipo_anuncio, margem_meta: Decimal) -> Decimal
             marketplace=tipo_anuncio.marketplace, ativo=True
         ).order_by('-ordem').first()
 
-    faixa_valor = faixa_armazenagem.valor_diario if faixa_armazenagem else Decimal('0')
+    faixa_valor = faixa_armazenagem.valor_diario if faixa_armazenagem else Decimal(
+        '0')
     armazenagem = faixa_valor * periodo_armaz
 
     # --- Parâmetros fiscais e de custo ---
-    custo          = produto.custo
+    custo = produto.custo
     custo_com_boni = produto.custo_com_boni or custo
-    ipi            = (produto.ipi            or Decimal('0')) / 100
-    frete_cif_fob  = (produto.frete_cif_fob  or Decimal('0')) / 100
-    st_valor       = produto.st_valor or Decimal('0')
-    icms_entrada   = (produto.icms_entrada    or Decimal('0')) / 100
-    icms_saida     = (produto.icms_saida_media or Decimal('0')) / 100
-    pis            = (produto.pis_cofins      or Decimal('0')) / 100
-    comissao       = tipo_anuncio.comissao / 100
+    ipi = (produto.ipi or Decimal('0')) / 100
+    frete_cif_fob = (produto.frete_cif_fob or Decimal('0')) / 100
+    st_valor = produto.st_valor or Decimal('0')
+    icms_entrada = (produto.icms_entrada or Decimal('0')) / 100
+    icms_saida = (produto.icms_saida_media or Decimal('0')) / 100
+    pis = (produto.pis_cofins or Decimal('0')) / 100
+    comissao = tipo_anuncio.comissao / 100
 
     # --- FIXO e denominador — calculados uma única vez ---
     # * [EXPLICAÇÃO] → O acréscimo é incorporado no denominador para que o preço final
@@ -100,12 +101,15 @@ def goal_seek_preco_base(produto, tipo_anuncio, margem_meta: Decimal) -> Decimal
     #                  Para acrescimo = 0% (Clássico): denominador inalterado.
     #                  Para acrescimo = 8% (Premium): denominador × 1,08, garantindo
     #                  que P_final = roundUp90(P_base × 1,08) atinja a margem_meta.
-    acrescimo    = tipo_anuncio.acrescimo_preco / 100
-    metro_cubico = (produto.altura / 100) * (produto.largura / 100) * (produto.profundidade / 100)
-    custo_final  = custo_com_boni + (custo_com_boni * ipi) + (custo_com_boni * frete_cif_fob) + st_valor
-    coleta       = metro_cubico * fator_coleta
-    fixo         = coleta + armazenagem + custo_final - custo * (icms_entrada + pis)
-    denominador  = (Decimal('1') - comissao - icms_saida - pis - margem_meta) * (Decimal('1') + acrescimo)
+    acrescimo = tipo_anuncio.acrescimo_preco / 100
+    metro_cubico = (produto.altura / 100) * \
+        (produto.largura / 100) * (produto.profundidade / 100)
+    custo_final = custo_com_boni + \
+        (custo_com_boni * ipi) + (custo_com_boni * frete_cif_fob) + st_valor
+    coleta = metro_cubico * fator_coleta
+    fixo = coleta + armazenagem + custo_final - custo * (icms_entrada + pis)
+    denominador = (Decimal('1') - comissao - icms_saida -
+                   pis - margem_meta) * (Decimal('1') + acrescimo)
 
     if denominador <= 0:
         logger.warning(
@@ -148,8 +152,8 @@ def goal_seek_preco_base(produto, tipo_anuncio, margem_meta: Decimal) -> Decimal
 
     # Percorre as faixas a partir da faixa do custo
     for faixa in faixas[idx_inicial:]:
-        preco_min   = faixa.preco_min or Decimal('0')
-        preco_max   = faixa.preco_max
+        preco_min = faixa.preco_min or Decimal('0')
+        preco_max = faixa.preco_max
         frete_faixa = faixa.valor
 
         p_exato = (fixo + frete_faixa) / denominador
@@ -200,9 +204,12 @@ def calcular_cardapio_precos(produto, tipo_anuncio):
         return round_up_to_90(preco_base * (1 + acrescimo))
 
     # Goal Seek para cada margem — 3 chamadas por combinação
-    base_padrao = goal_seek_preco_base(produto, tipo_anuncio, tipo_anuncio.margem_padrao / 100)
-    base_minima = goal_seek_preco_base(produto, tipo_anuncio, tipo_anuncio.margem_minima / 100)
-    base_maxima = goal_seek_preco_base(produto, tipo_anuncio, tipo_anuncio.margem_maxima / 100)
+    base_padrao = goal_seek_preco_base(
+        produto, tipo_anuncio, tipo_anuncio.margem_padrao / 100)
+    base_minima = goal_seek_preco_base(
+        produto, tipo_anuncio, tipo_anuncio.margem_minima / 100)
+    base_maxima = goal_seek_preco_base(
+        produto, tipo_anuncio, tipo_anuncio.margem_maxima / 100)
 
     if not base_padrao:
         logger.warning(
@@ -212,14 +219,17 @@ def calcular_cardapio_precos(produto, tipo_anuncio):
         return None
 
     preco_margem_padrao = aplicar_acrescimo(base_padrao)
-    preco_margem_minima = aplicar_acrescimo(base_minima) if base_minima else None
-    preco_margem_maxima = aplicar_acrescimo(base_maxima) if base_maxima else None
+    preco_margem_minima = aplicar_acrescimo(
+        base_minima) if base_minima else None
+    preco_margem_maxima = aplicar_acrescimo(
+        base_maxima) if base_maxima else None
 
     # Busca ou cria o registro — preserva a preferencia_preco já salva
     cardapio, _ = CardapioPrecos.objects.get_or_create(
         produto=produto,
         tipo_anuncio=tipo_anuncio,
-        defaults={'preferencia_preco': CardapioPrecos.PreferenciaPreco.MARGEM_PADRAO}
+        defaults={
+            'preferencia_preco': CardapioPrecos.PreferenciaPreco.MARGEM_PADRAO}
     )
 
     # Determina preco_em_uso conforme preferencia atual
@@ -238,14 +248,14 @@ def calcular_cardapio_precos(produto, tipo_anuncio):
 
     # Atualiza o cardápio preservando a preferencia_preco
     CardapioPrecos.objects.filter(pk=cardapio.pk).update(
-        preco_base          = base_padrao,
-        preco_margem_padrao = preco_margem_padrao,
-        preco_margem_minima = preco_margem_minima,
-        preco_margem_maxima = preco_margem_maxima,
-        preco_em_uso        = preco_em_uso,
-        preco_atacado_2     = preco_atacado_2,
-        preco_atacado_3     = preco_atacado_3,
-        valido              = True,
+        preco_base=base_padrao,
+        preco_margem_padrao=preco_margem_padrao,
+        preco_margem_minima=preco_margem_minima,
+        preco_margem_maxima=preco_margem_maxima,
+        preco_em_uso=preco_em_uso,
+        preco_atacado_2=preco_atacado_2,
+        preco_atacado_3=preco_atacado_3,
+        valido=True,
     )
     cardapio.refresh_from_db()
 
@@ -275,7 +285,8 @@ def propagar_cardapio_para_anuncios(cardapio):
 
     for anuncio in anuncios:
         if anuncio.preco_travado:
-            logger.info(f'[PROPAGAR] {anuncio.mlb} → ignorado (preco_travado=True)')
+            logger.info(
+                f'[PROPAGAR] {anuncio.mlb} → ignorado (preco_travado=True)')
             continue
 
         # Aplica tag de preço se houver (desconto ou acréscimo sobre preco_em_uso)
@@ -285,9 +296,11 @@ def propagar_cardapio_para_anuncios(cardapio):
         if anuncio.tag_preco and anuncio.tag_preco.ativo:
             fator = anuncio.tag_preco.valor_pct / 100
             if anuncio.tag_preco.tipo == 'desconto':
-                preco_final = round_up_to_90(cardapio.preco_em_uso * (1 - fator))
+                preco_final = round_up_to_90(
+                    cardapio.preco_em_uso * (1 - fator))
             else:
-                preco_final = round_up_to_90(cardapio.preco_em_uso * (1 + fator))
+                preco_final = round_up_to_90(
+                    cardapio.preco_em_uso * (1 + fator))
             logger.info(
                 f'[TAG] {anuncio.mlb} → {anuncio.tag_preco} | '
                 f'preco_em_uso=R${cardapio.preco_em_uso} → preco_final=R${preco_final}'
@@ -297,16 +310,16 @@ def propagar_cardapio_para_anuncios(cardapio):
         is_classico = tipo.tipo_anuncio == 'gold_special'
         if is_classico:
             type(anuncio).objects.filter(pk=anuncio.pk).update(
-                preco_classico_calculado = preco_final,
-                preco_atacado_2          = cardapio.preco_atacado_2,
-                preco_atacado_3          = cardapio.preco_atacado_3,
+                preco_classico_calculado=preco_final,
+                preco_atacado_2=cardapio.preco_atacado_2,
+                preco_atacado_3=cardapio.preco_atacado_3,
             )
             anuncio.preco_classico_calculado = preco_final
         else:
             type(anuncio).objects.filter(pk=anuncio.pk).update(
-                preco_premium_calculado = preco_final,
-                preco_atacado_2         = cardapio.preco_atacado_2,
-                preco_atacado_3         = cardapio.preco_atacado_3,
+                preco_premium_calculado=preco_final,
+                preco_atacado_2=cardapio.preco_atacado_2,
+                preco_atacado_3=cardapio.preco_atacado_3,
             )
             anuncio.preco_premium_calculado = preco_final
 
@@ -344,7 +357,8 @@ def calcular_frete_para_anuncio(anuncio) -> Decimal | None:
     ).first()
 
     novo_valor = frete.valor if frete else None
-    type(anuncio).objects.filter(pk=anuncio.pk).update(frete_calculado=novo_valor)
+    type(anuncio).objects.filter(pk=anuncio.pk).update(
+        frete_calculado=novo_valor)
     logger.info(
         f'[FRETE] {anuncio.mlb} → peso={peso}kg | preco=R${preco} | frete=R${novo_valor}'
     )
@@ -382,12 +396,14 @@ def calcular_margem_anuncio(anuncio, frete_valor):
             catalogo=anuncio.catalogo
         )
     except TipoAnuncioML.DoesNotExist:
-        logger.warning(f'[MARGEM] {anuncio.mlb} → TipoAnuncioML nao encontrado')
+        logger.warning(
+            f'[MARGEM] {anuncio.mlb} → TipoAnuncioML nao encontrado')
         return
 
-    logistica = ConfiguracaoLogisticaML.objects.filter(marketplace__sigla='ML').first()
-    fator_coleta  = logistica.fator_coleta        if logistica else Decimal('0')
-    periodo_armaz = logistica.periodo_armazenagem  if logistica else 0
+    logistica = ConfiguracaoLogisticaML.objects.filter(
+        marketplace__sigla='ML').first()
+    fator_coleta = logistica.fator_coleta if logistica else Decimal('0')
+    periodo_armaz = logistica.periodo_armazenagem if logistica else 0
 
     # Armazenagem dinâmica
     faixa_armazenagem = FaixaArmazenagem.objects.filter(
@@ -403,54 +419,61 @@ def calcular_margem_anuncio(anuncio, frete_valor):
             marketplace__sigla='ML', ativo=True
         ).order_by('-ordem').first()
 
-    faixa_valor          = faixa_armazenagem.valor_diario if faixa_armazenagem else Decimal('0')
+    faixa_valor = faixa_armazenagem.valor_diario if faixa_armazenagem else Decimal(
+        '0')
     armazenagem_dinamico = faixa_valor * periodo_armaz
     armazenagem_planilha = produto.armazenagem_planilha or Decimal('0')
 
     # Parâmetros fiscais
-    custo          = produto.custo
+    custo = produto.custo
     custo_com_boni = produto.custo_com_boni or custo
-    ipi            = (produto.ipi            or Decimal('0')) / 100
-    frete_cif_fob  = (produto.frete_cif_fob  or Decimal('0')) / 100
-    st_valor       = produto.st_valor or Decimal('0')
-    icms_entrada   = (produto.icms_entrada    or Decimal('0')) / 100
-    icms_saida     = (produto.icms_saida_media or Decimal('0')) / 100
-    pis            = (produto.pis_cofins      or Decimal('0')) / 100
-    comissao_pct   = tipo.comissao / 100
+    ipi = (produto.ipi or Decimal('0')) / 100
+    frete_cif_fob = (produto.frete_cif_fob or Decimal('0')) / 100
+    st_valor = produto.st_valor or Decimal('0')
+    icms_entrada = (produto.icms_entrada or Decimal('0')) / 100
+    icms_saida = (produto.icms_saida_media or Decimal('0')) / 100
+    pis = (produto.pis_cofins or Decimal('0')) / 100
+    comissao_pct = tipo.comissao / 100
 
-    metro_cubico   = (produto.altura / 100) * (produto.largura / 100) * (produto.profundidade / 100)
-    custo_final    = custo_com_boni + (custo_com_boni * ipi) + (custo_com_boni * frete_cif_fob) + st_valor
-    coleta         = metro_cubico * fator_coleta
-    frete          = frete_valor or Decimal('0')
+    metro_cubico = (produto.altura / 100) * \
+        (produto.largura / 100) * (produto.profundidade / 100)
+    custo_final = custo_com_boni + \
+        (custo_com_boni * ipi) + (custo_com_boni * frete_cif_fob) + st_valor
+    coleta = metro_cubico * fator_coleta
+    frete = frete_valor or Decimal('0')
     comissao_valor = preco * comissao_pct
-    icms_valor     = (preco * icms_saida) - (custo * icms_entrada)
-    pis_valor      = (preco - custo) * pis
+    icms_valor = (preco * icms_saida) - (custo * icms_entrada)
+    pis_valor = (preco - custo) * pis
 
     # Margem dinâmica
     margem_valor_din = (
         preco - frete - coleta - armazenagem_dinamico
         - custo_final - comissao_valor - icms_valor - pis_valor
     )
-    margem_pct_din = (margem_valor_din / preco * 100) if preco else Decimal('0')
+    margem_pct_din = (margem_valor_din / preco *
+                      100) if preco else Decimal('0')
 
     # Margem baseada na planilha
     margem_valor_pla = (
         preco - frete - coleta - armazenagem_planilha
         - custo_final - comissao_valor - icms_valor - pis_valor
     )
-    margem_pct_pla = (margem_valor_pla / preco * 100) if preco else Decimal('0')
+    margem_pct_pla = (margem_valor_pla / preco *
+                      100) if preco else Decimal('0')
 
     # Salva no AnuncioML — campo correto conforme tipo
     is_classico = anuncio.tipo_anuncio == 'gold_special'
     if is_classico:
         type(anuncio).objects.filter(pk=anuncio.pk).update(
             margem_classico_calculado=round(margem_pct_din, 2),
-            margem_classico_calculado_baseado_na_planilha=round(margem_pct_pla, 2),
+            margem_classico_calculado_baseado_na_planilha=round(
+                margem_pct_pla, 2),
         )
     else:
         type(anuncio).objects.filter(pk=anuncio.pk).update(
             margem_premium_calculado=round(margem_pct_din, 2),
-            margem_premium_calculado_baseado_na_planilha=round(margem_pct_pla, 2),
+            margem_premium_calculado_baseado_na_planilha=round(
+                margem_pct_pla, 2),
         )
 
     # Salva BaseDeCalculo
@@ -553,7 +576,7 @@ def recalcular_tudo():
 # SIGNALS
 # ================================================
 
-@receiver(post_save, sender='anuncios.AnuncioML')
+# @receiver(post_save, sender='anuncios.AnuncioML')
 def signal_anuncio_ml_salvo(sender, instance, **kwargs):
     # * [EXPLICAÇÃO] → Quando um anúncio é salvo, recalcula o CardapioPrecos
     #                  da sua combinação e propaga o resultado de volta para ele.
@@ -575,26 +598,26 @@ def signal_anuncio_ml_salvo(sender, instance, **kwargs):
     recalcular_combinacao(instance.produto, tipo)
 
 
-@receiver(post_save, sender='produtos.Produto')
+# @receiver(post_save, sender='produtos.Produto')
 def signal_produto_salvo(sender, instance, **kwargs):
     recalcular_todas_combinacoes_do_produto(instance)
 
 
-@receiver(post_save, sender='precificacao_marketplaces.FreteML')
+# @receiver(post_save, sender='precificacao_marketplaces.FreteML')
 def signal_frete_ml_salvo(sender, instance, **kwargs):
     recalcular_tudo()
 
 
-@receiver(post_save, sender='marketplaces.TipoAnuncioML')
+# @receiver(post_save, sender='marketplaces.TipoAnuncioML')
 def signal_tipo_anuncio_ml_salvo(sender, instance, **kwargs):
     recalcular_todas_combinacoes_do_tipo(instance)
 
 
-@receiver(post_save, sender='marketplaces.ConfiguracaoLogisticaML')
+# @receiver(post_save, sender='marketplaces.ConfiguracaoLogisticaML')
 def signal_config_logistica_ml_salvo(sender, instance, **kwargs):
     recalcular_tudo()
 
 
-@receiver(post_save, sender='marketplaces.FaixaArmazenagem')
+# @receiver(post_save, sender='marketplaces.FaixaArmazenagem')
 def signal_faixa_armazenagem_salvo(sender, instance, **kwargs):
     recalcular_tudo()

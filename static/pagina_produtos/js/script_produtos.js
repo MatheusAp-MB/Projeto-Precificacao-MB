@@ -13,8 +13,28 @@ $(document).ready(function () {
             threshold: 1,
         },
         columnDefs: [
-            { type: 'pt-string', targets: [0, 1, 2, 3, 4, 6, 14, 25] },
-            { searchPanes: { show: true }, targets: '_all' }
+            { type: 'pt-string', targets: [1, 2, 3, 4, 5, 7, 15, 26] },
+            { searchPanes: { show: true }, targets: '_all' },
+            {
+                targets: 0,
+                searchPanes: {
+                    show: true,
+                    options: [
+                        {
+                            label: 'Com foto',
+                            value: function (rowData, rowIdx) {
+                                return $(rowData[0]).attr('data-tem-foto') === 'sim';
+                            }
+                        },
+                        {
+                            label: 'Sem foto',
+                            value: function (rowData, rowIdx) {
+                                return $(rowData[0]).attr('data-tem-foto') !== 'sim';
+                            }
+                        }
+                    ]
+                }
+            },
         ]
     });
 

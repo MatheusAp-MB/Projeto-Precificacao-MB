@@ -74,6 +74,15 @@ class Produto(models.Model):
     )
 
     # ================================================
+    # MÍDIA
+    # ================================================
+
+    # * [EXPLICAÇÃO] → URL da imagem do produto, vinda do arquivo Produtos_do_ML_Sysemp.
+    #                  Já hospedada em servidor externo — o sistema apenas referencia,
+    #                  nunca baixa ou armazena o arquivo de imagem localmente.
+    imagem_url = models.URLField(max_length=500, blank=True, null=True)
+
+    # ================================================
     # ARMAZENAGEM
     # ================================================
 

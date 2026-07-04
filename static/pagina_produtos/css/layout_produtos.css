@@ -129,3 +129,53 @@
 
 .painel-col-controle-db  { flex: 0 0 auto; width: 300px; }
 .painel-col-controle-erp { flex: 0 0 auto; width: 300px; }
+
+/* ================================================
+   IMAGEM DO PRODUTO — TABELA E MODAL
+   ================================================ */
+
+/* * [EXPLICAÇÃO] → Miniatura na tabela: tamanho fixo, object-fit garante
+                     que qualquer proporção de imagem original preencha
+                     o quadrado sem distorcer. */
+.miniatura-produto {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    display: block;
+}
+
+.miniatura-vazia {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f1f3f5;
+    color: #adb5bd;
+    font-size: 1rem;
+}
+
+/* * [EXPLICAÇÃO] → Imagem grande no modal: mesma lógica, tamanho maior,
+                     sempre centralizada acima do título. */
+.modal-produto-imagem-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.modal-produto-imagem {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.modal-produto-imagem-vazia {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f1f3f5;
+    color: #adb5bd;
+    font-size: 2.5rem;
+}

@@ -5,6 +5,13 @@
 -->
 
 <!-- * [EXPLICAÇÃO] → Título do produto exibido no topo do modal. -->
+<div class="modal-produto-imagem-wrap">
+    {% if produto.imagem_url %}
+    <img src="{{ produto.imagem_url }}" class="modal-produto-imagem" alt="{{ produto.titulo }}">
+    {% else %}
+    <div class="modal-produto-imagem modal-produto-imagem-vazia"><i class="fas fa-image"></i></div>
+    {% endif %}
+</div>
 <h6 class="modal-produto-titulo">{{ produto.titulo }}</h6>
 
 <div class="row g-4">
@@ -81,6 +88,26 @@
         </div>
     </div>
 
+
+        <!-- Financeiro -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header modal-card-cabecalho">
+                <strong>Financeiro</strong>
+            </div>
+            <div class="card-body">
+                <table class="modal-tabela">
+                    <colgroup>
+                        <col class="modal-col-dado">
+                        <col class="modal-col-valor">
+                    </colgroup>
+                    <tr><td class="modal-td-dado">Custo</td><td class="modal-td-valor">R$ {{ produto.custo|floatformat:2 }}</td></tr>
+                    <tr><td class="modal-td-dado">Custo c/ Boni</td><td class="modal-td-valor">{{ produto.custo_com_boni|floatformat:2|default:"" }}</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    
     <!-- Controle -->
     <div class="col-md-6">
         <div class="card">
@@ -102,24 +129,7 @@
         </div>
     </div>
 
-    <!-- Financeiro -->
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header modal-card-cabecalho">
-                <strong>Financeiro</strong>
-            </div>
-            <div class="card-body">
-                <table class="modal-tabela">
-                    <colgroup>
-                        <col class="modal-col-dado">
-                        <col class="modal-col-valor">
-                    </colgroup>
-                    <tr><td class="modal-td-dado">Custo</td><td class="modal-td-valor">R$ {{ produto.custo|floatformat:2 }}</td></tr>
-                    <tr><td class="modal-td-dado">Custo c/ Boni</td><td class="modal-td-valor">{{ produto.custo_com_boni|floatformat:2|default:"" }}</td></tr>
-                </table>
-            </div>
-        </div>
-    </div>
+
 
 
 
