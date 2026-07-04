@@ -36,9 +36,12 @@ class AnuncioML(models.Model):
         DROPSHIP = 'drop_off',    'Drop-off'
 
     class Status(models.TextChoices):
-        ATIVO   = 'active',  'Ativo'
-        PAUSADO = 'paused',  'Pausado'
-        FECHADO = 'closed',  'Fechado'
+        ATIVO               = 'active',           'Ativo'
+        PAUSADO              = 'paused',            'Pausado'
+        FECHADO               = 'closed',            'Encerrado'
+        EM_REVISAO            = 'under_review',      'Em revisão'
+        DEBITO_PENDENTE       = 'payment_required',  'Débito pendente'
+        AGUARDANDO_ATIVACAO   = 'not_yet_active',    'Aguardando ativação'
 
     class Nivel(models.TextChoices):
         BOM     = 'good',    'Bom'
@@ -49,8 +52,15 @@ class AnuncioML(models.Model):
     # IDENTIFICADORES
     # ================================================
 
-    mlb  = models.CharField(max_length=20, unique=True)
-    mlbu = models.CharField(max_length=20, blank=True, null=True)
+    mlb    = models.CharField(max_length=20, unique=True)
+    mlbu   = models.CharField(max_length=20, blank=True, null=True)
+
+    # * [EXPLICAÇÃO] → SKU exatamente como veio da API do ML (seller_custom_field),
+    #                  sem nenhum tratamento. Serve para detectar divergência
+    #                  entre o que o ML tem cadastrado e o que o Produto/ERP tem —
+    #                  a regra é que sejam iguais; se divergirem, é erro de
+    #                  cadastro do anúncio, não falha do sistema.
+    sku_ml = models.CharField(max_length=30, blank=True, null=True)
 
     # * [EXPLICAÇÃO] → Ligação com o produto via SKU — regra do projeto.
     #                  Se o SKU do anúncio não bater com o Produto, está errado.
@@ -74,10 +84,22 @@ class AnuncioML(models.Model):
     catalogo       = models.BooleanField(default=False)
 
     # ================================================
+    # CLASSIFICAÇÃO DE CATÁLOGO — dados brutos da API
+    # ================================================
+    # * [EXPLICAÇÃO] → Usados pela lógica de classificação (Simples/Base/Catálogo)
+    #                  e pela árvore de agrupamento por Página de Catálogo.
+    #                  Regra: catalog_product_id vazio → Simples
+    #                         catalog_listing = True   → Anúncio de Catálogo
+    #                         catalog_listing = False  → Anúncio Base
+    catalog_product_id = models.CharField(max_length=30, blank=True, null=True)
+    catalog_listing     = models.BooleanField(null=True, blank=True)
+    item_relations      = models.JSONField(blank=True, null=True)
+
+    # ================================================
     # ESTADO
     # ================================================
 
-    status    = models.CharField(max_length=10, choices=Status.choices, blank=True, null=True)
+    status    = models.CharField(max_length=20, choices=Status.choices, blank=True, null=True)
     estoque   = models.IntegerField(default=0)
     score     = models.IntegerField(blank=True, null=True)
     nivel     = models.CharField(max_length=10, choices=Nivel.choices, blank=True, null=True)
