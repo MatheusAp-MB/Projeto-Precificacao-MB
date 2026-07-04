@@ -14,27 +14,33 @@ $(document).ready(function () {
         },
         columnDefs: [
             { type: 'pt-string', targets: [1, 2, 3, 4, 5, 7, 15, 26] },
-            { searchPanes: { show: true }, targets: '_all' },
             {
                 targets: 0,
+                render: function (data, type, row) {
+                    if (type === 'display') {
+                        return data;
+                    }
+                    return data.indexOf('miniatura-vazia') === -1 ? 'Com foto' : 'Sem foto';
+                },
                 searchPanes: {
                     show: true,
                     options: [
                         {
                             label: 'Com foto',
                             value: function (rowData, rowIdx) {
-                                return $(rowData[0]).attr('data-tem-foto') === 'sim';
+                                return String(rowData[0]).indexOf('miniatura-vazia') === -1;
                             }
                         },
                         {
                             label: 'Sem foto',
                             value: function (rowData, rowIdx) {
-                                return $(rowData[0]).attr('data-tem-foto') !== 'sim';
+                                return String(rowData[0]).indexOf('miniatura-vazia') !== -1;
                             }
                         }
                     ]
                 }
             },
+            { searchPanes: { show: true }, targets: '_all' },
         ]
     });
 
@@ -75,8 +81,8 @@ function abrirModal() {
 var filtrosAbertos = false;
 
 function toggle_filtros() {
-    var painel  = document.querySelector('.dtsp-panesContainer');
-    var caret   = document.getElementById('btn-filtros-caret');
+    var painel = document.querySelector('.dtsp-panesContainer');
+    var caret = document.getElementById('btn-filtros-caret');
 
     if (filtrosAbertos) {
         $(painel).hide();
@@ -113,7 +119,7 @@ function atualizar_filtros_ativos() {
     var filtros = [];
 
     $('.dtsp-searchPane').each(function () {
-        var coluna  = $(this).find('.dtsp-search').attr('placeholder');
+        var coluna = $(this).find('.dtsp-search').attr('placeholder');
         var valores = [];
 
         $(this).find('tr.selected .dtsp-name').each(function () {

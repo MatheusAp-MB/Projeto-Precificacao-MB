@@ -162,8 +162,7 @@
                     e injeta no modal antes de abri-lo. -->
         <tr hx-get="{% url 'painel_produto' produto.id %}" hx-target="#modal-conteudo" hx-swap="innerHTML"
             onclick="abrirModal()" style="cursor: pointer;">
-            <td data-search="{% if produto.imagem_url %}Com foto{% else %}Sem foto{% endif %}"
-                data-filter="{% if produto.imagem_url %}Com foto{% else %}Sem foto{% endif %}">
+            <td>
                 {% if produto.imagem_url %}
                 <img src="{{ produto.imagem_url }}" class="miniatura-produto" alt="{{ produto.titulo }}" loading="lazy">
                 {% else %}
@@ -178,8 +177,7 @@
             <td data-order="{{ produto.estoque|default:0 }}">{{ produto.estoque|default:"" }}</td>
             <td>{{ produto.curva|default:"" }}</td>
             <td data-order="{{ produto.custo|default:0 }}">R$ {{ produto.custo|floatformat:2|default:"" }}</td>
-            <td data-order="{{ produto.custo_com_boni|default:0 }}">{{ produto.custo_com_boni|floatformat:2|default:""
-                }}</td>
+            <td data-order="{{ produto.custo_com_boni|default:0 }}">{{ produto.custo_com_boni|floatformat:2|default:""}}</td>
             <td data-order="{{ produto.peso|default:0 }}">{{ produto.peso|floatformat:3|default:"" }} kg</td>
             <td data-order="{{ produto.peso_cubado|default:0 }}">{{ produto.peso_cubado|floatformat:3|default:"" }} kg
             </td>
@@ -193,21 +191,16 @@
             </td>
             <td data-order="{{ produto.icms_saida_sp|default:0 }}">{{ produto.icms_saida_sp|floatformat:2|default:"" }}%
             </td>
-            <td data-order="{{ produto.icms_saida_media|default:0 }}">{{
-                produto.icms_saida_media|floatformat:2|default:"" }}%</td>
+            <td data-order="{{ produto.icms_saida_media|default:0 }}">{{produto.icms_saida_media|floatformat:2|default:"" }}%</td>
             <td data-order="{{ produto.pis_cofins|default:0 }}">{{ produto.pis_cofins|floatformat:2|default:"" }}%</td>
             <td data-order="{{ produto.mva|default:0 }}">{{ produto.mva|default:"" }}</td>
             <td data-order="{{ produto.st_valor|default:0 }}">{{ produto.st_valor|default:"" }}</td>
             <td data-order="{{ produto.frete_cif_fob|default:0 }}">{{ produto.frete_cif_fob|default:"" }}</td>
-            <td data-order="{{ produto.criado_em|date:'Y-m-d H:i'|default:'' }}">{{ produto.criado_em|date:"d/m/Y
-                H:i"|default:"" }}</td>
-            <td data-order="{{ produto.atualizado_em|date:'Y-m-d H:i'|default:'' }}">{{
-                produto.atualizado_em|date:"d/m/Y H:i"|default:"" }}</td>
+            <td data-order="{{ produto.criado_em|date:'Y-m-d H:i'|default:'' }}">{{ produto.criado_em|date:"d/m/YH:i"|default:"" }}</td>
+            <td data-order="{{ produto.atualizado_em|date:'Y-m-d H:i'|default:'' }}">{{produto.atualizado_em|date:"d/m/Y H:i"|default:"" }}</td>
             <td>{{ produto.categoria|default:"" }}</td>
-            <td data-order="{{ produto.ultima_compra|date:'Y-m-d'|default:'' }}">{{
-                produto.ultima_compra|date:"d/m/Y"|default:"" }}</td>
-            <td data-order="{{ produto.cadastrado_erp_em|date:'Y-m-d'|default:'' }}">{{
-                produto.cadastrado_erp_em|date:"d/m/Y"|default:"" }}</td>
+            <td data-order="{{ produto.ultima_compra|date:'Y-m-d'|default:'' }}">{{produto.ultima_compra|date:"d/m/Y"|default:"" }}</td>
+            <td data-order="{{ produto.cadastrado_erp_em|date:'Y-m-d'|default:'' }}">{{produto.cadastrado_erp_em|date:"d/m/Y"|default:"" }}</td>
         </tr>
         {% endfor %}
     </tbody>
