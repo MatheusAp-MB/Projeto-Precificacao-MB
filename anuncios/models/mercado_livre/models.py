@@ -27,33 +27,33 @@ class AnuncioML(models.Model):
 
     class TipoAnuncio(models.TextChoices):
         CLASSICO = 'gold_special', 'Clássico'
-        PREMIUM  = 'gold_pro',     'Premium'
+        PREMIUM = 'gold_pro',     'Premium'
 
     class TipoLogistico(models.TextChoices):
-        FULL     = 'fulfillment', 'FULL'
-        ME_SEND  = 'me2',         'Manda tu'
-        FLEX     = 'flex',        'Flex'
+        FULL = 'fulfillment', 'FULL'
+        ME_SEND = 'me2',         'Manda tu'
+        FLEX = 'flex',        'Flex'
         DROPSHIP = 'drop_off',    'Drop-off'
 
     class Status(models.TextChoices):
-        ATIVO               = 'active',           'Ativo'
-        PAUSADO              = 'paused',            'Pausado'
-        FECHADO               = 'closed',            'Encerrado'
-        EM_REVISAO            = 'under_review',      'Em revisão'
-        DEBITO_PENDENTE       = 'payment_required',  'Débito pendente'
-        AGUARDANDO_ATIVACAO   = 'not_yet_active',    'Aguardando ativação'
+        ATIVO = 'active',           'Ativo'
+        PAUSADO = 'paused',            'Pausado'
+        FECHADO = 'closed',            'Encerrado'
+        EM_REVISAO = 'under_review',      'Em revisão'
+        DEBITO_PENDENTE = 'payment_required',  'Débito pendente'
+        AGUARDANDO_ATIVACAO = 'not_yet_active',    'Aguardando ativação'
 
     class Nivel(models.TextChoices):
-        BOM     = 'good',    'Bom'
+        BOM = 'good',    'Bom'
         REGULAR = 'regular', 'Regular'
-        RUIM    = 'bad',     'Ruim'
+        RUIM = 'bad',     'Ruim'
 
     # ================================================
     # IDENTIFICADORES
     # ================================================
 
-    mlb    = models.CharField(max_length=20, unique=True)
-    mlbu   = models.CharField(max_length=20, blank=True, null=True)
+    mlb = models.CharField(max_length=20, unique=True)
+    mlbu = models.CharField(max_length=20, blank=True, null=True)
 
     # * [EXPLICAÇÃO] → SKU exatamente como veio da API do ML (seller_custom_field),
     #                  sem nenhum tratamento. Serve para detectar divergência
@@ -79,9 +79,11 @@ class AnuncioML(models.Model):
     # TIPO
     # ================================================
 
-    tipo_anuncio   = models.CharField(max_length=20, choices=TipoAnuncio.choices,   blank=True, null=True)
-    tipo_logistico = models.CharField(max_length=20, choices=TipoLogistico.choices, blank=True, null=True)
-    catalogo       = models.BooleanField(default=False)
+    tipo_anuncio = models.CharField(
+        max_length=20, choices=TipoAnuncio.choices,   blank=True, null=True)
+    tipo_logistico = models.CharField(
+        max_length=20, choices=TipoLogistico.choices, blank=True, null=True)
+    catalogo = models.BooleanField(default=False)
 
     # ================================================
     # CLASSIFICAÇÃO DE CATÁLOGO — dados brutos da API
@@ -92,21 +94,23 @@ class AnuncioML(models.Model):
     #                         catalog_listing = True   → Anúncio de Catálogo
     #                         catalog_listing = False  → Anúncio Base
     catalog_product_id = models.CharField(max_length=30, blank=True, null=True)
-    catalog_listing     = models.BooleanField(null=True, blank=True)
-    item_relations      = models.JSONField(blank=True, null=True)
+    catalog_listing = models.BooleanField(null=True, blank=True)
+    item_relations = models.JSONField(blank=True, null=True)
 
     # ================================================
     # ESTADO
     # ================================================
 
-    status    = models.CharField(max_length=20, choices=Status.choices, blank=True, null=True)
-    estoque   = models.IntegerField(default=0)
-    score     = models.IntegerField(blank=True, null=True)
-    nivel     = models.CharField(max_length=10, choices=Nivel.choices, blank=True, null=True)
+    status = models.CharField(
+        max_length=20, choices=Status.choices, blank=True, null=True)
+    estoque = models.IntegerField(default=0)
+    score = models.IntegerField(blank=True, null=True)
+    nivel = models.CharField(
+        max_length=10, choices=Nivel.choices, blank=True, null=True)
     qtd_vendas = models.IntegerField(default=0)
-    permalink  = models.URLField(max_length=500, blank=True, null=True)
+    permalink = models.URLField(max_length=500, blank=True, null=True)
 
-    data_criacao_ml       = models.DateTimeField(blank=True, null=True)
+    data_criacao_ml = models.DateTimeField(blank=True, null=True)
     ultima_atualizacao_ml = models.DateTimeField(blank=True, null=True)
 
     # ================================================
@@ -115,8 +119,10 @@ class AnuncioML(models.Model):
 
     # * [EXPLICAÇÃO] → frete_da_planilha → importado da planilha (coluna BF), mantido para comparação.
     #                  frete_calculado   → calculado pelo sistema via tabela FreteML.
-    frete_da_planilha = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    frete_calculado   = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    frete_da_planilha = models.DecimalField(
+        max_digits=10, decimal_places=2, blank=True, null=True)
+    frete_calculado = models.DecimalField(
+        max_digits=10, decimal_places=2, blank=True, null=True)
 
     # ================================================
     # PRECIFICAÇÃO — PREÇO CLÁSSICO
@@ -125,8 +131,10 @@ class AnuncioML(models.Model):
     # * [EXPLICAÇÃO] → preco_classico_da_planilha → importado da planilha (resultado do Goal Seek do Excel).
     #                  preco_classico_calculado   → calculado pelo sistema via Goal Seek analítico.
     #                  Todas as fórmulas do sistema usam preco_classico_calculado.
-    preco_classico_da_planilha = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    preco_classico_calculado   = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    preco_classico_da_planilha = models.DecimalField(
+        max_digits=10, decimal_places=2, blank=True, null=True)
+    preco_classico_calculado = models.DecimalField(
+        max_digits=10, decimal_places=2, blank=True, null=True)
 
     # ================================================
     # PRECIFICAÇÃO — PREÇO PREMIUM
@@ -134,9 +142,10 @@ class AnuncioML(models.Model):
 
     # * [EXPLICAÇÃO] → preco_premium_da_planilha → importado da planilha.
     #                  preco_premium_calculado   → calculado pelo sistema via RoundUpTo90(preco_classico × acrescimo).
-    preco_premium_da_planilha = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    preco_premium_calculado   = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-
+    preco_premium_da_planilha = models.DecimalField(
+        max_digits=10, decimal_places=2, blank=True, null=True)
+    preco_premium_calculado = models.DecimalField(
+        max_digits=10, decimal_places=2, blank=True, null=True)
 
     # ================================================
     # PRECIFICAÇÃO — MARGEM CLÁSSICA
@@ -146,12 +155,14 @@ class AnuncioML(models.Model):
     #                  margem_classico_valor_da_planilha               → importado da planilha (R$) — coluna BQ.
     #                  margem_classico_calculado                       → calculado pelo sistema (faixa dinâmica por dimensão).
     #                  margem_classico_calculado_baseado_na_planilha   → calculado pelo sistema usando armazenagem da planilha.
-    margem_classico_da_planilha                  = models.DecimalField(max_digits=6,  decimal_places=2, blank=True, null=True)
-    margem_classico_valor_da_planilha            = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    margem_classico_calculado                    = models.DecimalField(max_digits=6,  decimal_places=2, blank=True, null=True)
-    margem_classico_calculado_baseado_na_planilha = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-
-
+    margem_classico_da_planilha = models.DecimalField(
+        max_digits=6,  decimal_places=2, blank=True, null=True)
+    margem_classico_valor_da_planilha = models.DecimalField(
+        max_digits=10, decimal_places=2, blank=True, null=True)
+    margem_classico_calculado = models.DecimalField(
+        max_digits=6,  decimal_places=2, blank=True, null=True)
+    margem_classico_calculado_baseado_na_planilha = models.DecimalField(
+        max_digits=6, decimal_places=2, blank=True, null=True)
 
     # ================================================
     # PRECIFICAÇÃO — MARGEM PREMIUM
@@ -161,10 +172,14 @@ class AnuncioML(models.Model):
     #                  margem_premium_valor_da_planilha               → importado da planilha (R$) — coluna BX.
     #                  margem_premium_calculado                       → calculado pelo sistema (faixa dinâmica por dimensão).
     #                  margem_premium_calculado_baseado_na_planilha   → calculado pelo sistema usando armazenagem da planilha.
-    margem_premium_da_planilha                  = models.DecimalField(max_digits=6,  decimal_places=2, blank=True, null=True)
-    margem_premium_valor_da_planilha            = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    margem_premium_calculado                    = models.DecimalField(max_digits=6,  decimal_places=2, blank=True, null=True)
-    margem_premium_calculado_baseado_na_planilha = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    margem_premium_da_planilha = models.DecimalField(
+        max_digits=6,  decimal_places=2, blank=True, null=True)
+    margem_premium_valor_da_planilha = models.DecimalField(
+        max_digits=10, decimal_places=2, blank=True, null=True)
+    margem_premium_calculado = models.DecimalField(
+        max_digits=6,  decimal_places=2, blank=True, null=True)
+    margem_premium_calculado_baseado_na_planilha = models.DecimalField(
+        max_digits=6, decimal_places=2, blank=True, null=True)
 
     # * [EXPLICAÇÃO] → preco_travado = True → signal não sobrescreve o preço.
     #                  Pode ser ativado pelo usuário para congelar o preço atual
@@ -193,15 +208,15 @@ class AnuncioML(models.Model):
                                           null=True, blank=True)
     preco_atacado_3 = models.DecimalField(max_digits=10, decimal_places=2,
                                           null=True, blank=True)
-    
+
     # ================================================
     # META
     # ================================================
 
     class Meta:
-        verbose_name        = 'Anúncio ML'
+        verbose_name = 'Anúncio ML'
         verbose_name_plural = 'Anúncios ML'
-        ordering            = ['mlb']
+        ordering = ['mlb']
 
     def __str__(self):
         return f'{self.mlb} — {self.titulo_anuncio}'
@@ -222,7 +237,8 @@ class BaseDeCalculo(models.Model):
     #                  Campos sem sufixo           → são os campos _dinamico (nomenclatura herdada)
     #                  Campos com sufixo _planilha → usam armazenagem importada da coluna BH da planilha
 
-    anuncio      = models.OneToOneField(AnuncioML, on_delete=models.CASCADE, related_name='base_calculo')
+    anuncio = models.OneToOneField(
+        AnuncioML, on_delete=models.CASCADE, related_name='base_calculo')
     calculado_em = models.DateTimeField(auto_now=True)
 
     # ================================================
@@ -231,34 +247,51 @@ class BaseDeCalculo(models.Model):
     # * [EXPLICAÇÃO] → Cópia dos dados do produto no momento do cálculo.
     #                  Garante rastreabilidade mesmo se o produto for alterado depois.
 
-    entrada_custo            = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    entrada_custo_com_boni   = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    entrada_ipi              = models.DecimalField(max_digits=6,  decimal_places=2, null=True, blank=True)
-    entrada_frete_cif_fob    = models.DecimalField(max_digits=6,  decimal_places=2, null=True, blank=True)
-    entrada_st_valor         = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    entrada_icms_entrada     = models.DecimalField(max_digits=6,  decimal_places=2, null=True, blank=True)
-    entrada_icms_saida_media = models.DecimalField(max_digits=6,  decimal_places=2, null=True, blank=True)
-    entrada_pis_cofins       = models.DecimalField(max_digits=6,  decimal_places=2, null=True, blank=True)
-    entrada_peso             = models.DecimalField(max_digits=8,  decimal_places=3, null=True, blank=True)
-    entrada_peso_cubado      = models.DecimalField(max_digits=8,  decimal_places=3, null=True, blank=True)
-    entrada_altura           = models.DecimalField(max_digits=8,  decimal_places=2, null=True, blank=True)
-    entrada_largura          = models.DecimalField(max_digits=8,  decimal_places=2, null=True, blank=True)
-    entrada_profundidade     = models.DecimalField(max_digits=8,  decimal_places=2, null=True, blank=True)
+    entrada_custo = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
+    entrada_custo_com_boni = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
+    entrada_ipi = models.DecimalField(
+        max_digits=6,  decimal_places=2, null=True, blank=True)
+    entrada_frete_cif_fob = models.DecimalField(
+        max_digits=6,  decimal_places=2, null=True, blank=True)
+    entrada_st_valor = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
+    entrada_icms_entrada = models.DecimalField(
+        max_digits=6,  decimal_places=2, null=True, blank=True)
+    entrada_icms_saida_media = models.DecimalField(
+        max_digits=6,  decimal_places=2, null=True, blank=True)
+    entrada_pis_cofins = models.DecimalField(
+        max_digits=6,  decimal_places=2, null=True, blank=True)
+    entrada_peso = models.DecimalField(
+        max_digits=8,  decimal_places=3, null=True, blank=True)
+    entrada_peso_cubado = models.DecimalField(
+        max_digits=8,  decimal_places=3, null=True, blank=True)
+    entrada_altura = models.DecimalField(
+        max_digits=8,  decimal_places=2, null=True, blank=True)
+    entrada_largura = models.DecimalField(
+        max_digits=8,  decimal_places=2, null=True, blank=True)
+    entrada_profundidade = models.DecimalField(
+        max_digits=8,  decimal_places=2, null=True, blank=True)
 
     # ================================================
     # DADOS DE ENTRADA — ANÚNCIO E MARKETPLACE
     # ================================================
 
-    entrada_comissao_classico        = models.DecimalField(max_digits=5,  decimal_places=2, null=True, blank=True)
-    entrada_acrescimo_premium        = models.DecimalField(max_digits=5,  decimal_places=2, null=True, blank=True)
-    entrada_fator_coleta             = models.DecimalField(max_digits=8,  decimal_places=2, null=True, blank=True)
-    entrada_armazenagem_faixa_valor  = models.DecimalField(max_digits=8,  decimal_places=4, null=True, blank=True)
-    entrada_armazenagem_periodo      = models.IntegerField(null=True, blank=True)
+    entrada_comissao_classico = models.DecimalField(
+        max_digits=5,  decimal_places=2, null=True, blank=True)
+    entrada_acrescimo_premium = models.DecimalField(
+        max_digits=5,  decimal_places=2, null=True, blank=True)
+    entrada_fator_coleta = models.DecimalField(
+        max_digits=8,  decimal_places=2, null=True, blank=True)
+    entrada_armazenagem_faixa_valor = models.DecimalField(
+        max_digits=8,  decimal_places=4, null=True, blank=True)
+    entrada_armazenagem_periodo = models.IntegerField(null=True, blank=True)
 
     # * [EXPLICAÇÃO] → Valor mensal de armazenagem importado da planilha (coluna BH).
     #                  Registrado aqui para rastreabilidade do cálculo baseado na planilha.
-    entrada_armazenagem_da_planilha = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
-
+    entrada_armazenagem_da_planilha = models.DecimalField(
+        max_digits=8, decimal_places=2, null=True, blank=True)
 
     # ================================================
     # FÓRMULAS — VALORES INTERMEDIÁRIOS
@@ -270,19 +303,22 @@ class BaseDeCalculo(models.Model):
         max_length=200, blank=True,
         default='(Altura ÷ 100) × (Largura ÷ 100) × (Profundidade ÷ 100)'
     )
-    calc_metro_cubico = models.DecimalField(max_digits=10, decimal_places=6, null=True, blank=True)
+    calc_metro_cubico = models.DecimalField(
+        max_digits=10, decimal_places=6, null=True, blank=True)
 
     formula_custo_final = models.CharField(
         max_length=200, blank=True,
         default='Custo c/ Boni + (Custo c/ Boni × IPI) + (Custo c/ Boni × Frete CIF/FOB) + ST Valor'
     )
-    calc_custo_final = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    calc_custo_final = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
 
     formula_coleta = models.CharField(
         max_length=200, blank=True,
         default='Metro Cúbico × Fator de Coleta'
     )
-    calc_coleta = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    calc_coleta = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
 
     # * [EXPLICAÇÃO] → calc_armazenagem                  → faixa selecionada pelas dimensões do produto
     #                  calc_armazenagem_baseada_na_planilha → valor direto da coluna BH da planilha
@@ -290,50 +326,59 @@ class BaseDeCalculo(models.Model):
         max_length=200, blank=True,
         default='Tarifa Diária da Faixa × Período de Armazenagem'
     )
-    calc_armazenagem                   = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    calc_armazenagem_baseada_na_planilha = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    calc_armazenagem = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
+    calc_armazenagem_baseada_na_planilha = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
 
     formula_preco_premium = models.CharField(
         max_length=200, blank=True,
         default='RoundUpTo90(Preço Clássico Calculado × (1 + Acréscimo Premium))'
     )
-    calc_preco_premium = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    calc_preco_premium = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
 
     formula_comissao_classico = models.CharField(
         max_length=200, blank=True,
         default='Preço Clássico Calculado × Comissão Clássico'
     )
-    calc_comissao_classico = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    calc_comissao_classico = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
 
     formula_comissao_premium = models.CharField(
         max_length=200, blank=True,
         default='Preço Premium Calculado × Comissão Premium'
     )
-    calc_comissao_premium = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    calc_comissao_premium = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
 
     formula_icms_classico = models.CharField(
         max_length=200, blank=True,
         default='(Preço Clássico Calculado × ICMS Saída) - (Custo × ICMS Entrada)'
     )
-    calc_icms_classico = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    calc_icms_classico = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
 
     formula_icms_premium = models.CharField(
         max_length=200, blank=True,
         default='(Preço Premium Calculado × ICMS Saída) - (Custo × ICMS Entrada)'
     )
-    calc_icms_premium = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    calc_icms_premium = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
 
     formula_pis_cofins_classico = models.CharField(
         max_length=200, blank=True,
         default='(Preço Clássico Calculado - Custo) × PIS/COFINS'
     )
-    calc_pis_cofins_classico = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    calc_pis_cofins_classico = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
 
     formula_pis_cofins_premium = models.CharField(
         max_length=200, blank=True,
         default='(Preço Premium Calculado - Custo) × PIS/COFINS'
     )
-    calc_pis_cofins_premium = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    calc_pis_cofins_premium = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
 
     # ================================================
     # RESULTADOS FINAIS — CÁLCULO _DINAMICO
@@ -345,15 +390,19 @@ class BaseDeCalculo(models.Model):
         max_length=500, blank=True,
         default='[_dinamico] Preço Clássico - Frete - Coleta - Armazenagem Dinâmica - Custo Final - Comissão Clássico - ICMS Clássico - PIS/COFINS Clássico'
     )
-    resultado_margem_classico_valor = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    resultado_margem_classico_pct   = models.DecimalField(max_digits=8,  decimal_places=2, null=True, blank=True)
+    resultado_margem_classico_valor = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
+    resultado_margem_classico_pct = models.DecimalField(
+        max_digits=8,  decimal_places=2, null=True, blank=True)
 
     formula_margem_premium = models.CharField(
         max_length=500, blank=True,
         default='[_dinamico] Preço Premium - Frete - Coleta - Armazenagem Dinâmica - Custo Final - Comissão Premium - ICMS Premium - PIS/COFINS Premium'
     )
-    resultado_margem_premium_valor = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    resultado_margem_premium_pct   = models.DecimalField(max_digits=8,  decimal_places=2, null=True, blank=True)
+    resultado_margem_premium_valor = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
+    resultado_margem_premium_pct = models.DecimalField(
+        max_digits=8,  decimal_places=2, null=True, blank=True)
 
     # ================================================
     # RESULTADOS FINAIS — CÁLCULO BASEADO NA PLANILHA
@@ -362,19 +411,22 @@ class BaseDeCalculo(models.Model):
     #                  Existe para comparação com o cálculo dinâmico e identificação de inconsistências.
     #                  Ver documentação em produtos/models.py (campo armazenagem_planilha).
 
-    resultado_margem_classico_valor_baseado_na_planilha = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    resultado_margem_classico_pct_baseado_na_planilha   = models.DecimalField(max_digits=8,  decimal_places=2, null=True, blank=True)
+    resultado_margem_classico_valor_baseado_na_planilha = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
+    resultado_margem_classico_pct_baseado_na_planilha = models.DecimalField(
+        max_digits=8,  decimal_places=2, null=True, blank=True)
 
-    resultado_margem_premium_valor_baseado_na_planilha  = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    resultado_margem_premium_pct_baseado_na_planilha    = models.DecimalField(max_digits=8,  decimal_places=2, null=True, blank=True)
+    resultado_margem_premium_valor_baseado_na_planilha = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
+    resultado_margem_premium_pct_baseado_na_planilha = models.DecimalField(
+        max_digits=8,  decimal_places=2, null=True, blank=True)
 
     class Meta:
-        verbose_name        = 'Base de Cálculo'
+        verbose_name = 'Base de Cálculo'
         verbose_name_plural = 'Bases de Cálculo'
 
     def __str__(self):
         return f'Base de Cálculo — {self.anuncio.mlb}'
-
 
 
 class CardapioPrecos(models.Model):
@@ -389,8 +441,8 @@ class CardapioPrecos(models.Model):
         MARGEM_MAXIMA = 'margem_maxima', 'Margem Máxima'
 
     # Chave única
-    produto      = models.ForeignKey(Produto, on_delete=models.CASCADE,
-                                     related_name='cardapio_precos', to_field='sku')
+    produto = models.ForeignKey(Produto, on_delete=models.CASCADE,
+                                related_name='cardapio_precos', to_field='sku')
     tipo_anuncio = models.ForeignKey('marketplaces.TipoAnuncioML',
                                      on_delete=models.PROTECT,
                                      related_name='cardapio_precos')
@@ -411,8 +463,8 @@ class CardapioPrecos(models.Model):
     preferencia_preco = models.CharField(max_length=20,
                                          choices=PreferenciaPreco.choices,
                                          default=PreferenciaPreco.MARGEM_PADRAO)
-    preco_em_uso      = models.DecimalField(max_digits=10, decimal_places=2,
-                                            null=True, blank=True)
+    preco_em_uso = models.DecimalField(max_digits=10, decimal_places=2,
+                                       null=True, blank=True)
 
     # Atacado — derivados do preco_em_uso
     preco_atacado_2 = models.DecimalField(max_digits=10, decimal_places=2,
@@ -422,13 +474,13 @@ class CardapioPrecos(models.Model):
 
     # Controle
     calculado_em = models.DateTimeField(auto_now=True)
-    valido       = models.BooleanField(default=True)
+    valido = models.BooleanField(default=True)
 
     def __str__(self):
         return f'{self.produto.sku} — {self.tipo_anuncio.nome}'
 
     class Meta:
-            unique_together     = ['produto', 'tipo_anuncio']
-            verbose_name        = 'Cardápio de Preços'
-            verbose_name_plural = 'Cardápios de Preços'
-            ordering            = ['produto', 'tipo_anuncio']
+        unique_together = ['produto', 'tipo_anuncio']
+        verbose_name = 'Cardápio de Preços'
+        verbose_name_plural = 'Cardápios de Preços'
+        ordering = ['produto', 'tipo_anuncio']
